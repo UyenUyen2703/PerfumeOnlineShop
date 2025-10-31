@@ -1,0 +1,127 @@
+.home-banner {
+  width: 100%;
+  height: 40%;
+  object-fit: cover;
+}
+.text-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 100px;
+  color: white;
+  font-weight: 400;
+  line-height: 1.2;
+  background: transparent;
+}
+.banner-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.btn-explorenow {
+  background-color: white;
+  color: #333;
+  padding: 10px 30px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-explorenow:hover {
+  background-color: #ebc9bd;
+}
+
+.top-fragrance-list {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.img_product {
+  width: 400px;
+  height: 400px;
+}
+
+.title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 50px;
+}
+
+.title-top-fragrance {
+  text-align: center;
+}
+
+.subtitle {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+}
+
+.body-homepage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.fragrance-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  justify-content: center;
+}
+
+.brand_name {
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* font-weight: 600; */
+}
+
+.product_name{
+  font-family: 'Great Vibes', cursive;
+  font-size: 2rem;
+}
+
+.price {
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 5px;
+}
+
+.description {
+  width: 400px;
+  font-weight: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.btn-buy {
+  font-family: 'Allura', cursive;
+  background-color: transparent;
+  color: #f2b3a9;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 40px;
+  text-align: left;
+}

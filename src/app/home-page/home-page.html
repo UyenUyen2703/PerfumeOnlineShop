@@ -1,0 +1,28 @@
+<div class="home-container">
+  <div class="banner-container">
+    <img src="assets/images/homepage-banner.jpg" alt="Homepage Banner" class="home-banner" />
+    <div class="text">
+      <h1 class="text-title">
+        Fragrance that <br />
+        make your day
+      </h1>
+      <button class="btn-explorenow">Explore Now</button>
+    </div>
+  </div>
+  <div class="body-homepage">
+    <div class="title-top-fragrance">
+      <p class="title">Our top fragrances</p>
+      <p class="subtitle">Nunc porta semper lacus a varius</p>
+    </div>
+    <div *ngFor="let product of products" class="top-fragrance-list">
+      <div class="fragrance-item">
+        <p class="brand_name">{{ product.brands?.name || 'No Brand' }}</p>
+        <p class="product_name">{{ product.name }}</p>
+        <p class="price">VND {{ product.price * 1000 }}</p>
+        <p class="description">{{ product.description }}</p>
+        <button class="btn-buy">Buy Now</button>
+      </div>
+      <img [src]="product.image_url" alt="{{ product.name }}" class="img_product" />
+    </div>
+  </div>
+</div>
