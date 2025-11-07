@@ -57,3 +57,8 @@
   border-radius: 30px;
   align-items: center;
 }
+
+.btn-add-to-cart:hover {
+  background-color: #ff6f91;
+  transform: scale(1.05);
+}
