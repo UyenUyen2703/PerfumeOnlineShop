@@ -14,9 +14,7 @@ export class Supabase {
 
   //get products with brand information
   async getProducts() {
-    const { data, error } = await supabase
-      .from('products')
-      .select(`
+    const { data, error } = await supabase.from('products').select(`
         *,
         brands (
           id,
@@ -26,6 +24,29 @@ export class Supabase {
           name
         )
       `);
+    if (error) throw error;
+    return data;
+  }
+
+  async getProductById(productId: string) {
+    const { data, error } = await supabase
+      .from('products')
+      .select(
+        `
+        *,
+        brands (
+          id,
+          brand_id,
+          name
+        ), categories (
+          id,
+          category_id,
+          name
+        )
+      `
+      )
+      .eq('product_id', productId)
+      .single();
     if (error) throw error;
     return data;
   }

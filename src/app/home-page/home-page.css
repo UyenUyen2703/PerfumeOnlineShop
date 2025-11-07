@@ -49,7 +49,7 @@
 
 .img_product {
   width: 400px;
-  height: 400px;
+  height: auto;
 }
 
 .title {
@@ -82,11 +82,14 @@
   justify-content: center;
 }
 
+.top-fragrance-list:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
 .brand_name {
   font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
   letter-spacing: 2px;
-  /* font-weight: 600; */
 }
 
 .product_name{
@@ -124,4 +127,21 @@
   transition: all 0.3s ease;
   font-size: 40px;
   text-align: left;
+}
+
+.btn-buy:hover {
+  color: #ebc9bd;
+}
+
+.btn-viewmore {
+  /* margin-top: 20px; */
+  background-color: #f2b3a9;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
 }

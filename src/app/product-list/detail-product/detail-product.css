@@ -1,0 +1,59 @@
+.detail-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  padding-bottom: 20px;
+}
+
+.img_product_detail {
+  width: 400px;
+  height: auto;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: justify;
+}
+
+.product-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-family: 'Arial', sans-serif;
+  font-size: 20px;
+  color: #e91e63;
+  margin-bottom: 15px;
+}
+
+.btn-add-to-cart {
+  font-family: 'Allura', cursive;
+  background-color: #ff9dbe;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 30px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 30px;
+  align-items: center;
+}

@@ -18,11 +18,12 @@
       <div class="fragrance-item">
         <p class="brand_name">{{ product.brands?.name || 'No Brand' }}</p>
         <p class="product_name">{{ product.name }}</p>
-        <p class="price">VND {{ product.price * 1000 }}</p>
+        <p class="price">VND {{currencyService.convertNumberToCurrency(product.price * 1000)}}</p>
         <p class="description">{{ product.description }}</p>
         <button class="btn-buy">Buy Now</button>
       </div>
-      <img [src]="product.image_url" alt="{{ product.name }}" class="img_product" />
+      <img [src]="product.image_url" alt="{{ product.name }}" (click)="goToDetail(product.product_id)" class="img_product" />
     </div>
+    <button class="btn-viewmore" routerLink="/perfume">View More</button>
   </div>
 </div>

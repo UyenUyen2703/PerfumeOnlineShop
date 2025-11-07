@@ -1,0 +1,12 @@
+<div class="detail-container" *ngFor="let product of productList">
+  <div class="product-image">
+    <img [src]="product.image_url" alt="{{ product.name }}" class="img_product_detail" />
+  </div>
+  <div class="product-info">
+    <h2 class="product-name">{{ product.name }}</h2>
+    <p class="brand-name">{{ product.brands?.name || 'No Brand' }} - {{product.categories?.name || 'No Category'}}</p>
+    <p class="price">{{ currencyService.convertNumberToCurrency(product.price * 1000) }}</p>
+    <p class="description">{{ product.description }}</p>
+    <button class="btn-add-to-cart">Add to cart</button>
+  </div>
+</div>
