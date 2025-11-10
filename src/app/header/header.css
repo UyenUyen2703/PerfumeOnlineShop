@@ -48,4 +48,30 @@
   border-radius: 45%;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  cursor: pointer;
+}
+
+.logout {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-btn {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #ff69b4;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #ff1493;
+  text-decoration: none;
 }

@@ -1,8 +1,9 @@
 import { NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
 import { CurrencyService } from '../../services/currency.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-detail-product',
@@ -13,7 +14,12 @@ import { CurrencyService } from '../../services/currency.service';
 export class DetailProduct implements OnInit {
   productList: any = [];
 
-  constructor(private route: ActivatedRoute, public currencyService: CurrencyService) {}
+  constructor(
+    private route: ActivatedRoute,
+    public currencyService: CurrencyService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -42,6 +48,21 @@ export class DetailProduct implements OnInit {
     }
 
     return data;
+  }
+
+  async onAddToCart(product: any) {
+    try {
+      const user = await this.authService.getUser();
+      if (!user) {
+        this.router.navigate(['/login']);
+        return;
+      }
+
+      alert('Product added to cart successfully!');
+
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   }
 
 }

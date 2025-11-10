@@ -7,6 +7,6 @@
     <p class="brand-name">{{ product.brands?.name || 'No Brand' }} - {{product.categories?.name || 'No Category'}}</p>
     <p class="price">{{ currencyService.convertNumberToCurrency(product.price * 1000) }}</p>
     <p class="description">{{ product.description }}</p>
-    <button class="btn-add-to-cart">Add to cart</button>
+    <button class="btn-add-to-cart" (click)="onAddToCart(product)">Add to cart</button>
   </div>
 </div>

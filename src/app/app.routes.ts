@@ -4,27 +4,45 @@ import { ProductList } from './product-list/product-list';
 import { DetailProduct } from './product-list/detail-product/detail-product';
 import { Login } from './auth/login/login';
 import { Register } from './auth/register/register';
+import { Personal } from './personal/personal';
+import { AuthGuard } from './guards/auth.guard';
+import { Search } from './home-page/search/search';
+import { FavoriteList } from './personal/favorite-list/favorite-list';
+import { PersonalInfor } from './personal/personal-infor/personal-infor';
 
 export const routes: Routes = [
-
   {
     path: 'login',
-    component: Login
+    component: Login,
   },
   {
     path: 'register',
-    component: Register
+    component: Register,
   },
   {
     path: '',
-    component: HomePage
+    component: HomePage,
   },
   {
-    path:'perfume',
-    component: ProductList
+    path: 'perfume',
+    component: ProductList,
   },
   {
     path: 'detail/:product_id',
-    component: DetailProduct
-  }
+    component: DetailProduct,
+  },
+  {
+    path: 'search',
+    component: Search,
+  },
+  {
+    path: 'personal/favorites',
+    component: FavoriteList,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'personal',
+    component: PersonalInfor,
+    canActivate: [AuthGuard],
+  },
 ];

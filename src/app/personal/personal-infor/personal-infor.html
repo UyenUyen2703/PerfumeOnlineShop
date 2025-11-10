@@ -1,0 +1,74 @@
+<div>
+  <app-personal></app-personal>
+</div>
+<div>
+  <h1>Personal Information</h1>
+
+  <div class="profile-section">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-container">
+        <img [src]="getAvatarUrl()" alt="User Avatar" class="avatar" />
+        <div class="avatar-upload-overlay" [class.uploading]="isUploading">
+          <input
+            type="file"
+            id="avatar-input"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
+            (change)="onAvatarFileSelected($event)"
+            [disabled]="isUploading"
+            style="display: none"
+          />
+          <label for="avatar-input" class="upload-button" [class.disabled]="isUploading">
+            <span *ngIf="!isUploading">📷 Change Avatar</span>
+            <span *ngIf="isUploading">⏳ Uploading...</span>
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="uploadError" class="error-message">
+        {{ uploadError }}
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+      <div class="info-item">
+        <label>Name:</label>
+        <span>{{
+          userProfile?.full_name || user?.user_metadata?.full_name || 'Not provided'
+        }}</span>
+      </div>
+
+      <div class="info-item">
+        <label>Email:</label>
+        <span>{{ userProfile?.email || user?.email || 'Not provided' }}</span>
+      </div>
+
+      <div class="info-item">
+        <label>Phone:</label>
+        <span>{{ userProfile?.phone || 'Not provided' }}</span>
+      </div>
+
+      <div class="info-item">
+        <label>Address:</label>
+        <span>{{ userProfile?.address || 'Not provided' }}</span>
+      </div>
+
+      <div class="info-item">
+        <label>Role:</label>
+        <span>{{ userProfile?.role || 'Customer' }}</span>
+      </div>
+
+      <div class="info-item">
+        <label>Member since:</label>
+        <span>{{
+          userProfile?.created_at ? (userProfile.created_at | date : 'mediumDate') : 'Recently'
+        }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-secondary" (click)="signOut()">Sign Out</button>
+  </div>
+</div>

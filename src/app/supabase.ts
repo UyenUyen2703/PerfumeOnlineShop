@@ -5,14 +5,20 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class Supabase {
-  //get all data
   async getData(table: string) {
-    const { data, error } = await supabase.from(table).select('*');
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.from(table).select('*');
+      if (error) {
+        console.error(`Error fetching data from ${table}:`, error);
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error(`Unexpected error in getData for ${table}:`, error);
+      throw error;
+    }
   }
 
-  //get products with brand information
   async getProducts() {
     const { data, error } = await supabase.from('products').select(`
         *,

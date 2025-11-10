@@ -15,20 +15,24 @@
   </div>
 
   <div class="user-actions">
-    <a routerLink="/login" class="login-link">
+    <a (click)="checkLogin()" class="login-link">
       <img src="assets/icon/user-icon.png" alt="User Login" class="icon" />
     </a>
 
-     <a routerLink="/login" class="login-link">
-      <img src="assets/icon/search.png" alt="User Login" class="icon" />
+     <a routerLink="/search" class="login-link">
+      <img src="assets/icon/search.png" alt="User search" class="icon" />
     </a>
 
-     <a routerLink="/login" class="login-link">
-      <img src="assets/icon/heart.png" alt="User Login" class="icon" />
+     <a routerLink="/favoriteList" class="login-link">
+      <img src="assets/icon/heart.png" alt="User favorite list" class="icon" />
     </a>
 
-    <a routerLink="/cart" class="cart-link">
+    <a *ngIf="isLoggedIn" routerLink="/cart" class="cart-link">
       <img src="assets/icon/cart-icon.png" alt="Shopping Cart" class="icon" />
     </a>
+
+    <a *ngIf="isLoggedIn" (click)="logout()" class="logout">Logout</a>
+
+    <a *ngIf="!isLoggedIn" routerLink="/login" class="login-btn">Login</a>
   </div>
 </div>
