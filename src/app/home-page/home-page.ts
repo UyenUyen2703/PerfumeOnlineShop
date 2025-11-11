@@ -18,7 +18,7 @@ export class HomePage {
 
   private async loadProducts() {
     const products = await this.supabase.getProducts();
-    this.products = products;
+    this.products = products.slice(0, 3);
   }
 
   goToDetail(productId: string) {
