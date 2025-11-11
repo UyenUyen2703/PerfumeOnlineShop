@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Supabase } from '../supabase';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { PersonalInfor } from "./personal-infor/personal-infor";
+import { Router, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-personal',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterOutlet, RouterLinkActive],
   templateUrl: './personal.html',
   styleUrl: './personal.css',
 })

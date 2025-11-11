@@ -19,6 +19,8 @@
 .nav-links {
   display: flex;
   gap: 50px;
+  margin-left: 20px;
+  padding: 10px;
 }
 
 .nav-links a {
@@ -27,12 +29,22 @@
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
+  padding: 20px 15px;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
 }
 
 .nav-links a:hover {
   color: #ff69b4;
-  text-decoration: underline;
 }
+
+.nav-links a.active {
+  color: #ff69b4;
+  border-bottom-color: #ff69b4;
+}
+
 
 .user-actions {
   display: flex;
@@ -75,3 +87,5 @@
   background-color: #ff1493;
   text-decoration: none;
 }
+
+

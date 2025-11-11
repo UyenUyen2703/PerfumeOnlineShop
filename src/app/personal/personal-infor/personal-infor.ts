@@ -3,17 +3,16 @@ import { AuthService } from '../../services/auth.service';
 import { Supabase } from '../../supabase';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Personal } from "../personal";
 
 @Component({
   selector: 'app-personal-infor',
-  imports: [CommonModule, Personal],
+  imports: [CommonModule],
   templateUrl: './personal-infor.html',
   styleUrl: './personal-infor.css',
 })
 export class PersonalInfor implements OnInit {
   user: any;
-  userProfile: any; // User data from our users table
+  userProfile: any;
   isUploading = false;
   uploadError: string | null = null;
 

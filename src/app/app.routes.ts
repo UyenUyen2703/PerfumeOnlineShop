@@ -36,13 +36,22 @@ export const routes: Routes = [
     component: Search,
   },
   {
-    path: 'personal/favorites',
-    component: FavoriteList,
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'personal',
-    component: PersonalInfor,
+    component: Personal,
     canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        component: PersonalInfor,
+      },
+      {
+        path: 'favorites',
+        component: FavoriteList,
+      },
+      {
+        path: 'orders',
+        component: PersonalInfor,
+      }
+    ]
   },
 ];

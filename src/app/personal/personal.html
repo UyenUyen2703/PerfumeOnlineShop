@@ -1,7 +1,28 @@
+<div class="personal-container">
   <nav class="personal-nav">
-    <button routerLink="/personal" class="btn btn-link">Personal Information</button>
-    <button routerLink="/personal/orders" class="btn btn-link">My Orders</button>
-    <button routerLink="/personal/favorites" class="btn btn-link">Favorites List</button>
+    <button 
+      routerLink="/personal" 
+      routerLinkActive="active" 
+      [routerLinkActiveOptions]="{exact: true}"
+      class="btn btn-link">
+      Personal Information
+    </button>
+    <button 
+      routerLink="/personal/orders" 
+      routerLinkActive="active"
+      class="btn btn-link">
+      My Orders
+    </button>
+    <button 
+      routerLink="/personal/favorites" 
+      routerLinkActive="active"
+      class="btn btn-link">
+      Favorites List
+    </button>
   </nav>
   
+  <div class="personal-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
 
