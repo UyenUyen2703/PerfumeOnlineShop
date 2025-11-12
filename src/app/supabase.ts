@@ -61,13 +61,15 @@ export class Supabase {
     try {
       const { data: joinData, error: joinError } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           categories!inner (
             id,
             name
           )
-        `)
+        `
+        )
         .eq('categories.name', categoryName);
 
       if (!joinError && joinData && joinData.length > 0) {
@@ -107,10 +109,64 @@ export class Supabase {
           products = productsByCategoryId;
         }
       }
-      
+
       return products || [];
     } catch (error) {
       console.error('Unexpected error in getProductsByCategory:', error);
+      return [];
+    }
+  }
+
+  async getProductsByBrand(brandName: string) {
+    try {
+      const { data: joinData, error: joinError } = await supabase
+        .from('products')
+        .select(
+          `
+          *,
+          brands!inner (
+            id,
+            name, logo_url
+          )
+        `
+        )
+        .eq('brands.name', brandName);
+      if (!joinError && joinData && joinData.length > 0) {
+        return joinData;
+      }
+      const { data: brandData, error: brandError } = await supabase
+        .from('brands')
+        .select('id, brand_id')
+        .eq('name', brandName)
+        .single();
+      if (brandError) {
+        console.error('Error finding brand:', brandError);
+        return [];
+      }
+      let products = [];
+      if (brandData.id) {
+        const { data: productsById } = await supabase
+          .from('products')
+          .select('*')
+          .eq('brand_id', brandData.id);
+        if (productsById && productsById.length > 0) {
+          products = productsById;
+        }
+      }
+
+      if (products.length === 0 && brandData.brand_id) {
+        const { data: productsByBrandId } = await supabase
+          .from('products')
+          .select('*')
+          .eq('brand_id', brandData.brand_id);
+        if (productsByBrandId) {
+          products = productsByBrandId;
+        }
+      }
+
+      return products || [];
+    } catch (error) {
+      console.error('Unexpected error in getProductsByBrand:', error);
       return [];
     }
   }

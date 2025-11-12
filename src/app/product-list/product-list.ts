@@ -14,7 +14,11 @@ import { AuthService } from '../services/auth.service';
 export class ProductList implements OnInit, OnDestroy {
   products: any[] = [];
   categories: string[] = [];
+  brands: string[] = [];
   selectedCategory: string | null = null;
+  public Math = Math;
+  pageSize: number = 6;
+  currentPage: number = 1;
   private authSubscription: any;
 
   constructor(
@@ -27,6 +31,7 @@ export class ProductList implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadProducts();
     this.loadCategories();
+    this.loadBrands();
     this.authSubscription = this.authService.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
         setTimeout(() => {
@@ -39,6 +44,16 @@ export class ProductList implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.authSubscription) {
       this.authSubscription.data.subscription.unsubscribe();
+    }
+  }
+
+  private async loadBrands() {
+    try {
+      const brandsData = await this.supabase.getData('brands');
+      this.brands = brandsData?.map((brand: any) => brand.name) || [];
+    } catch (error) {
+      console.error('Error loading brands:', error);
+      this.brands = [];
     }
   }
 
@@ -74,10 +89,19 @@ export class ProductList implements OnInit, OnDestroy {
     console.log('filterByCategory called with:', category);
     this.selectedCategory = category;
     try {
-      this.products = await this.supabase.getProductsByCategory(category) || [];
-      console.log('Filtered products:', this.products);
+      this.products = (await this.supabase.getProductsByCategory(category)) || [];
     } catch (error) {
       console.error('Error filtering products by category:', error);
+      this.products = [];
+    }
+  }
+  async filterByBrand(brand: string) {
+    console.log('filterByBrand called with:', brand);
+    this.selectedCategory = brand;
+    try {
+      this.products = (await this.supabase.getProductsByBrand(brand)) || [];
+    } catch (error) {
+      console.error('Error filtering products by brand:', error);
       this.products = [];
     }
   }
@@ -89,6 +113,15 @@ export class ProductList implements OnInit, OnDestroy {
 
   addToCart(product: any, event: MouseEvent) {
     event.stopPropagation();
-    // Implement add to cart functionality
   }
+
+  get paginatedProducts() {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.products.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  changePage(page: number) {
+    this.currentPage = page;
+  }
+
 }

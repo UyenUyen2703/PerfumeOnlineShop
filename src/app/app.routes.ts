@@ -9,6 +9,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { Search } from './home-page/search/search';
 import { FavoriteList } from './personal/favorite-list/favorite-list';
 import { PersonalInfor } from './personal/personal-infor/personal-infor';
+import { Dashboard } from './admin/dashboard/dashboard';
 
 export const routes: Routes = [
   {
@@ -54,4 +55,9 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    // canActivate: [AuthGuard],
+  }
 ];
