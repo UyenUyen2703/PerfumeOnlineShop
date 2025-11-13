@@ -1,3 +1,4 @@
+import { User } from './../type/user';
 import { HomePage } from './home-page/home-page';
 import { Routes } from '@angular/router';
 import { ProductList } from './product-list/product-list';
@@ -10,6 +11,7 @@ import { Search } from './home-page/search/search';
 import { FavoriteList } from './personal/favorite-list/favorite-list';
 import { PersonalInfor } from './personal/personal-infor/personal-infor';
 import { Dashboard } from './admin/dashboard/dashboard';
+import { ManageUser } from './admin/manage-user/manage-user';
 
 export const routes: Routes = [
   {
@@ -59,5 +61,10 @@ export const routes: Routes = [
     path: 'dashboard',
     component: Dashboard,
     // canActivate: [AuthGuard],
-  }
+  },
+  {
+    path: 'admin/users',
+    component: ManageUser,
+    // canActivate: [AuthGuard],
+  },
 ];

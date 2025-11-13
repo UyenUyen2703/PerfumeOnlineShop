@@ -85,6 +85,7 @@
   padding: 10px;
   background: #f8f9fa;
   border-radius: 8px;
+  align-items: center;
 }
 
 .info-item label {
@@ -96,6 +97,142 @@
 .info-item span {
   flex: 1;
   color: #6c757d;
+}
+
+.info-value {
+  flex: 1;
+  color: #6c757d;
+}
+
+/* Editable item styles */
+.editable-item {
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.editable-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Edit button */
+.edit-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editable-item:hover .edit-btn {
+  opacity: 1;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
+
+/* Edit input styles */
+.edit-input {
+  flex: 1;
+  border: 2px solid #007bff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  outline: none;
+  font-size: 14px;
+  background: white;
+}
+
+.edit-input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.edit-select {
+  min-width: 150px;
+  padding: 6px 10px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+}
+
+/* Edit actions */
+.edit-actions {
+  display: inline-flex;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.save-btn, .cancel-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background: #28a745;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.save-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cancel-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #c82333;
+}
+
+.readonly-badge {
+  font-size: 12px;
+  background: #dc3545;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 10px;
+  max-width: 30px;
+  text-align: center;
+}
+
+span.readonly-badge {
+  color: white !important;
+}
+
+.edit-icon{
+  width: 14px;
+  height: 14px;
 }
 
 .actions {
@@ -122,6 +259,44 @@
   background: #5a6268;
 }
 
+/* Validation styles */
+.edit-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-input.error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+/* Success feedback */
+.edit-input:valid:not(.error) {
+  border-color: #28a745;
+}
+
+/* Phone number formatting helper */
+.phone-helper {
+  font-size: 11px;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
 @media (max-width: 768px) {
   .profile-section {
     flex-direction: column;
@@ -133,6 +308,10 @@
   }
 
   .user-info {
+    width: 100%;
+  }
+
+  .edit-container {
     width: 100%;
   }
 }

@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class Supabase {
+  [x: string]: any;
   async getData(table: string) {
     try {
       const { data, error } = await supabase.from(table).select('*');

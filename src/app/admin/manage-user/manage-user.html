@@ -1,0 +1,19 @@
+<div class="manage-user-container">
+  <h2>Manage Users</h2>
+  <igx-grid [data]="userData" width="100%" height="400px">
+    <igx-column field="user_id" header="User ID" dataType="string" width="150px"></igx-column>
+    <igx-column field="email" header="Email" dataType="string" width="250px"></igx-column>
+    <igx-column field="address" header="Address" dataType="string" width="200px"></igx-column>
+    <igx-column field="phone" header="Phone number" dataType="string" width="200px"></igx-column>
+    <igx-column field="created_at" header="Created At" dataType="string" width="200px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy HH:mm' }}
+      </ng-template>
+    </igx-column>
+    <igx-column field="updated_at" header="Updated At" dataType="string" width="200px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy HH:mm' }}
+      </ng-template>
+    </igx-column>
+  </igx-grid>
+</div>

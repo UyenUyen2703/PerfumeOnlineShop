@@ -1,1 +1,119 @@
-<p>dashboard works!</p>
+<div class="dropdown-header">
+  <select id="gridSelect" [(ngModel)]="selectedGrid">
+    <option value="" disabled selected>Select a dashboard</option>
+    <option value="product">Product Dashboard</option>
+    <option value="brand">Brand Dashboard</option>
+    <option value="category">Category Dashboard</option>
+  </select>
+</div>
+
+
+<div *ngIf="selectedGrid === 'product'" class="product-container" id="product">
+  <!-- <h2>Product Dashboard</h2> -->
+  <igx-grid [data]="product" height="400px" width="100%" >
+    <igx-grid-toolbar>
+      <igx-grid-toolbar-title>Products</igx-grid-toolbar-title>
+      <igx-grid-toolbar-actions>
+        <igx-grid-pinning-actions></igx-grid-pinning-actions>
+      </igx-grid-toolbar-actions>
+    </igx-grid-toolbar>
+    <igx-column field="id" header="ID" dataType="number" width="100px" [resizable]="true" ></igx-column>
+    <igx-column field="image_url" header="Image" dataType="string" width="150px">
+      <ng-template igxCell let-cell="cell">
+        <img
+          [src]="cell.value"
+          alt="Product Image"
+          style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px"
+        />
+      </ng-template>
+    </igx-column>
+    <igx-column field="discount" header="Discount" dataType="string" width="100px"></igx-column>
+    <igx-column field="name" header="Product Name" dataType="string" width="200px"></igx-column>
+    <igx-column field="price" header="Price" dataType="number" width="150px"></igx-column>
+    <igx-column
+      field="description"
+      header="Description"
+      dataType="string"
+      width="300px"
+    ></igx-column>
+    <igx-column field="size_ml" header="Sizes" dataType="string" width="150px"></igx-column>
+    <igx-column
+      field="categories.name"
+      header="Category"
+      dataType="string"
+      width="150px"
+    ></igx-column>
+    <igx-column field="brands.name" header="Brand" dataType="string" width="150px"></igx-column>
+    <igx-column field="quantities" header="Quantities" dataType="string" width="150px"></igx-column>
+    <igx-column field="created_at" header="Created At" dataType="string" width="200px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+    <igx-column field="updated_at" header="Updated At" dataType="string" width="200px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+  </igx-grid>
+</div>
+
+<div *ngIf="selectedGrid === 'brand'" class="brand-container" id="brand">
+  <!-- <h2>Brand Dashboard</h2> -->
+  <igx-grid [data]="brand" height="400px" width="100%" [allowFiltering]="true">
+    <igx-grid-toolbar>
+      <igx-grid-toolbar-title>Brands</igx-grid-toolbar-title>
+      <igx-grid-toolbar-actions>
+        <igx-grid-pinning-actions></igx-grid-pinning-actions>
+      </igx-grid-toolbar-actions>
+    </igx-grid-toolbar>
+    <igx-column field="id" header="ID" dataType="number" width="100px"></igx-column>
+    <igx-column field="logo_url" header="Logo" dataType="string" width="200px">
+      <ng-template igxCell let-cell="cell">
+        <img
+          [src]="cell.value"
+          alt="Logo"
+          style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px"
+        />
+      </ng-template>
+    </igx-column>
+    <igx-column field="name" header="Brand Name" dataType="string" width="200px"></igx-column>
+    <igx-column field="country" header="Country" dataType="string" width="300px"></igx-column>
+    <igx-column field="created_at" header="Created At" dataType="string" width="400px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+    <igx-column field="updated_at" header="Updated At" dataType="string" width="400px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+  </igx-grid>
+</div>
+
+
+<div *ngIf="selectedGrid === 'category'" class="cat-container" id="category">
+  <!-- <h2>Category Dashboard</h2> -->
+  <igx-grid [data]="category" width="100%">
+    <igx-grid-toolbar>
+      <igx-grid-toolbar-title>Categories</igx-grid-toolbar-title>
+      <igx-grid-toolbar-actions>
+        <igx-grid-pinning-actions></igx-grid-pinning-actions>
+      </igx-grid-toolbar-actions>
+    </igx-grid-toolbar>
+    <igx-column field="id" header="ID" dataType="number" width="100px"></igx-column>
+    <igx-column field="name" header="Category Name" dataType="string" width="200px"></igx-column>
+    <igx-column field="description" header="Description" dataType="string" width="300px"></igx-column>
+    <igx-column field="created_at" header="Created At" dataType="string" width="400px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+    <igx-column field="updated_at" header="Updated At" dataType="string" width="400px">
+      <ng-template igxCell let-cell="cell">
+        {{ cell.value | date : 'dd/MM/yyyy' }}
+      </ng-template>
+    </igx-column>
+  </igx-grid>
+</div>

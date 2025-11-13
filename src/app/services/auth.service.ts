@@ -83,6 +83,7 @@ export class AuthService {
         full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
         phone: user.user_metadata?.phone || null,
         address: user.user_metadata?.address || null,
+        gender: user.user_metadata?.gender || null,
         avatar_URL: avatarStorageUrl || user.user_metadata?.avatar_url || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

@@ -6,6 +6,9 @@ import { CurrencyService } from './services/currency.service';
 import { AuthService } from './services/auth.service';
 import { filter } from 'rxjs/operators';
 import { Admin } from "./admin/admin";
+import { IgxGridComponent } from 'igniteui-angular';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-root',

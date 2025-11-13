@@ -28,37 +28,210 @@
 
     <!-- User Info -->
     <div class="user-info">
-      <div class="info-item">
-        <label>Name:</label>
-        <span>{{
-          userProfile?.full_name || user?.user_metadata?.full_name || 'Not provided'
-        }}</span>
+      <!-- Full Name Field -->
+      <div
+        class="info-item editable-item"
+        (mouseenter)="showEditButton = 'full_name'"
+        (mouseleave)="showEditButton = ''"
+      >
+        <label>Full Name:</label>
+
+        <!-- View mode -->
+        <span *ngIf="!editableFields.full_name" class="info-value">
+          {{ userProfile?.full_name || 'Not provided' }}
+        </span>
+
+        <!-- Edit mode -->
+        <div *ngIf="editableFields.full_name" class="edit-container">
+          <input
+            [(ngModel)]="tempUserData.full_name"
+            class="edit-input"
+            [class.error]="validationErrors['full_name']"
+            type="text"
+            placeholder="Enter your full name"
+            (input)="validateFullName(tempUserData.full_name || '')"
+            maxlength="50"
+          />
+          <div *ngIf="validationErrors['full_name']" class="error-message">
+            {{ validationErrors['full_name'] }}
+          </div>
+        </div>
+
+        <!-- Edit button -->
+        <button
+          *ngIf="showEditButton === 'full_name' && !editableFields.full_name"
+          class="edit-btn"
+          (click)="enableEdit('full_name')"
+          title="Edit full name"
+        >
+          <img src="assets/icon/pencil.png" alt="Edit" class="edit-icon" />
+        </button>
+
+        <!-- Save/Cancel buttons -->
+        <div *ngIf="editableFields.full_name" class="edit-actions">
+          <button
+            class="save-btn"
+            [disabled]="validationErrors['full_name']"
+            (click)="saveEdit('full_name')"
+            title="Save">✓</button>
+          <button class="cancel-btn" (click)="cancelEdit('full_name')" title="Cancel">✗</button>
+        </div>
       </div>
 
+      <!-- Email Field (Read only) -->
       <div class="info-item">
         <label>Email:</label>
-        <span>{{ userProfile?.email || user?.email || 'Not provided' }}</span>
+        <span class="info-value">{{ userProfile?.email || user?.email || 'Not provided' }}</span>
+        <span class="readonly-badge">Read only</span>
       </div>
 
-      <div class="info-item">
+      <!-- Phone Field -->
+      <div
+        class="info-item editable-item"
+        (mouseenter)="showEditButton = 'phone'"
+        (mouseleave)="showEditButton = ''"
+      >
         <label>Phone:</label>
-        <span>{{ userProfile?.phone || 'Not provided' }}</span>
+
+        <!-- View mode -->
+        <span *ngIf="!editableFields.phone" class="info-value">
+          {{ formatPhoneNumber(userProfile?.phone ?? null) }}
+        </span>
+
+        <!-- Edit mode -->
+        <div *ngIf="editableFields.phone" class="edit-container">
+          <input
+            [(ngModel)]="tempUserData.phone"
+            class="edit-input"
+            [class.error]="validationErrors['phone']"
+            type="tel"
+            placeholder="Enter your phone number (10 digits)"
+            (input)="validatePhone(tempUserData.phone || '')"
+            maxlength="15"
+          />
+          <div *ngIf="validationErrors['phone']" class="error-message">
+            {{ validationErrors['phone'] }}
+          </div>
+        </div>
+
+        <!-- Edit button -->
+        <button
+          *ngIf="showEditButton === 'phone' && !editableFields.phone"
+          class="edit-btn"
+          (click)="enableEdit('phone')"
+          title="Edit phone"
+        >
+          <img src="assets/icon/pencil.png" alt="Edit" class="edit-icon" />
+        </button>
+
+        <!-- Save/Cancel buttons -->
+        <div *ngIf="editableFields.phone" class="edit-actions">
+          <button
+            class="save-btn"
+            [disabled]="validationErrors['phone']"
+            (click)="saveEdit('phone')"
+            title="Save">✓</button>
+          <button class="cancel-btn" (click)="cancelEdit('phone')" title="Cancel">✗</button>
+        </div>
       </div>
 
-      <div class="info-item">
+      <!-- Address Field -->
+      <div
+        class="info-item editable-item"
+        (mouseenter)="showEditButton = 'address'"
+        (mouseleave)="showEditButton = ''"
+      >
         <label>Address:</label>
-        <span>{{ userProfile?.address || 'Not provided' }}</span>
+
+        <!-- View mode -->
+        <span *ngIf="!editableFields.address" class="info-value">
+          {{ userProfile?.address || 'Not provided' }}
+        </span>
+
+        <!-- Edit mode -->
+        <div *ngIf="editableFields.address" class="edit-container">
+          <textarea
+            [(ngModel)]="tempUserData.address"
+            class="edit-input edit-textarea"
+            [class.error]="validationErrors['address']"
+            placeholder="Enter your full address (e.g., 123 Đường ABC, Phường XYZ, Quận DEF, TP.HCM)"
+            (input)="validateAddress(tempUserData.address || '')"
+            rows="3"
+            maxlength="255"
+          ></textarea>
+          <div *ngIf="validationErrors['address']" class="error-message">
+            {{ validationErrors['address'] }}
+          </div>
+        </div>
+
+        <!-- Edit button -->
+        <button
+          *ngIf="showEditButton === 'address' && !editableFields.address"
+          class="edit-btn"
+          (click)="enableEdit('address')"
+          title="Edit address"
+        >
+          <img src="assets/icon/pencil.png" alt="Edit" class="edit-icon" />
+        </button>
+
+        <div *ngIf="editableFields.address" class="edit-actions">
+          <button
+            class="save-btn"
+            [disabled]="validationErrors['address']"
+            (click)="saveEdit('address')"
+            title="Save">✓</button>
+          <button class="cancel-btn" (click)="cancelEdit('address')" title="Cancel">✗</button>
+        </div>
+      </div>
+
+      <div
+        class="info-item editable-item"
+        (mouseenter)="showEditButton = 'gender'"
+        (mouseleave)="showEditButton = ''"
+      >
+        <label>Gender:</label>
+
+        <span *ngIf="!editableFields.gender" class="info-value">
+          {{ getGenderLabel(userProfile?.gender ?? null) || 'Not provided' }}
+        </span>
+
+        <select
+          *ngIf="editableFields.gender"
+          [(ngModel)]="tempUserData.gender"
+          class="edit-input edit-select"
+        >
+          <option value="">Select gender</option>
+          <option *ngFor="let option of genderOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+
+        <!-- Edit button -->
+        <button
+          *ngIf="showEditButton === 'gender' && !editableFields.gender"
+          class="edit-btn"
+          (click)="enableEdit('gender')"
+          title="Edit gender"
+        >
+          <img src="assets/icon/pencil.png" alt="Edit" class="edit-icon" />
+        </button>
+
+        <div *ngIf="editableFields.gender" class="edit-actions">
+          <button class="save-btn" (click)="saveEdit('gender')" title="Save">✓</button>
+          <button class="cancel-btn" (click)="cancelEdit('gender')" title="Cancel">✗</button>
+        </div>
       </div>
 
       <div class="info-item">
         <label>Role:</label>
-        <span>{{ userProfile?.role || 'Customer' }}</span>
+        <span class="info-value">{{ userProfile?.role || 'Customer' }}</span>
+        <span class="readonly-badge">Read only</span>
       </div>
 
       <div class="info-item">
         <label>Member since:</label>
-        <span>{{
-          userProfile?.created_at ? (userProfile.created_at | date : 'mediumDate') : 'Recently'
+        <span class="info-value">{{
+          userProfile?.created_at ? (userProfile?.created_at | date : 'mediumDate') : 'Recently'
         }}</span>
       </div>
     </div>
