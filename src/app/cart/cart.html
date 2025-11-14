@@ -1,0 +1,74 @@
+<div class="cart-container">
+  <!-- Left side - Product List -->
+  <div class="cart-left">
+    <div class="cart-header">
+      <h3>Shopping Cart ({{getTotalItemCount()}} items)</h3>
+    </div>
+
+    <!-- Empty cart message -->
+    <div *ngIf="isCartEmpty()" class="empty-cart">
+      <p>Your cart is empty</p>
+      <button class="continue-shopping" [routerLink]="['/']">Continue Shopping</button>
+    </div>
+
+    <!-- Product Items -->
+    <div *ngFor="let item of cartItems" class="cart-item">
+      <button class="remove-btn" (click)="removeItem(item.id)">&times;</button>
+      <div class="product-image">
+        <img [src]="item.image" [alt]="item.name" />
+      </div>
+      <div class="product-details">
+        <h4 class="product-name">{{item.name}}</h4>
+        <p class="product-code">{{item.code}}</p>
+        <p class="product-options">{{item.options}}</p>
+      </div>
+      <div class="product-price">{{formatToCurrency(item.price)}}</div>
+      <div class="quantity-controls">
+        <button class="qty-btn" (click)="decreaseQuantity(item.id)">−</button>
+        <span class="quantity">{{item.quantity}}</span>
+        <button class="qty-btn" (click)="increaseQuantity(item.id)">+</button>
+      </div>
+      <div class="item-total">{{formatToCurrency(getItemTotal(item))}}</div>
+    </div>
+
+    <!-- Add a note section -->
+    <div *ngIf="!isCartEmpty()" class="add-note-section">
+      <h4>ADD A NOTE</h4>
+      <textarea
+        placeholder="Some words to In-House team"
+        rows="3"
+        [(ngModel)]="orderNote"></textarea>
+    </div>
+  </div>
+
+  <!-- Right side - Cart Summary -->
+  <div class="cart-right" *ngIf="!isCartEmpty()">
+    <div class="cart-summary">
+      <div class="summary-row total-row">
+        <span class="label">CART TOTAL</span>
+        <span class="value">VND {{getCartTotal()}}</span>
+      </div>
+      <p class="shipping-note">Shipping & taxes calculated at checkout</p>
+
+      <div class="terms-checkbox">
+        <input
+          type="checkbox"
+          id="terms"
+          [(ngModel)]="agreeToTerms"
+          (change)="toggleTermsAgreement()" />
+        <label for="terms">I agree to <a href="#">Terms & Conditions</a></label>
+      </div>
+
+      <button
+        class="checkout-btn"
+        [disabled]="!agreeToTerms || isCartEmpty()"
+        (click)="checkout()">
+        CHECKOUT 🔒
+      </button>
+
+      <div class="paypal-section">
+        <img src="assets/images/paypal-logo.png" alt="PayPal" class="paypal-logo" />
+      </div>
+    </div>
+  </div>
+</div>

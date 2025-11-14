@@ -1,13 +1,26 @@
+import { ExportService } from './../../services/export.service';
 import { supabase } from './../../../env/enviroment';
 import { Component, OnInit } from '@angular/core';
-import { IgxColumnComponent, IgxGridComponent, IgxGridModule, IgxFilterDirective, IgxGridPinningActionsComponent } from 'igniteui-angular';
-import { CurrencyPipe, CommonModule } from '@angular/common';
+import {
+  IgxColumnComponent,
+  IgxGridComponent,
+  IgxGridModule,
+  IgxGridPinningActionsComponent,
+} from 'igniteui-angular';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [IgxGridModule, IgxGridComponent, IgxColumnComponent, CommonModule, FormsModule, IgxGridPinningActionsComponent],
+  imports: [
+    IgxGridModule,
+    IgxGridComponent,
+    IgxColumnComponent,
+    CommonModule,
+    FormsModule,
+    IgxGridPinningActionsComponent,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -18,6 +31,7 @@ export class Dashboard implements OnInit {
   category: any[] = [];
   isLoading: boolean = false;
 
+  constructor(private exportService: ExportService) {}
   ngOnInit() {
     this.loadProducts();
     this.loadBrand();
@@ -63,6 +77,18 @@ export class Dashboard implements OnInit {
     } catch (error) {
       console.error('Error loading brand:', error);
       return 'Unknown Brand';
+    }
+  }
+
+  exportFile() {
+    if (this.selectedGrid === 'product') {
+      this.exportService.exportToExcel(this.product, 'products_data');
+    }
+    else if (this.selectedGrid === 'brand') {
+      this.exportService.exportToExcel(this.brand, 'brands_data');
+    }
+    else if (this.selectedGrid === 'category') {
+      this.exportService.exportToExcel(this.category, 'categories_data');
     }
   }
 }

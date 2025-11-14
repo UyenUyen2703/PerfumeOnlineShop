@@ -4,10 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
 import { CurrencyService } from '../../services/currency.service';
 import { AuthService } from '../../services/auth.service';
+import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
 
 @Component({
   selector: 'app-detail-product',
-  imports: [NgForOf],
+  imports: [NgForOf, AddToCartComponent],
   templateUrl: './detail-product.html',
   styleUrl: './detail-product.css',
 })
@@ -63,6 +64,13 @@ export class DetailProduct implements OnInit {
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
+  }
+
+  // Handler for the new AddToCart component
+  onProductAdded(product: any): void {
+    console.log('Product added to cart:', product);
+    // You can add additional logic here like showing a toast notification
+    // or updating the UI to reflect the cart change
   }
 
 }

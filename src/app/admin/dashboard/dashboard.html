@@ -1,23 +1,57 @@
-<div class="dropdown-header">
-  <select id="gridSelect" [(ngModel)]="selectedGrid">
-    <option value="" disabled selected>Select a dashboard</option>
-    <option value="product">Product Dashboard</option>
-    <option value="brand">Brand Dashboard</option>
-    <option value="category">Category Dashboard</option>
-  </select>
-</div>
+<div class="file-container">
+  <div class="dropdown-header">
+    <select id="gridSelect" [(ngModel)]="selectedGrid">
+      <option value="" disabled selected>Select a dashboard</option>
+      <option value="product">Product Dashboard</option>
+      <option value="brand">Brand Dashboard</option>
+      <option value="category">Category Dashboard</option>
+    </select>
+  </div>
 
+  <div class="file">
+    <button
+      [disabled]="!selectedGrid"
+      (class.disabled-button)="(!selectedGrid)"
+      class="file-btn"
+      (click)="exportFile()"
+    >
+      <img src="assets/icon/export.png" alt="Down Arrow" style="width: 30px; height: 30px" />
+    </button>
+
+    <button
+      [disabled]="!selectedGrid"
+      (class.disabled-button)="(!selectedGrid)"
+      class="file-btn"
+    >
+      <img src="assets/icon/import.png" alt="Down Arrow" style="width: 30px; height: 30px" />
+    </button>
+
+    <button
+      [disabled]="!selectedGrid"
+      (class.disabled-button)="(!selectedGrid)"
+      class="file-btn"
+    >
+      <img src="assets/icon/report.png" alt="Down Arrow" style="width: 30px; height: 30px" />
+    </button>
+  </div>
+</div>
 
 <div *ngIf="selectedGrid === 'product'" class="product-container" id="product">
   <!-- <h2>Product Dashboard</h2> -->
-  <igx-grid [data]="product" height="400px" width="100%" >
+  <igx-grid [data]="product" height="400px" width="100%">
     <igx-grid-toolbar>
       <igx-grid-toolbar-title>Products</igx-grid-toolbar-title>
       <igx-grid-toolbar-actions>
         <igx-grid-pinning-actions></igx-grid-pinning-actions>
       </igx-grid-toolbar-actions>
     </igx-grid-toolbar>
-    <igx-column field="id" header="ID" dataType="number" width="100px" [resizable]="true" ></igx-column>
+    <igx-column
+      field="id"
+      header="ID"
+      dataType="number"
+      width="100px"
+      [resizable]="true"
+    ></igx-column>
     <igx-column field="image_url" header="Image" dataType="string" width="150px">
       <ng-template igxCell let-cell="cell">
         <img
@@ -60,7 +94,7 @@
 
 <div *ngIf="selectedGrid === 'brand'" class="brand-container" id="brand">
   <!-- <h2>Brand Dashboard</h2> -->
-  <igx-grid [data]="brand" height="400px" width="100%" [allowFiltering]="true">
+  <igx-grid [data]="brand" height="400px" width="100%">
     <igx-grid-toolbar>
       <igx-grid-toolbar-title>Brands</igx-grid-toolbar-title>
       <igx-grid-toolbar-actions>
@@ -92,7 +126,6 @@
   </igx-grid>
 </div>
 
-
 <div *ngIf="selectedGrid === 'category'" class="cat-container" id="category">
   <!-- <h2>Category Dashboard</h2> -->
   <igx-grid [data]="category" width="100%">
@@ -104,7 +137,12 @@
     </igx-grid-toolbar>
     <igx-column field="id" header="ID" dataType="number" width="100px"></igx-column>
     <igx-column field="name" header="Category Name" dataType="string" width="200px"></igx-column>
-    <igx-column field="description" header="Description" dataType="string" width="300px"></igx-column>
+    <igx-column
+      field="description"
+      header="Description"
+      dataType="string"
+      width="300px"
+    ></igx-column>
     <igx-column field="created_at" header="Created At" dataType="string" width="400px">
       <ng-template igxCell let-cell="cell">
         {{ cell.value | date : 'dd/MM/yyyy' }}

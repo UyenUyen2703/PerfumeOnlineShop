@@ -12,6 +12,7 @@ import { FavoriteList } from './personal/favorite-list/favorite-list';
 import { PersonalInfor } from './personal/personal-infor/personal-infor';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { ManageUser } from './admin/manage-user/manage-user';
+import { Cart } from './cart/cart';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,10 @@ export const routes: Routes = [
     component: Search,
   },
   {
+    path: 'cart',
+    component: Cart,
+  },
+  {
     path: 'personal',
     component: Personal,
     canActivate: [AuthGuard],
@@ -53,7 +58,7 @@ export const routes: Routes = [
       },
       {
         path: 'orders',
-        component: PersonalInfor,
+        component: Personal,
       }
     ]
   },
