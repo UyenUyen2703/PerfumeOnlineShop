@@ -255,10 +255,10 @@ export class AddToCartComponent {
   }
 
   isProductInCart(): boolean {
-    return this.product ? this.cartService.isItemInCart(this.product.id) : false;
+    return this.product ? this.cartService.isItemInCart(this.product.product_id) : false;
   }
 
   getProductQuantityInCart(): number {
-    return this.product ? this.cartService.getItemQuantityInCart(this.product.id) : 0;
+    return this.product ? this.cartService.getItemQuantityInCart(this.product.product_id) : 0;
   }
 }

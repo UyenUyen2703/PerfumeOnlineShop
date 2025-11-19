@@ -1,0 +1,165 @@
+<div class="orders-container">
+  <div class="page-header">
+    <h2 class="page-title">My Orders</h2>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="order-tabs">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'outstanding'"
+      (click)="setActiveTab('outstanding')"
+    >
+      Outstanding <span class="tab-count">{{ getOrdersByStatus('outstanding').length }}</span>
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'awaiting'"
+      (click)="setActiveTab('awaiting')"
+    >
+      Awaiting <span class="tab-count">{{ getOrdersByStatus('awaiting').length }}</span>
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'cancelled'"
+      (click)="setActiveTab('cancelled')"
+    >
+      Cancelled <span class="tab-count">{{ getOrdersByStatus('cancelled').length }}</span>
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="filteredOrders.length === 0" class="no-orders">
+    <div class="empty-icon">📦</div>
+    <p class="empty-message">You have no {{ activeTab }} orders yet.</p>
+    <a routerLink="/product-list" class="shop-link">Start Shopping</a>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="filteredOrders.length > 0" class="orders-list">
+    <div *ngFor="let order of filteredOrders" class="order-card" (click)="openOrderDetail(order)">
+      <!-- Order Header -->
+      <div class="order-header">
+        <div class="order-id">
+          <strong>#{{ customShowIdOrder(order.order_id || '') }}</strong>
+        </div>
+        <div class="order-status" [class]="'status-' + order.status">
+          {{ getStatusLabel(order.status) }}
+        </div>
+      </div>
+      <div class="order-content">
+        <div *ngFor="let item of order.items" class="order-item">
+          <div class="item-image-container">
+            <img
+              [src]="item.image || 'assets/images/placeholder.jpg'"
+              [alt]="item.name"
+              class="item-image"
+              (error)="onImageError($event)"
+            />
+          </div>
+
+          <div class="item-info">
+            <h4 class="item-name">{{ item.name }}</h4>
+            <p class="item-details">Options: {{ item.options }}</p>
+            <p class="item-details">
+              Quantity: <strong>{{ item.quantity }}</strong>
+            </p>
+            <p class="item-price">{{ formatToCurrency(item.price * 1000) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Footer -->
+      <div class="order-footer">
+        <div class="order-date">
+          <small>Ordered: {{ order.created_at | date : 'MMM dd, yyyy' }}</small>
+        </div>
+        <div class="order-total">
+          <strong>Total: {{ formatToCurrency(order.total_amount) }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Thêm phần overlay -->
+<div class="order-detail-overlay" *ngIf="showOrderDetail" (click)="closeOnOverlayClick($event)">
+  <div class="order-detail-modal">
+    <!-- header -->
+    <div class="modal-header">
+      <h3>Order Details - #{{ selectedOrder?.order_id }}</h3>
+      <button class="close-button" (click)="closeOrderDetail()">X</button>
+    </div>
+    <!-- body -->
+    <div class="modal-content">
+      <!-- Infor order -->
+      <div class="order-info-section">
+        <div class="info-row">
+          <span class="label">Status:</span>
+          <span class="value status" [class]="'status-' + selectedOrder?.status">
+            {{ getStatusLabel(selectedOrder?.status || '') }}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="label">Order Date:</span>
+          <span class="value">{{ selectedOrder?.created_at | date : 'MMM dd, yyyy HH:mm' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Recipient Name:</span>
+          <span class="value">{{ selectedOrder?.recipient_Name || '' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Recipient Phone:</span>
+          <span class="value">{{ selectedOrder?.recipient_Phone || '' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Delivery Address:</span>
+          <span class="value">{{ selectedOrder?.address }}</span>
+        </div>
+        <div class="info-row" *ngIf="selectedOrder?.note">
+          <span class="label">Note:</span>
+          <span class="value">{{ selectedOrder?.note }}</span>
+        </div>
+      </div>
+
+      <!-- Danh sách sản phẩm -->
+      <div class="products-section">
+        <h4>Products Ordered</h4>
+        <div class="product-list">
+          <div *ngFor="let item of selectedOrder?.items" class="product-item">
+            <img
+              [src]="item.image"
+              [alt]="item.name"
+              class="product-image"
+              (error)="onImageError($event)"
+            />
+            <div class="product-info">
+              <h5>{{ item.name }}</h5>
+              <p class="product-options">{{ item.options }}</p>
+              <div class="quantity-price">
+                <span>Qty: {{ item.quantity }}</span>
+                <span class="price">{{ formatToCurrency(item.price * 1000) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tổng tiền -->
+      <div class="order-summary">
+        <div class="total-amount">
+          <span class="label">Total Amount:</span>
+          <span class="amount">{{ formatToCurrency(selectedOrder?.total_amount || 0) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer với các actions -->
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeOrderDetail()">Close</button>
+      <button class="btn-primary" (click)="followOrder(selectedOrder?.order_id!)">
+        Track Order
+      </button>
+    </div>
+  </div>
+</div>

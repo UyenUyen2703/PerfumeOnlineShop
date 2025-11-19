@@ -16,6 +16,12 @@ export class AuthService {
     console.log('Sign-in data:', data);
   }
 
+  async getUserId(): Promise<string | null> {
+    const { data } = await supabase.auth.getUser();
+    console.log('User ID:', data.user ? data.user.id : null);
+    return data.user ? data.user.id : null;
+  }
+
   async uploadAvatarFromUrl(userId: string, avatarUrl: string): Promise<string | null> {
     try {
       if (!avatarUrl) return null;

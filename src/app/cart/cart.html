@@ -13,20 +13,19 @@
 
     <!-- Product Items -->
     <div *ngFor="let item of cartItems" class="cart-item">
-      <button class="remove-btn" (click)="removeItem(item.id)">&times;</button>
+      <button class="remove-btn" (click)="removeItem(item.product_id)">&times;</button>
       <div class="product-image">
         <img [src]="item.image" [alt]="item.name" />
       </div>
       <div class="product-details">
         <h4 class="product-name">{{item.name}}</h4>
-        <p class="product-code">{{item.code}}</p>
         <p class="product-options">{{item.options}}</p>
       </div>
       <div class="product-price">{{formatToCurrency(item.price)}}</div>
       <div class="quantity-controls">
-        <button class="qty-btn" (click)="decreaseQuantity(item.id)">−</button>
+        <button class="qty-btn" (click)="decreaseQuantity(item.product_id)">−</button>
         <span class="quantity">{{item.quantity}}</span>
-        <button class="qty-btn" (click)="increaseQuantity(item.id)">+</button>
+        <button class="qty-btn" (click)="increaseQuantity(item.product_id)">+</button>
       </div>
       <div class="item-total">{{formatToCurrency(getItemTotal(item))}}</div>
     </div>
@@ -39,11 +38,45 @@
         rows="3"
         [(ngModel)]="orderNote"></textarea>
     </div>
+    
   </div>
 
   <!-- Right side - Cart Summary -->
   <div class="cart-right" *ngIf="!isCartEmpty()">
     <div class="cart-summary">
+      <div class="infor-shipped">
+        <h3>INFORMATION & SHIPPING</h3>
+        <p>Please provide your information and shipping details at checkout.</p>
+
+        <div class="input-group">
+          <label for="recipientName">Recipient Name *</label>
+          <input
+            id="recipientName"
+            type="text"
+            placeholder="Enter recipient name"
+            [(ngModel)]="recipientName"
+            required />
+        </div>
+
+        <div class="input-group">
+          <label for="recipientPhone">Recipient Phone *</label>
+          <input
+            id="recipientPhone"
+            type="text"
+            placeholder="Enter recipient phone"
+            [(ngModel)]="recipientPhone"
+            required />
+        </div>
+
+        <div class="input-group">
+          <label for="address">Delivery Address *</label>
+          <textarea
+            id="address"
+            placeholder="Enter full delivery address"
+            rows="3"
+            [(ngModel)]="address"
+            required></textarea>
+        </div>
       <div class="summary-row total-row">
         <span class="label">CART TOTAL</span>
         <span class="value">VND {{getCartTotal()}}</span>
@@ -61,7 +94,7 @@
 
       <button
         class="checkout-btn"
-        [disabled]="!agreeToTerms || isCartEmpty()"
+        [disabled]="!agreeToTerms || isCartEmpty() || !address.trim() || !recipientName.trim() || !recipientPhone.trim()"
         (click)="checkout()">
         CHECKOUT 🔒
       </button>

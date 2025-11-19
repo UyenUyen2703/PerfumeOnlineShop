@@ -1,10 +1,13 @@
+import { Order } from './../../type/order';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { CartService, CartItem } from '../services/cart.service';
+import { CartService } from '../services/cart.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { supabase } from '../../env/enviroment';
+import { CartItem } from '../../type/order';
 
 @Component({
   selector: 'app-cart',
@@ -16,6 +19,11 @@ export class Cart implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   orderNote: string = '';
   agreeToTerms: boolean = false;
+  orderAddress: string = '';
+  address: string = '';
+  recipientName: string = '';
+  recipientPhone: string = '';
+  note: string = '';
   private cartSubscription?: Subscription;
 
   constructor(
@@ -25,7 +33,6 @@ export class Cart implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to cart changes
     this.cartSubscription = this.cartService.cartItems$.subscribe(
       items => {
         this.cartItems = items;
@@ -49,15 +56,15 @@ export class Cart implements OnInit, OnDestroy {
     return this.formatToCurrency(this.cartService.getCartTotal());
   }
 
-  increaseQuantity(itemId: number): void {
+  increaseQuantity(itemId: string): void {
     this.cartService.increaseQuantity(itemId);
   }
 
-  decreaseQuantity(itemId: number): void {
+  decreaseQuantity(itemId: string): void {
     this.cartService.decreaseQuantity(itemId);
   }
 
-  removeItem(itemId: number): void {
+  removeItem(itemId: string): void {
     this.cartService.removeItem(itemId);
   }
 
@@ -65,32 +72,47 @@ export class Cart implements OnInit, OnDestroy {
     this.cartService.addToCart(product);
   }
 
-  checkout(): void {
+  async checkout(): Promise<void> {
     if (!this.agreeToTerms) {
-      alert('Vui lòng đồng ý với điều khoản và điều kiện');
+      alert('Please agree to the terms and conditions before proceeding.');
       return;
     }
 
     if (this.cartService.isCartEmpty()) {
-      alert('Giỏ hàng trống!');
+      alert('Cart is empty!');
       return;
     }
 
-    // Xử lý logic thanh toán ở đây
-    console.log('Proceeding to checkout:', {
-      items: this.cartItems,
-      total: this.getCartTotal(),
-      note: this.orderNote,
-      termsAgreed: this.agreeToTerms
-    });
+    // Validate required fields
+    if (!this.address.trim()) {
+      alert('Please enter delivery address!');
+      return;
+    }
 
-    // Redirect đến trang thanh toán hoặc xử lý thanh toán
-    alert(`Đặt hàng thành công! Tổng tiền: ${this.getCartTotal()}`);
+    if (!this.recipientName.trim()) {
+      alert('Please enter recipient name!');
+      return;
+    }
 
-    // Clear cart after successful checkout
-    this.cartService.clearCart();
-    this.orderNote = '';
-    this.agreeToTerms = false;
+    if (!this.recipientPhone.trim()) {
+      alert('Please enter recipient phone number!');
+      return;
+    }
+
+    try {
+      await this.cartService.paymentProcess(this.address, this.recipientName, this.recipientPhone, this.note);
+      alert(`Order placed successfully! Total amount: ${this.getCartTotal()}`);
+      this.cartService.clearCart();
+      this.orderNote = '';
+      this.address = '';
+      this.recipientName = '';
+      this.recipientPhone = '';
+      this.note = '';
+      this.agreeToTerms = false;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An error occurred while processing your order. Please try again.');
+    }
   }
 
   toggleTermsAgreement(): void {

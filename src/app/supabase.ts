@@ -1,3 +1,4 @@
+import { User } from './../type/user';
 import { supabase } from './../env/enviroment';
 import { Injectable } from '@angular/core';
 
@@ -42,7 +43,6 @@ export class Supabase {
         `
         *,
         brands (
-          id,
           brand_id,
           name
         ), categories (
@@ -169,6 +169,81 @@ export class Supabase {
     } catch (error) {
       console.error('Unexpected error in getProductsByBrand:', error);
       return [];
+    }
+  }
+
+  async getOrdersByUserId(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (
+            *,
+            products (
+              name,
+              price,
+              image_url
+            )
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error('Unexpected error in getOrdersByUserId:', error);
+      throw error;
+    }
+  }
+
+  // Lấy orders của user hiện tại đã đăng nhập
+  async getCurrentUserOrders() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      return this.getOrdersByUserId(user.id);
+    } catch (error) {
+      console.error('Error in getCurrentUserOrders:', error);
+      throw error;
+    }
+  }
+
+  // Lấy một order cụ thể theo order_id và user_id (bảo mật)
+  async getOrderUserId(orderId: string, userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (
+            *,
+            products (
+              name,
+              price,
+              image_url
+            )
+          )
+        `)
+        .eq('order_id', orderId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching order:', error);
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.error('Unexpected error in getOrderByIdAndUserId:', error);
+      throw error;
     }
   }
 }

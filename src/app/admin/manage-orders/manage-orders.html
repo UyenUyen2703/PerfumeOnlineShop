@@ -1,1 +1,36 @@
-<p>manage-orders works!</p>
+<igx-grid [data]="order">
+  <igx-column field="order_id" header="Order ID" dataType="string" width="200px"></igx-column>
+  <!-- <igx-column field="user_id" header="User ID" dataType="string" width="200px"></igx-column> -->
+  <igx-column
+    field="recipient_Name"
+    header="Recipient Name"
+    dataType="string"
+    width="200px"
+  ></igx-column>
+  <igx-column
+    field="recipient_Phone"
+    header="Recipient Phone"
+    dataType="string"
+    width="150px"
+  ></igx-column>
+  <igx-column field="address" header="Address" dataType="string" width="300px"></igx-column>
+  <igx-column field="total_amount" header="Total Amount" dataType="number" width="150px">
+    <ng-template igxCell let-cell="cell">
+      {{ formatToCurrency(cell.value) }}
+    </ng-template>
+  </igx-column>
+  <igx-column field="note" header="Note" dataType="string" width="250px"></igx-column>
+  <igx-column field="status" header="Status" dataType="string" width="150px">
+    <ng-template igxCell let-cell="cell">
+      <select
+        class="status-dropdown"
+        [value]="cell.value"
+        (change)="updateOrderStatus(cell.row.data.order_id, $any($event.target).value)"
+      >
+        <option *ngFor="let status of statusOptions" [value]="status.value">
+          {{ status.label }}
+        </option>
+      </select>
+    </ng-template>
+  </igx-column>
+</igx-grid>

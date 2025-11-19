@@ -1,62 +1,47 @@
+import { Order, OrderItem, CartItem } from './../../type/order';
+import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-export interface CartItem {
-  id: number;
-  name: string;
-  code: string;
-  options: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { supabase } from '../../env/enviroment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
 
-  constructor() {
-    // Load cart from localStorage if exists
+  constructor(private authService: AuthService) {
     this.loadCartFromStorage();
   }
 
-  // Lấy danh sách sản phẩm trong giỏ hàng
   getCartItems(): CartItem[] {
     return this.cartItemsSubject.value;
   }
 
-  // Thêm sản phẩm vào giỏ hàng
   addToCart(product: any): void {
     const currentItems = this.getCartItems();
-    const existingItemIndex = currentItems.findIndex(item => item.id === product.id);
+    const existingItemIndex = currentItems.findIndex((item) => item.product_id === product.product_id);
 
     if (existingItemIndex > -1) {
-      // Nếu sản phẩm đã có, tăng số lượng
       currentItems[existingItemIndex].quantity += product.quantity || 1;
     } else {
-      // Nếu sản phẩm chưa có, thêm mới
       const newItem: CartItem = {
-        id: product.id,
+        product_id: product.product_id,
         name: product.name,
-        code: product.code || `#${Date.now()}`,
         options: product.options || '',
         price: product.price,
         quantity: product.quantity || 1,
-        image: product.image || 'assets/images/default-product.jpg'
+        image: product.image || 'assets/images/default-product.jpg',
       };
       currentItems.push(newItem);
     }
-
     this.updateCart(currentItems);
   }
 
-  // Cập nhật số lượng sản phẩm
-  updateQuantity(itemId: number, newQuantity: number): void {
+  updateQuantity(itemId: string, newQuantity: number): void {
     const currentItems = this.getCartItems();
-    const itemIndex = currentItems.findIndex(item => item.id === itemId);
+    const itemIndex = currentItems.findIndex((item) => item.product_id === itemId);
 
     if (itemIndex > -1 && newQuantity > 0) {
       currentItems[itemIndex].quantity = newQuantity;
@@ -64,64 +49,54 @@ export class CartService {
     }
   }
 
-  // Tăng số lượng
-  increaseQuantity(itemId: number): void {
+  increaseQuantity(itemId: string): void {
     const currentItems = this.getCartItems();
-    const item = currentItems.find(item => item.id === itemId);
+    const item = currentItems.find((item) => item.product_id === itemId);
     if (item) {
       item.quantity++;
       this.updateCart(currentItems);
     }
   }
 
-  // Giảm số lượng
-  decreaseQuantity(itemId: number): void {
+  decreaseQuantity(itemId: string): void {
     const currentItems = this.getCartItems();
-    const item = currentItems.find(item => item.id === itemId);
+    const item = currentItems.find((item) => item.product_id === itemId);
     if (item && item.quantity > 1) {
       item.quantity--;
       this.updateCart(currentItems);
     }
   }
 
-  // Xóa sản phẩm khỏi giỏ hàng
-  removeItem(itemId: number): void {
-    const currentItems = this.getCartItems().filter(item => item.id !== itemId);
+  removeItem(itemId: string): void {
+    const currentItems = this.getCartItems().filter((item) => item.product_id !== itemId);
     this.updateCart(currentItems);
   }
 
-  // Xóa toàn bộ giỏ hàng
   clearCart(): void {
     this.updateCart([]);
   }
 
-  // Tính tổng tiền của một sản phẩm
   getItemTotal(item: CartItem): number {
     return item.price * item.quantity;
   }
 
-  // Tính tổng tiền của toàn bộ giỏ hàng
   getCartTotal(): number {
     return this.getCartItems().reduce((total, item) => total + this.getItemTotal(item), 0);
   }
 
-  // Đếm tổng số lượng sản phẩm trong giỏ
   getTotalItemCount(): number {
     return this.getCartItems().reduce((total, item) => total + item.quantity, 0);
   }
 
-  // Kiểm tra giỏ hàng có trống không
   isCartEmpty(): boolean {
     return this.getCartItems().length === 0;
   }
 
-  // Cập nhật giỏ hàng và lưu vào localStorage
   private updateCart(items: CartItem[]): void {
     this.cartItemsSubject.next(items);
     this.saveCartToStorage(items);
   }
 
-  // Lưu giỏ hàng vào localStorage
   private saveCartToStorage(items: CartItem[]): void {
     try {
       localStorage.setItem('cart', JSON.stringify(items));
@@ -130,7 +105,6 @@ export class CartService {
     }
   }
 
-  // Load giỏ hàng từ localStorage
   private loadCartFromStorage(): void {
     try {
       const savedCart = localStorage.getItem('cart');
@@ -143,19 +117,79 @@ export class CartService {
     }
   }
 
-  // Tìm sản phẩm trong giỏ hàng
-  findItemInCart(productId: number): CartItem | undefined {
-    return this.getCartItems().find(item => item.id === productId);
+  findItemInCart(productId: string): CartItem | undefined {
+    return this.getCartItems().find((item) => item.product_id === productId);
   }
 
-  // Kiểm tra sản phẩm đã có trong giỏ chưa
-  isItemInCart(productId: number): boolean {
+  isItemInCart(productId: string): boolean {
     return this.findItemInCart(productId) !== undefined;
   }
 
-  // Lấy số lượng của sản phẩm trong giỏ
-  getItemQuantityInCart(productId: number): number {
+  getItemQuantityInCart(productId: string): number {
     const item = this.findItemInCart(productId);
     return item ? item.quantity : 0;
+  }
+
+  async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<void> {
+    try {
+      const user = await this.authService.getUser();
+      const item = this.getCartItems();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Validate required fields
+      if (!address.trim()) {
+        throw new Error('Delivery address is required');
+      }
+
+      if (!recipientName.trim()) {
+        throw new Error('Recipient name is required');
+      }
+
+      if (!recipientPhone.trim()) {
+        throw new Error('Recipient phone is required');
+      }
+
+      const orderPayload = {
+        user_id: user.id,
+        total_amount: this.getCartTotal(),
+        address: address.trim(),
+        recipient_Name: recipientName.trim(),
+        recipient_Phone: recipientPhone.trim(),
+        note: note.trim(),
+        status: 'Pending',
+      };
+
+      console.log('Order payload:', orderPayload);
+
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert([orderPayload])
+        .select()
+        .single();
+      if (orderError) {
+        throw orderError;
+      }
+      const orderId = orderData.order_id;
+
+      const orderItems = item.map((CartItem) => ({
+        order_id: orderId,
+        product_id: CartItem.product_id,
+        quantity: CartItem.quantity,
+        unit_price: CartItem.price,
+      }));
+
+      const { data, error } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error during payment process:', error);
+      throw error;
+    }
   }
 }

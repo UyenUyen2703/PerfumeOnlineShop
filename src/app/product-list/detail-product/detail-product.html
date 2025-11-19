@@ -7,17 +7,14 @@
     <p class="brand-name">{{ product.brands?.name || 'No Brand' }} - {{product.categories?.name || 'No Category'}}</p>
     <p class="price">{{ currencyService.convertNumberToCurrency(product.price * 1000) }}</p>
     <p class="description">{{ product.description }}</p>
-    <!-- Original button (comment out) -->
-    <!-- <button class="btn-add-to-cart" (click)="onAddToCart(product)">Add to cart</button> -->
-    
-    <!-- New Add to Cart component -->
-    <app-add-to-cart 
+
+    <app-add-to-cart
       [product]="{
-        id: product.id,
+        product_id: product.product_id,
         name: product.name,
         price: product.price * 1000,
         image: product.image_url,
-        code: '#' + product.id,
+        code: '#' + product.product_id,
         options: (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
       }"
       [showQuantitySelector]="true"

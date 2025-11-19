@@ -13,6 +13,8 @@ import { PersonalInfor } from './personal/personal-infor/personal-infor';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { ManageUser } from './admin/manage-user/manage-user';
 import { Cart } from './cart/cart';
+import { OrdersPersonal } from './personal/orders-personal/orders-personal';
+import { ManageOrders } from './admin/manage-orders/manage-orders';
 
 export const routes: Routes = [
   {
@@ -58,9 +60,9 @@ export const routes: Routes = [
       },
       {
         path: 'orders',
-        component: Personal,
-      }
-    ]
+        component: OrdersPersonal,
+      },
+    ],
   },
   {
     path: 'dashboard',
@@ -70,6 +72,12 @@ export const routes: Routes = [
   {
     path: 'admin/users',
     component: ManageUser,
+    // canActivate: [AuthGuard],
+  },
+
+  {
+    path: 'admin/orders',
+    component: ManageOrders,
     // canActivate: [AuthGuard],
   },
 ];
