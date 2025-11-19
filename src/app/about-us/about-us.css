@@ -1,0 +1,24 @@
+.banner-img {
+  width: 100%;
+  height: 550px;
+  object-fit: cover;
+}
+
+.owl-nav button {
+  position: absolute;
+  top: 45%;
+  background: rgba(0,0,0,0.3) !important;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: white !important;
+  font-size: 25px !important;
+}
+
+.owl-nav .owl-prev {
+  left: 10px;
+}
+
+.owl-nav .owl-next {
+  right: 10px;
+}

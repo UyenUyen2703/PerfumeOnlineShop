@@ -34,6 +34,7 @@
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "igniteui-angular": "^20.0.0",
+    "ngx-owl-carousel-o": "^20.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",

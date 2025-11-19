@@ -15,6 +15,7 @@ import { ManageUser } from './admin/manage-user/manage-user';
 import { Cart } from './cart/cart';
 import { OrdersPersonal } from './personal/orders-personal/orders-personal';
 import { ManageOrders } from './admin/manage-orders/manage-orders';
+import { AboutUs } from './about-us/about-us';
 
 export const routes: Routes = [
   {
@@ -32,6 +33,10 @@ export const routes: Routes = [
   {
     path: 'perfume',
     component: ProductList,
+  },
+  {
+    path: 'about',
+    component: AboutUs,
   },
   {
     path: 'detail/:product_id',

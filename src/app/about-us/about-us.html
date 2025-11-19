@@ -1,1 +1,13 @@
-<p>about-us works!</p>
+<div class="carousel-container">
+  <owl-carousel-o [options]="customOptions">
+    <ng-container *ngFor="let img of images">
+      <ng-template carouselSlide>
+        <div class="slide-wrapper">
+          <img [src]="img"
+               [alt]="'Banner image'"
+               class="banner-img">
+        </div>
+      </ng-template>
+    </ng-container>
+  </owl-carousel-o>
+</div>
