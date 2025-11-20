@@ -46,10 +46,6 @@ import { CartService } from '../../services/cart.service';
         <span *ngIf="!isLoading && !isAdded">{{ buttonText }}</span>
         <span *ngIf="!isLoading && isAdded">✓ Added to Cart</span>
       </button>
-
-      <div class="cart-info" *ngIf="showCartInfo">
-        <small>{{ cartService.getTotalItemCount() }} items in cart</small>
-      </div>
     </div>
   `,
   styles: [`
@@ -227,7 +223,6 @@ export class AddToCartComponent {
     this.isLoading = true;
 
     try {
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const productToAdd = {
@@ -238,10 +233,7 @@ export class AddToCartComponent {
       this.cartService.addToCart(productToAdd);
       this.productAdded.emit(productToAdd);
 
-      // Show success state
       this.isAdded = true;
-
-      // Reset success state after 2 seconds
       setTimeout(() => {
         this.isAdded = false;
       }, 2000);

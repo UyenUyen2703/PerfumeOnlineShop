@@ -16,9 +16,7 @@ export class Login {
       console.log('Starting Google sign in...');
       await this.authService.signInWithGoogle();
 
-      // Wait a bit longer to ensure auth state change is processed
       setTimeout(() => {
-        console.log('Redirecting to home page...');
         this.router.navigate(['/']);
       }, 2000);
     } catch (error) {

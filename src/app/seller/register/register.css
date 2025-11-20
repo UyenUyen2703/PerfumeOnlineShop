@@ -1,25 +1,26 @@
-.seller-login-container {
+/* Seller Register Page - Independent Layout */
+.seller-register-container {
   display: flex;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8fafc;
 }
 
-.login-wrapper {
+.register-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background: #ffffff;
   position: relative;
   z-index: 2;
+  overflow-y: auto;
 }
 
-.login-bg {
+.register-bg {
   flex: 1;
-  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
-  background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   display: none;
 }
@@ -33,44 +34,59 @@
   opacity: 0.3;
 }
 
-.login-header {
+.register-header {
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .brand-title {
   font-size: 2.5rem;
-  color: #404E89;
+  color: #667eea;
   margin: 0;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
-.login-title {
+.register-title {
   font-size: 1.8rem;
   color: #333;
   margin: 0.5rem 0 0.25rem;
   font-weight: 600;
 }
 
-.login-subtitle {
+.register-subtitle {
   color: #666;
   margin: 0;
   font-size: 1rem;
 }
 
-.login-form {
+.register-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 700px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+  padding: 2.5rem;
   border: 1px solid #e0e6ed;
 }
 
-.form-group {
+.form-row {
+  display: flex;
+  gap: 1rem;
   margin-bottom: 1.5rem;
+}
+
+.form-row .form-group.full-width {
+  flex: 1 1 100%;
+}
+
+.form-group {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -89,6 +105,8 @@
   font-size: 1rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
 }
 
 .form-input:focus {
@@ -97,75 +115,96 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+.form-input.error {
+  border-color: #ef4444;
 }
 
-.remember-me {
+.form-input.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.terms-agreement {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e0e6ed;
+}
+
+.checkbox-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
   color: #555;
+  line-height: 1.5;
 }
 
-.remember-me input[type='checkbox'] {
-  margin-right: 0.5rem;
-  width: 16px;
-  height: 16px;
+.checkbox-container input[type="checkbox"] {
+  margin-right: 0.75rem;
+  margin-top: 0.125rem;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
 }
 
-.forgot-password {
+.terms-link {
   color: #667eea;
   text-decoration: none;
   font-weight: 500;
 }
 
-.forgot-password:hover {
+.terms-link:hover {
   text-decoration: underline;
 }
 
-.login-btn {
+.register-btn {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-bottom: 1.5rem;
 }
 
-.login-btn:hover:not(:disabled) {
+.register-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-.login-btn:disabled {
+.register-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.register-link {
+.login-link {
   text-align: center;
   color: #666;
   font-size: 0.9rem;
+  margin-top: 1rem;
 }
 
-.register-link-text {
+.login-link-text {
   color: #667eea;
   text-decoration: none;
   font-weight: 500;
 }
 
-.register-link-text:hover {
+.login-link-text:hover {
   text-decoration: underline;
 }
 
@@ -189,30 +228,73 @@
 }
 
 /* Responsive Design */
-@media (min-width: 768px) {
-  .login-bg {
+@media (min-width: 1200px) {
+  .register-bg {
     display: block;
   }
 
-  .login-wrapper {
-    flex: 0 0 50%;
+  .register-wrapper {
+    flex: 0 0 60%;
   }
 }
 
-@media (max-width: 480px) {
-  .login-wrapper {
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-row .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .register-wrapper {
     padding: 1rem;
   }
 
-  .login-form {
-    padding: 1.5rem;
+  .register-form {
+    padding: 2rem;
   }
 
   .brand-title {
     font-size: 2rem;
   }
 
-  .login-title {
+  .register-title {
     font-size: 1.5rem;
   }
+}
+
+@media (max-width: 480px) {
+  .register-form {
+    padding: 1.5rem;
+  }
+
+  .brand-title {
+    font-size: 1.8rem;
+  }
+
+  .register-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Back to main link */
+.back-to-main {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.back-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #764ba2;
 }

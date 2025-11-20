@@ -7,7 +7,7 @@
 .owl-nav button {
   position: absolute;
   top: 45%;
-  background: rgba(0,0,0,0.3) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -21,4 +21,39 @@
 
 .owl-nav .owl-next {
   right: 10px;
+}
+
+.about-us-container {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+
+
+}
+
+.about-us-container:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.about-us-content {
+  margin-top: 20px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-us-image {
+  width: 300px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  margin-left: 20px;
+  border-radius: 10px;
+}
+
+.about-us-header {
+  text-align: justify;
+  width: 50%;
 }

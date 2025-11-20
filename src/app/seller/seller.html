@@ -1,1 +1,94 @@
-<p>seller works!</p>
+<div class="seller-layout">
+  <div class="seller-header" *ngIf="!isLoginandRegisterRoute()">
+    <div class="seller-header-container">
+      <div class="seller-brand">
+        <img src="/assets/images/logo-seller.png" alt="Logo" class="seller-logo" />
+        <h2 class="seller-title">Seller Panel</h2>
+      </div>
+
+      <nav class="seller-nav">
+        <ul class="seller-nav-list">
+          <li class="seller-nav-item">
+            <a routerLink="/seller/seller-dashboard" routerLinkActive="active" class="seller-nav-link">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="seller-nav-item">
+            <a routerLink="/seller/seller-products" routerLinkActive="active" class="seller-nav-link">
+              <i class="fas fa-box"></i>
+              <span>Product Management</span>
+            </a>
+          </li>
+          <li class="seller-nav-item">
+            <a routerLink="/seller/seller-orders" routerLinkActive="active" class="seller-nav-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Order Management</span>
+            </a>
+          </li>
+          <li class="seller-nav-item">
+            <a routerLink="/seller/seller-analytics" routerLinkActive="active" class="seller-nav-link">
+              <i class="fas fa-chart-bar"></i>
+              <span>Analytics</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="seller-user-menu">
+        <div class="seller-notifications">
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">2</span>
+          </button>
+        </div>
+
+        <div class="seller-profile-dropdown" (click)="toggleDropdown()">
+          <div class="profile-trigger">
+            <div class="profile-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+              <span class="profile-name">{{ sellerName }}</span>
+              <small class="profile-role">Seller</small>
+            </div>
+            <i class="fas fa-chevron-down dropdown-arrow" [class.rotated]="dropdownOpen"></i>
+          </div>
+
+          <div
+            class="dropdown-menu"
+            [class.show]="dropdownOpen"
+            clickOutside
+            (clickOutside)="closeDropdown()"
+          >
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-user-cog"></i>
+              <span>Personal Information</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-store"></i>
+              <span>My Store</span>
+            </a>
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a routerLink="/" class="dropdown-item">
+              <i class="fas fa-home"></i>
+              <span>Back to User Page</span>
+            </a>
+            <a href="#" class="dropdown-item text-danger" (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="seller-main" [class.no-header]="isLoginandRegisterRoute()">
+    <router-outlet></router-outlet>
+  </main>
+</div>

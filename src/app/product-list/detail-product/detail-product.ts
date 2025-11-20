@@ -23,7 +23,7 @@ export class DetailProduct implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const productId = params['product_id'];
       if (productId) {
         this.loadProductsOfId(productId);
@@ -60,17 +60,12 @@ export class DetailProduct implements OnInit {
       }
 
       alert('Product added to cart successfully!');
-
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
   }
 
-  // Handler for the new AddToCart component
   onProductAdded(product: any): void {
     console.log('Product added to cart:', product);
-    // You can add additional logic here like showing a toast notification
-    // or updating the UI to reflect the cart change
   }
-
 }

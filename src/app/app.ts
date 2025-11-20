@@ -6,9 +6,6 @@ import { CurrencyService } from './services/currency.service';
 import { AuthService } from './services/auth.service';
 import { filter } from 'rxjs/operators';
 import { Admin } from "./admin/admin";
-import { IgxGridComponent } from 'igniteui-angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-root',
@@ -55,5 +52,12 @@ export class App implements OnInit {
   isAdminRoute(): boolean {
     const url = this.currentUrl();
     return url.startsWith('/dashboard') || url.startsWith('/admin');
+  }
+
+  isSellerRoute(): boolean {
+    const url = this.currentUrl();
+    return url.startsWith('/login-seller') ||
+           url.startsWith('/register-seller') ||
+           url.startsWith('/seller');
   }
 }

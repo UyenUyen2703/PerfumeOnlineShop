@@ -4,10 +4,11 @@ import { Router, RouterLinkActive } from '@angular/router';
 import { Supabase } from '../supabase';
 import { CurrencyService } from '../services/currency.service';
 import { AuthService } from '../services/auth.service';
+import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.component';
 
 @Component({
   selector: 'app-product-list',
-  imports: [NgForOf],
+  imports: [NgForOf, AddToCartComponent],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
@@ -86,7 +87,6 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   async filterByCategory(category: string) {
-    console.log('filterByCategory called with:', category);
     this.selectedCategory = category;
     try {
       this.products = (await this.supabase.getProductsByCategory(category)) || [];
@@ -96,7 +96,6 @@ export class ProductList implements OnInit, OnDestroy {
     }
   }
   async filterByBrand(brand: string) {
-    console.log('filterByBrand called with:', brand);
     this.selectedCategory = brand;
     try {
       this.products = (await this.supabase.getProductsByBrand(brand)) || [];
@@ -112,6 +111,7 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   addToCart(product: any, event: MouseEvent) {
+    product.addedToCart = true;
     event.stopPropagation();
   }
 
@@ -124,4 +124,7 @@ export class ProductList implements OnInit, OnDestroy {
     this.currentPage = page;
   }
 
+  onProductAdded(product: any): void {
+    console.log('Product added to cart:', product);
+  }
 }

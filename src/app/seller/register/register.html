@@ -1,0 +1,86 @@
+<div class="seller-register-container">
+  <div class="register-wrapper">
+    <div class="register-header">
+      <h1 class="brand-title">PerfumeShop</h1>
+      <h2 class="register-title">Register Seller</h2>
+      <p class="register-subtitle">Join us to start selling</p>
+    </div>
+
+    <form class="register-form" (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="registerData.email"
+            required
+            class="form-input"
+            placeholder="Enter your email"
+          />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="registerData.password"
+            (ngModelChange)="onPasswordChange()"
+            required
+            minlength="6"
+            class="form-input"
+            placeholder="Enter password (minimum 6 characters)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="registerData.confirmPassword"
+            (ngModelChange)="onPasswordChange()"
+            required
+            class="form-input"
+            [class.error]="passwordMismatch"
+            placeholder="Enter password again"
+          />
+          <small *ngIf="passwordMismatch" class="error-text">Confirm password does not match</small>
+        </div>
+      </div>
+
+      <div class="terms-agreement">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="agreeToTerms" name="agreeToTerms" required />
+          <span class="checkmark"></span>
+          I agree to the <a href="#" class="terms-link">Terms of Service</a> and
+          <a href="#" class="terms-link">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="register-btn"
+        [disabled]="!registerForm.form.valid || !agreeToTerms || passwordMismatch"
+      >
+        Register as Seller
+      </button>
+
+      <div class="login-link">
+        <p>
+          Already have a seller account?
+          <a href="/login-seller" class="login-link-text">Log in now</a>
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <div class="register-bg">
+    <div class="bg-overlay"></div>
+  </div>
+</div>

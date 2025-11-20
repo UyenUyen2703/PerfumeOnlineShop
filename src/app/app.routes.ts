@@ -16,6 +16,10 @@ import { Cart } from './cart/cart';
 import { OrdersPersonal } from './personal/orders-personal/orders-personal';
 import { ManageOrders } from './admin/manage-orders/manage-orders';
 import { AboutUs } from './about-us/about-us';
+import { LoginSeller } from './seller/login/login';
+import { RegisterSeller } from './seller/register/register';
+import { SellerDashboard } from './seller/dashboard/dashboard';
+import { Seller } from './seller/seller';
 
 export const routes: Routes = [
   {
@@ -84,5 +88,25 @@ export const routes: Routes = [
     path: 'admin/orders',
     component: ManageOrders,
     // canActivate: [AuthGuard],
+  },
+  {
+    path: 'login-seller',
+    component: LoginSeller,
+  },
+
+  {
+    path: 'register-seller',
+    component: RegisterSeller,
+  },
+  {
+    path: 'seller',
+    component: Seller,
+    children: [
+      {
+        path: 'seller-dashboard',
+        component: SellerDashboard,
+      },
+
+    ],
   },
 ];

@@ -14,7 +14,8 @@
         *ngFor="let category of categories"
         (click)="filterByCategory(category)"
         [class.active]="selectedCategory === category"
-        class="category-button">
+        class="category-button"
+      >
         {{ category }}
       </button>
       <h3>By Brand</h3>
@@ -30,17 +31,31 @@
   </div>
 
   <div class="products-grid">
-    <div
-      *ngFor="let product of paginatedProducts"
-      class="product-item"
-      (click)="goToDetail(product.product_id)"
-    >
-      <img [src]="product.image_url" alt="{{ product.name }}" class="img" />
+    <div *ngFor="let product of paginatedProducts" class="product-item">
+      <img [src]="product.image_url" alt="{{ product.name }}" class="img" (click)="goToDetail(product.product_id)" />
       <div class="product-details">
         <h3>{{ product.name }}</h3>
         <p>{{ currencyService.convertNumberToCurrency(product.price * 1000) }}</p>
       </div>
-      <button class="add-to-cart-button" (click)="addToCart(product, $event)">Add to Cart</button>
+
+      <app-add-to-cart
+        [product]="{
+          product_id: product.product_id,
+          name: product.name,
+          price: product.price * 1000,
+          image: product.image_url,
+          code: '#' + product.product_id,
+          options:
+            (product.brands?.name || 'No Brand') +
+            ' • ' +
+            (product.categories?.name || 'No Category')
+        }"
+        [showQuantitySelector]="true"
+        [showCartInfo]="true"
+        [maxQuantity]="10"
+        (productAdded)="onProductAdded($event)"
+      >
+      </app-add-to-cart>
     </div>
   </div>
 </div>
