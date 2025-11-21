@@ -1,11 +1,6 @@
-<!-- Layout for seller pages -->
-@if (isSellerRoute()) {
+@if (isSellerRoute() || isAdminRoute() || isAdminAuthRoute()) {
   <router-outlet></router-outlet>
-} @else if (isAdminRoute()) {
-  <!-- Layout for admin pages -->
-  <app-admin></app-admin>
 } @else {
-  <!-- Layout for user pages -->
   <app-header></app-header>
   <main class="main-content">
     <router-outlet></router-outlet>

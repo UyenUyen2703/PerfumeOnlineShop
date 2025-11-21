@@ -33,7 +33,6 @@ export class Seller {
       this.router.navigate(['/login-seller']);
     } catch (error) {
       console.error('Error during seller logout:', error);
-      // this.router.navigate(['/login-seller']);
     }
   }
   closeDropdown() {

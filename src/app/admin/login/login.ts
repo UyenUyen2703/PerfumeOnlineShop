@@ -1,17 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class LoginSeller {
+export class LoginAdmin {
   loginData = {
     email: '',
-    password: ''
+    password: '',
   };
 
   rememberMe = false;
@@ -20,7 +21,8 @@ export class LoginSeller {
 
   onSubmit() {
     if (this.loginData.email && this.loginData.password) {
-      this.router.navigate(['/seller/seller-dashboard']);
+      alert('Đăng nhập thành công!');
+      this.router.navigate(['/admin/dashboard']);
     } else {
       alert('Vui lòng nhập đầy đủ thông tin!');
     }

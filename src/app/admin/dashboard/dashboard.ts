@@ -46,7 +46,6 @@ export class Dashboard implements OnInit {
         .select('*, categories(name), brands(name)');
       if (error) throw error;
       this.product = productsData || [];
-      console.log('Products loaded:', this.product);
     } catch (error) {
       console.error('Error loading products:', error);
       this.product = [];

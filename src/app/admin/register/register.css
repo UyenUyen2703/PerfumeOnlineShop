@@ -1,0 +1,151 @@
+.admin-register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.register-container {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.register-header {
+  margin-bottom: 30px;
+}
+
+.admin-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  color: white;
+}
+
+.register-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.register-header p {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+.register-form {
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #764ba2;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.register-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(118, 75, 162, 0.3);
+}
+
+.register-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.register-footer {
+  font-size: 14px;
+  color: #666;
+}
+
+.register-footer p {
+  margin: 10px 0;
+}
+
+.register-footer a {
+  color: #764ba2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.register-footer a:hover {
+  color: #667eea;
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .admin-register-page {
+    padding: 10px;
+  }
+
+  .register-container {
+    padding: 30px 20px;
+  }
+
+  .admin-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .register-header h1 {
+    font-size: 24px;
+  }
+}

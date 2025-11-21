@@ -20,6 +20,10 @@ import { LoginSeller } from './seller/login/login';
 import { RegisterSeller } from './seller/register/register';
 import { SellerDashboard } from './seller/dashboard/dashboard';
 import { Seller } from './seller/seller';
+import { OrderManagement } from './seller/order-management/order-management';
+import { Admin } from './admin/admin';
+import { LoginAdmin } from './admin/login/login';
+import { RegisterAdmin } from './admin/register/register';
 
 export const routes: Routes = [
   {
@@ -74,20 +78,31 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'dashboard',
-    component: Dashboard,
-    // canActivate: [AuthGuard],
-  },
-  {
-    path: 'admin/users',
-    component: ManageUser,
-    // canActivate: [AuthGuard],
+    path: 'login-admin',
+    component: LoginAdmin,
   },
 
   {
-    path: 'admin/orders',
-    component: ManageOrders,
-    // canActivate: [AuthGuard],
+    path: 'register-admin',
+    component: RegisterAdmin,
+  },
+  {
+    path: 'admin',
+    component: Admin,
+    children: [
+      {
+        path: 'dashboard',
+        component: Dashboard,
+      },
+      {
+        path: 'users',
+        component: ManageUser,
+      },
+      {
+        path: 'orders',
+        component: ManageOrders,
+      },
+    ],
   },
   {
     path: 'login-seller',
@@ -106,7 +121,10 @@ export const routes: Routes = [
         path: 'seller-dashboard',
         component: SellerDashboard,
       },
-
+      {
+        path: 'seller-order-management',
+        component: OrderManagement,
+      },
     ],
   },
 ];

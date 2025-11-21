@@ -1,0 +1,63 @@
+<div class="admin-register-page">
+  <div class="register-container">
+    <div class="register-header">
+      <div class="admin-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <h1>Admin Registration</h1>
+      <p>Create your administrative account</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="register-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="registerData.email"
+          required
+          class="form-control"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="registerData.password"
+          required
+          class="form-control"
+          placeholder="Enter your password"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="registerData.confirmPassword"
+          required
+          class="form-control"
+          placeholder="Confirm your password"
+        />
+      </div>
+
+      <button type="submit" class="register-btn" [disabled]="!registerForm.form.valid">
+        Create Account
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <p>Already have an account? <a routerLink="/login-admin">Sign in here</a></p>
+      <p><a routerLink="/">← Back to Main Site</a></p>
+    </div>
+  </div>
+</div>

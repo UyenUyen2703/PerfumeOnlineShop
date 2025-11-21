@@ -1,7 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-add-to-cart',
@@ -188,7 +190,7 @@ import { CartService } from '../../services/cart.service';
     }
   `]
 })
-export class AddToCartComponent {
+export class AddToCartComponent implements OnInit {
   @Input() product: any = null;
   @Input() buttonText: string = 'Add to Cart';
   @Input() maxQuantity: number = 99;
@@ -200,8 +202,31 @@ export class AddToCartComponent {
   selectedQuantity: number = 1;
   isAdded: boolean = false;
   isLoading: boolean = false;
+  requiresLogin: boolean = false;
 
-  constructor(public cartService: CartService) {}
+  constructor(
+    public cartService: CartService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.checkAuthState();
+
+    this.authService.onAuthStateChange(async (event, session) => {
+      await this.checkAuthState();
+    });
+  }
+
+  private async checkAuthState(): Promise<void> {
+    try {
+      const user = await this.authService.getUser();
+      this.requiresLogin = !user;
+    } catch (error) {
+      console.error('Error checking auth state:', error);
+      this.requiresLogin = true;
+    }
+  }
 
   increaseQuantity(): void {
     if (this.selectedQuantity < this.maxQuantity) {
@@ -217,6 +242,11 @@ export class AddToCartComponent {
 
   async addToCart(): Promise<void> {
     if (!this.product || this.isLoading || this.isDisabled) {
+      return;
+    }
+
+    if (this.requiresLogin) {
+      this.router.navigate(['/login']);
       return;
     }
 

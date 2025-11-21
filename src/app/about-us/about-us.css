@@ -25,35 +25,150 @@
 
 .about-us-container {
   width: 100%;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-
-
-}
-
-.about-us-container:nth-child(even) {
-  flex-direction: row-reverse;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
 .about-us-content {
-  margin-top: 20px;
+  margin-bottom: 60px;
   line-height: 1.6;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.about-us-content:hover {
+  transform: translateY(-5px);
+}
+
+.about-us-content:nth-child(even) {
+  flex-direction: row-reverse;
+  background: rgba(248, 249, 250, 0.9);
+}
+
+.about-us-content:nth-child(odd) {
+  margin-left: 0;
+  margin-right: 60px;
+}
+
+.about-us-content:nth-child(even) {
+  margin-left: 60px;
+  margin-right: 0;
 }
 
 .about-us-image {
-  width: 300px;
-  aspect-ratio: 1/1;
+  width: 350px;
+  height: 250px;
   object-fit: cover;
-  margin-left: 20px;
-  border-radius: 10px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.about-us-image:hover {
+  transform: scale(1.05);
 }
 
 .about-us-header {
   text-align: justify;
-  width: 50%;
+  flex: 1;
+  padding: 0 20px;
+}
+
+.about-us-header h1,
+.about-us-header h2 {
+  font-family: 'Great Vibes', cursive;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.about-us-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.about-us-header h2 {
+  font-size: 1.8rem;
+  color: #34495e;
+}
+
+.about-us-header h4 {
+  font-family: 'Dancing Script', cursive;
+  font-weight: bold;
+  font-size: 20px;
+  color: #7f8c8d;
+  margin: 10px 0;
+}
+
+.about-us-header p {
+  font-family: 'Playwrite New Zealand Guides', cursive;
+  color: #555;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.about-us-list {
+  list-style: none;
+  padding: 0;
+}
+
+.about-us-list li {
+  font-family: 'Playwrite New Zealand Guides', cursive;
+  color: #555;
+  margin: 10px 0;
+  padding-left: 25px;
+  position: relative;
+  font-size: 1.1rem;
+}
+
+.about-us-list li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-us-content {
+    flex-direction: column !important;
+    text-align: center;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 20px;
+  }
+
+  .about-us-image {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    margin: 20px 0;
+  }
+
+  .about-us-header {
+    padding: 0;
+  }
+
+  .about-us-header h1 {
+    font-size: 2rem;
+  }
+
+  .about-us-header h2 {
+    font-size: 1.5rem;
+  }
 }

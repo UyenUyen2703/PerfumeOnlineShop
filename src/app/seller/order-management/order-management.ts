@@ -1,15 +1,16 @@
+import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
-import { IgcFormsModule, IgxGridComponent, IgxGridModule } from 'igniteui-angular';
-import { supabase } from '../../../env/enviroment';
+import { IgxGridComponent, IgxColumnComponent } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
+import { supabase } from '../../../env/enviroment';
 
 @Component({
-  selector: 'app-manage-orders',
-  imports: [IgxGridModule, IgxGridComponent, CommonModule],
-  templateUrl: './manage-orders.html',
-  styleUrl: './manage-orders.css',
+  selector: 'app-order-management',
+  imports: [FormsModule, CommonModule, IgxGridComponent, IgxColumnComponent],
+  templateUrl: './order-management.html',
+  styleUrl: './order-management.css',
 })
-export class ManageOrders {
+export class OrderManagement {
   order: any[] = [];
   constructor() {}
   statusOptions = [
@@ -59,6 +60,7 @@ export class ManageOrders {
       if (orderIndex !== -1) {
         this.order[orderIndex].status = newStatus;
       }
+      console.log('Order status updated:', data);
       this.loadOrders();
     } catch (error) {
       console.error('Error updating order status:', error);

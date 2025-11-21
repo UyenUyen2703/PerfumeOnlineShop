@@ -5,11 +5,11 @@ import { Footer } from './footer/footer';
 import { CurrencyService } from './services/currency.service';
 import { AuthService } from './services/auth.service';
 import { filter } from 'rxjs/operators';
-import { Admin } from "./admin/admin";
+import { Admin } from './admin/admin';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, Admin],
+  imports: [RouterOutlet, Header, Footer],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -26,20 +26,16 @@ export class App implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // Track route changes
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentUrl.set(event.url);
       });
-
-    // Set initial URL
     this.currentUrl.set(this.router.url);
 
     try {
       const user = await this.authService.getUser();
       if (user) {
-        console.log('User found on app start, ensuring they are in database...');
         await this.authService.addUserToDatabase(user);
       } else {
         console.log('No user found, continuing with guest access...');
@@ -51,13 +47,27 @@ export class App implements OnInit {
 
   isAdminRoute(): boolean {
     const url = this.currentUrl();
-    return url.startsWith('/dashboard') || url.startsWith('/admin');
+    return (
+      url.startsWith('/admin') &&
+      !url.startsWith('/login-admin') &&
+      !url.startsWith('/register-admin')
+    );
   }
 
   isSellerRoute(): boolean {
     const url = this.currentUrl();
-    return url.startsWith('/login-seller') ||
-           url.startsWith('/register-seller') ||
-           url.startsWith('/seller');
+    return (
+      url.startsWith('/login-seller') ||
+      url.startsWith('/register-seller') ||
+      url.startsWith('/seller')
+    );
+  }
+
+  isAdminAuthRoute(): boolean {
+    const url = this.currentUrl();
+    return (
+      url.startsWith('/login-admin') ||
+      url.startsWith('/register-admin')
+    );
   }
 }

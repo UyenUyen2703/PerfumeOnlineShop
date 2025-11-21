@@ -1,0 +1,50 @@
+<div class="admin-login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <div class="admin-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <h1>Admin Login</h1>
+      <p>Access your administrative dashboard</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="loginData.email"
+          required
+          class="form-control"
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="loginData.password"
+          required
+          class="form-control"
+          placeholder="Enter your password"
+        />
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid">
+        Sign In
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Don't have admin access? <a routerLink="/register-admin">Register here</a></p>
+      <p><a routerLink="/">← Back to Main Site</a></p>
+    </div>
+  </div>
+</div>
