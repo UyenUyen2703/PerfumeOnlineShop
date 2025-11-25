@@ -24,6 +24,7 @@ import { OrderManagement } from './seller/order-management/order-management';
 import { Admin } from './admin/admin';
 import { LoginAdmin } from './admin/login/login';
 import { RegisterAdmin } from './admin/register/register';
+import { Analyst } from './seller/analyst/analyst';
 
 export const routes: Routes = [
   {
@@ -124,6 +125,10 @@ export const routes: Routes = [
       {
         path: 'seller-order-management',
         component: OrderManagement,
+      },
+      {
+        path: 'analytics',
+        component: Analyst,
       },
     ],
   },

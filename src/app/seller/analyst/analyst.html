@@ -1,0 +1,65 @@
+<div class="analyst-container">
+  <h1 class="page-title">Business Analytics</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card orders-card">
+      <div class="stat-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Orders</h3>
+        <p class="stat-number">{{ totalOrders }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card revenue-card">
+      <div class="stat-icon">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Revenue</h3>
+        <p class="stat-number">{{ formatCurrency(totalRevenue) }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card products-card">
+      <div class="stat-icon">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Products</h3>
+        <p class="stat-number">{{ totalProducts }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card customers-card">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3>Total Customers</h3>
+        <p class="stat-number">{{ totalCustomers }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-container">
+      <div class="chart-card">
+        <h3>Overview Statistics</h3>
+        <div class="chart-wrapper">
+          <canvas id="overviewChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-card">
+        <h3>Monthly Revenue</h3>
+        <div class="chart-wrapper">
+          <canvas id="monthlyRevenueChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

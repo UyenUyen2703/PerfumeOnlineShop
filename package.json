@@ -31,6 +31,7 @@
     "@angular/router": "^20.3.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@supabase/supabase-js": "^2.77.0",
+    "chart.js": "^4.5.1",
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "igniteui-angular": "^20.0.0",
