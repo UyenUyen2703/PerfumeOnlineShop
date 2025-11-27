@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 export class Header implements OnInit {
   isLoggedIn = false;
   currentUser: any = null;
+  mobileMenuOpen = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -64,5 +65,13 @@ export class Header implements OnInit {
       this.router.navigate(['/']);
       console.log('User logged out successfully.');
     });
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
   }
 }

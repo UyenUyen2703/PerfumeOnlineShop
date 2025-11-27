@@ -6,7 +6,7 @@
         Fragrance that <br />
         make your day
       </h1>
-      <button class="btn-explorenow">Explore Now</button>
+      <button class="btn-explorenow" routerLink="/perfume">Explore Now</button>
     </div>
   </div>
   <div class="body-homepage">
@@ -20,7 +20,7 @@
         <p class="product_name">{{ product.name }}</p>
         <p class="price">VND {{currencyService.convertNumberToCurrency(product.price * 1000)}}</p>
         <p class="description">{{ product.description }}</p>
-        <button class="btn-buy">Buy Now</button>
+        <button class="btn-buy" (click)="addToCart(product, $event)">Buy Now</button>
       </div>
       <img [src]="product.image_url" alt="{{ product.name }}" (click)="goToDetail(product.product_id)" class="img_product" />
     </div>

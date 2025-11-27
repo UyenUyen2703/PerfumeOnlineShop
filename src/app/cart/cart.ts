@@ -115,10 +115,6 @@ export class Cart implements OnInit, OnDestroy {
     }
   }
 
-  toggleTermsAgreement(): void {
-    this.agreeToTerms = !this.agreeToTerms;
-  }
-
   isCartEmpty(): boolean {
     return this.cartService.isCartEmpty();
   }
