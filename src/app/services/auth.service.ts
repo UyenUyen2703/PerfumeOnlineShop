@@ -93,7 +93,7 @@ export class AuthService {
         avatar_URL: avatarStorageUrl || user.user_metadata?.avatar_url || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        role: 'customer',
+        role: user.user_metadata?.user_type || 'customer',
       };
 
       const { data: insertedUser, error: insertError } = await supabase

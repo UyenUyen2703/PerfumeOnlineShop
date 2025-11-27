@@ -16,6 +16,9 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   totalRevenue: number = 0;
   totalProducts: number = 0;
   totalCustomers: number = 0;
+  currentMonthOrders: number = 0;
+  monthlyKPI: number = 0;
+  achievementPercentage: number = 0;
 
   chart: Chart | null = null;
   monthlyRevenueChart: Chart | null = null;
@@ -29,7 +32,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Charts sẽ được tạo sau khi dữ liệu được load
   }
 
   async loadStatistics() {
@@ -51,6 +53,26 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       const orders: Order[] = await this.supabase.getData('orders');
       this.totalOrders = orders.length;
       this.totalRevenue = orders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+      // Tính order của tháng hiện tại
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+
+      this.currentMonthOrders = orders.filter(order => {
+        if (order.created_at) {
+          const orderDate = new Date(order.created_at);
+          return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear;
+        }
+        return false;
+      }).length;
+
+      // Lấy KPI của tháng (có thể từ database hoặc cấu hình)
+      this.monthlyKPI = await this.getMonthlyKPI(currentMonth + 1, currentYear);
+
+      // Tính phần trăm đạt được
+      this.achievementPercentage = this.monthlyKPI > 0 ?
+        Math.round((this.currentMonthOrders / this.monthlyKPI) * 100) : 0;
+
     } catch (error) {
       console.error('Error loading orders:', error);
     }
@@ -74,6 +96,22 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  async getMonthlyKPI(month: number, year: number): Promise<number> {
+    try {
+      // Tạm thời dùng KPI mặc định theo tháng
+      // Sau này có thể tạo bảng monthly_kpi trong database
+      const defaultKPI: { [key: number]: number } = {
+        1: 80, 2: 75, 3: 90, 4: 85, 5: 100, 6: 95,
+        7: 110, 8: 105, 9: 90, 10: 100, 11: 120, 12: 150
+      };
+
+      return defaultKPI[month] || 100;
+    } catch (error) {
+      console.error('Error getting monthly KPI:', error);
+      return 100; // KPI mặc định
+    }
+  }
+
   createOverviewChart() {
     const canvas = document.getElementById('overviewChart') as HTMLCanvasElement;
     if (!canvas) return;
@@ -82,19 +120,28 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
+    const chartData = this.achievementPercentage >= 100
+      ? [this.monthlyKPI, this.currentMonthOrders - this.monthlyKPI]
+      : [this.currentMonthOrders, this.monthlyKPI - this.currentMonthOrders];
+
+    const chartLabels = this.achievementPercentage >= 100
+      ? ['Target KPI', 'Over Achievement']
+      : ['Achieved', 'Remaining'];
+
+    const chartColors = this.achievementPercentage >= 100
+      ? ['#4CAF50', '#2E7D32']
+      : [this.achievementPercentage >= 80 ? '#4CAF50' : this.achievementPercentage >= 50 ? '#FF9800' : '#f44336', '#E0E0E0'];
+
     this.chart = new Chart(canvas, {
       type: 'doughnut',
       data: {
-        labels: ['Orders', 'Products', 'Customers'],
+        labels: chartLabels,
         datasets: [{
-          label: 'Overview Statistics',
-          data: [this.totalOrders, this.totalProducts, this.totalCustomers],
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56'
-          ],
-          borderWidth: 2
+          label: 'KPI Achievement',
+          data: chartData,
+          backgroundColor: chartColors,
+          borderWidth: 2,
+          borderColor: '#fff'
         }]
       },
       options: {
@@ -103,7 +150,29 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
         plugins: {
           title: {
             display: true,
-            text: 'Overview Statistics'
+            text: `Monthly KPI Achievement: ${this.achievementPercentage}%`
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context: any) {
+                const label = context.label || '';
+                const value = context.parsed;
+                return `${label}: ${value} orders`;
+              },
+              afterLabel: function(context: any) {
+                const total = context.dataset.data.reduce((sum: number, val: number) => sum + val, 0);
+                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                return `Percentage: ${percentage}%`;
+              }
+            }
+          },
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true
+            }
           }
         }
       }
@@ -191,6 +260,18 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       style: 'currency',
       currency: 'VND'
     }).format(amount);
+  }
+
+  getCurrentMonthName(): string {
+    const months = [
+      'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+      'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    ];
+    return months[new Date().getMonth()];
+  }
+
+  getCurrentYear(): number {
+    return new Date().getFullYear();
   }
 
   ngOnDestroy() {

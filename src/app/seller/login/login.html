@@ -42,8 +42,13 @@
         <a href="#" class="forgot-password">Forgot password?</a>
       </div>
 
-      <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid">
-        Login
+      <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid || isLoading">
+        <span *ngIf="isLoading">Đang đăng nhập...</span>
+        <span *ngIf="!isLoading">Login</span>
+      </button>
+
+      <button type="button" class="debug-btn" (click)="debugUser()" style="margin-top: 10px; background: #666;">
+        Debug User (check console)
       </button>
 
       <div class="register-link">

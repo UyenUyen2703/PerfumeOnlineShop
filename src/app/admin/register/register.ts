@@ -24,7 +24,6 @@ export class RegisterAdmin {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Admin registration attempt:', this.registerData);
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -33,21 +32,17 @@ export class RegisterAdmin {
         options: {
           data: {
             user_type: 'admin',
+            full_name: 'Admin'
           },
         },
       });
 
-      await supabase.from('users').insert([{
-        email: this.registerData.email,
-        full_name: 'Admin',
-        role: 'admin',
-        avatar_URL:'default-avatar.png',
-        password: this.registerData.password
-      }]);
       if (error) {
         console.error('Error during admin registration:', error);
         alert('Registration failed: ' + error.message);
+        return;
       }
+
       this.router.navigate(['/login-admin']);
     } catch (error) {
       console.error('Unexpected error during admin registration:', error);

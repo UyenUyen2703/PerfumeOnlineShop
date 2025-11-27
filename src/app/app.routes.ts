@@ -6,7 +6,7 @@ import { DetailProduct } from './product-list/detail-product/detail-product';
 import { Login } from './auth/login/login';
 import { Register } from './auth/register/register';
 import { Personal } from './personal/personal';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard, canActivateSeller, canActivateAdmin } from './guards/auth.guard';
 import { Search } from './home-page/search/search';
 import { FavoriteList } from './personal/favorite-list/favorite-list';
 import { PersonalInfor } from './personal/personal-infor/personal-infor';
@@ -90,6 +90,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: Admin,
+    canActivate: [canActivateAdmin],
     children: [
       {
         path: 'dashboard',
@@ -117,6 +118,7 @@ export const routes: Routes = [
   {
     path: 'seller',
     component: Seller,
+    canActivate: [canActivateSeller],
     children: [
       {
         path: 'seller-dashboard',

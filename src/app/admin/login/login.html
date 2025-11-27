@@ -37,8 +37,9 @@
         />
       </div>
 
-      <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid">
-        Sign In
+      <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid || isLoading">
+        <span *ngIf="isLoading">Đang đăng nhập...</span>
+        <span *ngIf="!isLoading">Sign In</span>
       </button>
     </form>
 

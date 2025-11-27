@@ -48,23 +48,17 @@ export class RegisterSeller {
         options: {
           data: {
             user_type: 'seller',
-            address: this.registerData.address
+            address: this.registerData.address,
+            full_name: 'Seller'
           }
         }
       });
 
-      await supabase.from('users').insert([{
-        email: this.registerData.email,
-        full_name: 'Seller',
-        role: 'seller',
-        avatar_URL:'default-avatar.png',
-        gender: 'Not specified',
-        password: this.registerData.password,
-      }]);
       if (error) {
         throw error;
       }
 
+      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
       this.router.navigate(['/login-seller']);
     } catch (error: any) {
       console.error('Registration error:', error);
