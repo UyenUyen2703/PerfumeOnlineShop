@@ -114,7 +114,7 @@
 }
 
 .about-us-header p {
-  font-family: 'Playwrite New Zealand Guides', cursive;
+  font-family: 'Playwrite New Zealand', cursive;
   color: #555;
   line-height: 1.8;
   font-size: 1.1rem;
@@ -126,7 +126,7 @@
 }
 
 .about-us-list li {
-  font-family: 'Playwrite New Zealand Guides', cursive;
+  font-family: 'Playwrite New Zealand', cursive;
   color: #555;
   margin: 10px 0;
   padding-left: 25px;
