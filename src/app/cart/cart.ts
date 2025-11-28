@@ -26,6 +26,10 @@ export class Cart implements OnInit, OnDestroy {
   note: string = '';
   private cartSubscription?: Subscription;
 
+  // Invoice overlay properties
+  showInvoiceOverlay: boolean = false;
+  invoiceData: any = null;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -100,19 +104,48 @@ export class Cart implements OnInit, OnDestroy {
     }
 
     try {
-      await this.cartService.paymentProcess(this.address, this.recipientName, this.recipientPhone, this.note);
-      alert(`Order placed successfully! Total amount: ${this.getCartTotal()}`);
-      this.cartService.clearCart();
+      const orderInfo = await this.cartService.paymentProcess(this.address, this.recipientName, this.recipientPhone, this.note);
+
+      // Tạo dữ liệu cho hóa đơn
+      this.invoiceData = {
+        orderId: orderInfo.orderId,
+        items: orderInfo.items,
+        total: orderInfo.total,
+        recipientName: this.recipientName,
+        recipientPhone: this.recipientPhone,
+        address: this.address,
+        note: this.note,
+        orderDate: new Date().toLocaleDateString('vi-VN')
+      };
+
+      // Hiển thị invoice overlay
+      this.showInvoiceOverlay = true;
+
+      // Reset form
       this.orderNote = '';
       this.address = '';
       this.recipientName = '';
       this.recipientPhone = '';
       this.note = '';
       this.agreeToTerms = false;
+
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('An error occurred while processing your order. Please try again.');
+      if (error instanceof Error) {
+        alert(`Đặt hàng thất bại: ${error.message}`);
+      } else {
+        alert('An error occurred while processing your order. Please try again.');
+      }
     }
+  }
+
+  closeInvoiceOverlay(): void {
+    this.showInvoiceOverlay = false;
+    this.invoiceData = null;
+  }
+
+  printInvoice(): void {
+    window.print();
   }
 
   isCartEmpty(): boolean {

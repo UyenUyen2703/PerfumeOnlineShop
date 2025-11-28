@@ -1,5 +1,6 @@
 import { Order, OrderItem, CartItem } from './../../type/order';
 import { AuthService } from './auth.service';
+import { ProductService } from './product.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { supabase } from '../../env/enviroment';
@@ -11,7 +12,10 @@ export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private productService: ProductService
+  ) {
     this.loadCartFromStorage();
   }
 
@@ -130,7 +134,7 @@ export class CartService {
     return item ? item.quantity : 0;
   }
 
-  async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<void> {
+  async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<{orderId: string, items: CartItem[], total: number}> {
     try {
       const user = await this.authService.getUser();
       const item = this.getCartItems();
@@ -151,6 +155,17 @@ export class CartService {
         throw new Error('Recipient phone is required');
       }
 
+      // Kiểm tra tồn kho trước khi đặt hàng (chỉ cảnh báo, không chặn)
+      try {
+        const stockValidation = await this.productService.validateStockAvailability(item);
+        if (!stockValidation.valid) {
+          console.warn('Stock validation warnings:', stockValidation.errors);
+          // Vẫn cho phép đặt hàng nhưng ghi log cảnh báo
+        }
+      } catch (stockError) {
+        console.warn('Could not validate stock, proceeding with order:', stockError);
+      }
+
       const orderPayload = {
         user_id: user.id,
         total_amount: this.getCartTotal(),
@@ -163,6 +178,7 @@ export class CartService {
 
       console.log('Order payload:', orderPayload);
 
+      // Tạo đơn hàng
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([orderPayload])
@@ -173,6 +189,7 @@ export class CartService {
       }
       const orderId = orderData.order_id;
 
+      // Tạo order items
       const orderItems = item.map((CartItem) => ({
         order_id: orderId,
         product_id: CartItem.product_id,
@@ -187,6 +204,29 @@ export class CartService {
       if (error) {
         throw error;
       }
+
+      // Cập nhật số lượng sản phẩm (trừ đi số lượng đã mua)
+      try {
+        await this.productService.updateMultipleProductQuantities(item);
+        console.log('Product quantities updated successfully after purchase');
+      } catch (quantityError) {
+        // Nếu cập nhật số lượng thất bại, chỉ log lỗi không chặn đơn hàng
+        console.error('Error updating product quantities:', quantityError);
+        console.warn('Order completed but inventory may not be updated');
+      }
+
+      // Lưu thông tin đơn hàng để trả về
+      const orderInfo = {
+        orderId: orderId,
+        items: [...item], // Copy items trước khi clear cart
+        total: this.getCartTotal()
+      };
+
+      // Xóa giỏ hàng sau khi đặt hàng thành công
+      this.clearCart();
+
+      return orderInfo;
+
     } catch (error) {
       console.error('Error during payment process:', error);
       throw error;

@@ -115,9 +115,11 @@
 }
 
 .product_name {
-  font-family: 'Great Vibes', cursive;
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-family: 'Dancing Script', cursive;
+  color: #2c3e50;
+  font-weight: 600;
   margin-bottom: 10px;
+  font-size: clamp(30px, 4vw, 28px);
 }
 
 .price {

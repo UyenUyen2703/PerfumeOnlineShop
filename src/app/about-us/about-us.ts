@@ -21,8 +21,7 @@ export class AboutUs implements OnInit, AfterViewInit {
     autoplay: true,
     autoplayTimeout: 3000,
     dots: true,
-    nav: true,
-    navText: ['<', '>'],
+    nav: false,
     items: 1
   };
 

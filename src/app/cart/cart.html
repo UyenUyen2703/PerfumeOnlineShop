@@ -104,3 +104,88 @@
     </div>
   </div>
 </div>
+
+<!-- Invoice Overlay -->
+<div class="invoice-overlay" [class.show]="showInvoiceOverlay" (click)="closeInvoiceOverlay()">
+  <div class="invoice-container" (click)="$event.stopPropagation()">
+    <div class="invoice-header">
+      <h2>🧾 PURCHASE ORDER INVOICE </h2>
+      <button class="close-btn" (click)="closeInvoiceOverlay()">×</button>
+    </div>
+
+    <div class="invoice-body">
+      <div class="order-info">
+        <div class="info-row">
+          <span class="label">Order ID:</span>
+          <span class="value">#{{ invoiceData?.orderId }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Order Date:</span>
+          <span class="value">{{ invoiceData?.orderDate }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Recipient Name:</span>
+          <span class="value">{{ invoiceData?.recipientName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Recipient Phone:</span>
+          <span class="value">{{ invoiceData?.recipientPhone }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Delivery Address:</span>
+          <span class="value">{{ invoiceData?.address }}</span>
+        </div>
+        <div class="info-row" *ngIf="invoiceData?.note">
+          <span class="label">Note:</span>
+          <span class="value">{{ invoiceData?.note }}</span>
+        </div>
+      </div>
+
+      <div class="items-section">
+        <h3>Order Details</h3>
+        <div class="items-table">
+          <div class="table-header">
+            <div class="col-image">Image</div>
+            <div class="col-name">Product Name</div>
+            <div class="col-price">Unit Price</div>
+            <div class="col-qty">Quantity</div>
+            <div class="col-total">Total</div>
+          </div>
+          <div class="table-row" *ngFor="let item of invoiceData?.items">
+            <div class="col-image">
+              <img [src]="item.image" [alt]="item.name" class="item-image">
+            </div>
+            <div class="col-name">
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-options" *ngIf="item.options">{{ item.options }}</div>
+            </div>
+            <div class="col-price">{{ formatToCurrency(item.price) }}</div>
+            <div class="col-qty">{{ item.quantity }}</div>
+            <div class="col-total">{{ formatToCurrency(item.price * item.quantity) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="total-section">
+        <div class="total-row">
+          <span class="total-label">TOTAL:</span>
+          <span class="total-amount">{{ formatToCurrency(invoiceData?.total || 0) }}</span>
+        </div>
+      </div>
+
+      <div class="status-section">
+        <div class="status-badge">
+          🕒 Status: <strong>Processing</strong>
+        </div>
+        <p class="status-note">
+          Thank you for your order! We will process it and contact you as soon as possible.
+        </p>
+      </div>
+    </div>
+
+    <div class="invoice-footer">
+      <button class="btn btn-print" (click)="printInvoice()">🖨️ Print Invoice</button>
+      <button class="btn btn-close" (click)="closeInvoiceOverlay()">Close</button>
+    </div>
+  </div>
+</div>
