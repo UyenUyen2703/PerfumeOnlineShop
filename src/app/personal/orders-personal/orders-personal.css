@@ -41,7 +41,6 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,16 +156,12 @@
 }
 
 /* Status Colors */
-.status-pending,
-.status-processing,
-.status-confirmed {
+.status-pending, .status-processing, .status-confirmed {
   background-color: #fff3cd;
   color: #856404;
 }
 
-.status-shipped,
-.status-in_transit,
-.status-out_for_delivery {
+.status-shipped, .status-in_transit, .status-out_for_delivery {
   background-color: #d1ecf1;
   color: #0c5460;
 }
@@ -176,8 +171,7 @@
   color: #155724;
 }
 
-.status-cancelled,
-.status-refunded {
+.status-cancelled, .status-refunded {
   background-color: #f8d7da;
   color: #721c24;
 }
@@ -256,8 +250,7 @@
   flex-shrink: 0;
 }
 
-.follow-btn,
-.review-btn {
+.follow-btn, .review-btn {
   padding: 8px 16px;
   border-radius: 6px;
   border: none;
@@ -267,11 +260,11 @@
   transition: all 0.2s ease;
   min-width: 80px;
   text-align: center;
+  color: white;
 }
 
 .follow-btn {
   background-color: #007bff;
-  color: white;
 }
 
 .follow-btn:hover {
@@ -281,7 +274,6 @@
 
 .review-btn {
   background-color: #28a745;
-  color: white;
 }
 
 .review-btn:hover {

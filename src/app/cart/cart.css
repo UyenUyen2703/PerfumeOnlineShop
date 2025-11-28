@@ -31,6 +31,7 @@
   gap: 15px;
   align-items: center;
   padding: 20px 0;
+  border: 1px solid #eee;
   border-bottom: 1px solid #eee;
   position: relative;
   transition: background-color 0.2s ease;
@@ -58,7 +59,8 @@
 }
 
 .remove-btn:hover {
-  color: #333;
+  color: #ff4444;
+  transform: scale(1.1);
 }
 
 .product-image {
@@ -84,16 +86,14 @@
   color: #333;
 }
 
-.product-code {
+.product-code, .product-options {
   font-size: 12px;
-  color: #999;
+  color: #666;
   margin: 0 0 5px 0;
 }
 
-.product-options {
-  font-size: 12px;
-  color: #666;
-  margin: 0;
+.product-code {
+  color: #999;
 }
 
 .product-price {
@@ -121,7 +121,8 @@
 }
 
 .qty-btn:hover {
-  background: #f5f5f5;
+  background: #f0f0f0;
+  transform: scale(1.05);
 }
 
 .quantity {
@@ -274,31 +275,15 @@
   background: #0056b3;
 }
 
-/* Animation for item removal */
-.cart-item {
-  transition: opacity 0.3s ease;
+/* Loading state */
+.cart-container.loading {
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .cart-item.removing {
   opacity: 0;
   transform: translateX(-100%);
-}
-
-/* Hover effects */
-.remove-btn:hover {
-  color: #ff4444;
-  transform: scale(1.1);
-}
-
-.qty-btn:hover {
-  background: #f0f0f0;
-  transform: scale(1.05);
-}
-
-/* Loading state */
-.cart-container.loading {
-  opacity: 0.7;
-  pointer-events: none;
 }
 
 .paypal-section {
@@ -310,7 +295,7 @@
   height: 25px;
 }
 
-/* Input styling for checkout form */
+/* Input styling */
 .input-group {
   margin-bottom: 20px;
 }
@@ -323,23 +308,15 @@
   font-size: 14px;
 }
 
-.input-group input,
-.input-group textarea {
+.input-group input, .input-group textarea {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e1e1e1;
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
-}
-
-.input-group input:focus,
-.input-group textarea:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .input-group textarea {
@@ -347,66 +324,47 @@
   min-height: 80px;
 }
 
-.input-group input::placeholder,
-.input-group textarea::placeholder {
+.input-group input:focus, .input-group textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-group input::placeholder, .input-group textarea::placeholder {
   color: #999;
   font-style: italic;
 }
 
-/* Required field indicator */
-.input-group label::after {
-  content: "";
-}
-
-.input-group label[for="recipientName"]::after,
-.input-group label[for="address"]::after {
+.input-group label[for="recipientName"]::after, .input-group label[for="address"]::after {
   content: " *";
   color: #dc3545;
   font-weight: bold;
 }
 
-/* Validation styling */
-.input-group input.ng-invalid.ng-touched,
-.input-group textarea.ng-invalid.ng-touched {
+.input-group .ng-invalid.ng-touched {
   border-color: #dc3545;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
-.input-group input.ng-valid.ng-touched,
-.input-group textarea.ng-valid.ng-touched {
+.input-group .ng-valid.ng-touched {
   border-color: #28a745;
   box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
 /* Responsive Design */
-/* Large devices (992px and up) */
 @media (min-width: 992px) {
-  .cart-container {
-    gap: 40px;
-  }
-
-  .cart-left {
-    padding: 25px;
-  }
+  .cart-container { gap: 40px; }
+  .cart-left { padding: 25px; }
 }
 
-/* Medium devices (768px to 991px) */
 @media (min-width: 768px) and (max-width: 991px) {
-  .cart-container {
-    gap: 25px;
-    padding: 15px;
-  }
-
+  .cart-container { gap: 25px; padding: 15px; }
   .cart-item {
     grid-template-columns: 35px 70px 2fr 90px 110px 70px;
     gap: 12px;
     padding: 15px 0;
   }
-
-  .product-image {
-    width: 70px;
-    height: 70px;
-  }
+  .product-image { width: 70px; height: 70px; }
 }
 
 /* Small devices (576px to 767px) */

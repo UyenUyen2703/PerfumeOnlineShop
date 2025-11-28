@@ -17,12 +17,10 @@
 }
 
 .product-item {
-  box-shadow:
-    rgba(100, 100, 111, 0.15) 0px 7px 29px 0px,
-    rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  box-shadow: rgba(100, 100, 111, 0.15) 0px 7px 29px 0px;
   border-radius: 20px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   height: 520px;
   display: flex;
   flex-direction: column;
@@ -30,16 +28,12 @@
   justify-content: space-between;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  overflow: visible;
   position: relative;
 }
 
 .product-item:hover {
   transform: translateY(-4px);
-  box-shadow:
-    rgba(100, 100, 111, 0.25) 0px 12px 35px 0px,
-    rgba(255, 105, 180, 0.1) 0px 3px 20px 0px;
+  box-shadow: rgba(100, 100, 111, 0.25) 0px 12px 35px 0px;
   background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
 }
 
@@ -50,7 +44,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ff69b4, #ff8fab, #ffa8cc);
+  background: linear-gradient(90deg, #ff69b4, #ffa8cc);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -77,7 +71,7 @@ app-add-to-cart {
   padding-top: 15px;
 }
 
-/* Override styles cho add-to-cart component */
+/* Add-to-cart component overrides */
 app-add-to-cart .add-to-cart-container {
   max-width: 100%;
   gap: 10px;
@@ -92,22 +86,21 @@ app-add-to-cart .quantity-selector label {
   font-size: 14px;
   font-weight: 600;
   color: #495057;
-  min-width: auto;
 }
 
 app-add-to-cart .qty-btn {
   width: 28px;
   height: 28px;
   border: 2px solid #e9ecef;
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  background: #fff;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 app-add-to-cart .qty-btn:hover:not(:disabled) {
-  background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #f8f9fa;
   border-color: #ff69b4;
   transform: scale(1.05);
 }
@@ -361,35 +354,23 @@ h3{
   box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
 }
 /* Responsive Design */
-/* Extra Large devices (1400px and up) */
 @media (min-width: 1400px) {
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 30px;
   }
-
-  .product-item {
-    padding: 20px;
-  }
 }
 
-/* Large devices (1200px to 1399px) */
 @media (min-width: 1200px) and (max-width: 1399px) {
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 }
 
-/* Medium Large devices (992px to 1199px) */
 @media (min-width: 992px) and (max-width: 1199px) {
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
-
-  .category {
-    min-width: 200px;
-  }
+  .category { min-width: 200px; }
 }
 
 /* Medium devices (768px to 991px) */
