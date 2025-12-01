@@ -31,6 +31,7 @@
 }
 
 .btn-explorenow {
+  font-family: var(--font-main);
   background-color: white;
   color: #333;
   padding: 12px 35px;
@@ -79,7 +80,7 @@
 }
 
 .subtitle {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--font-subtitle);
   font-size: clamp(10px, 1.5vw, 12px);
   margin-bottom: 10px;
 }
@@ -107,7 +108,7 @@
 }
 
 .brand_name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: clamp(12px, 2vw, 14px);
@@ -115,7 +116,7 @@
 }
 
 .product_name {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-productName);
   color: #2c3e50;
   font-weight: 600;
   margin-bottom: 10px;
@@ -123,7 +124,7 @@
 }
 
 .price {
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-main);
   font-size: clamp(12px, 2vw, 14px);
   font-weight: bold;
   color: #333;
@@ -139,14 +140,14 @@
   line-clamp: 3;
   -webkit-line-clamp: 3;
   overflow: hidden;
-  font-family: 'Playwrite New Zealand', cursive;
+  font-family: var(--font-main);
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
   line-height: 1.4;
   margin-bottom: 20px;
 }
 
 .btn-buy {
-  font-family: 'Allura', cursive;
+  font-family: var(--font-button);
   background-color: transparent;
   color: #f2b3a9;
   border: none;

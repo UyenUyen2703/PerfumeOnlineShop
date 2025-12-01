@@ -2,11 +2,25 @@
   box-sizing: border-box;
 }
 
+:root {
+  --primary-color: #ff6f91;
+  --secondary-color: #f8f9fa;
+  --text-color: #333333;
+  --background-color: #ffffff;
+  --border-radius: 8px;
+  --transition-duration: 0.3s;
+  --font-main: 'Montserrat', sans-serif;
+  --font-productName:  'Saira Stencil One', cursive;
+  --font-button: 'Allura', cursive;
+  --font-heading: 'Playwrite New Zealand', cursive;
+  --font-subtitle: 'Courier New', Courier, monospace;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #fef7f7;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-main);
   line-height: 1.6;
 }
 
@@ -96,8 +110,6 @@ img {
 .p-4 { padding: 1.5rem !important; }
 .p-5 { padding: 3rem !important; }
 
-/* Media Query Breakpoints */
-/* Extra Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
   .container {
     max-width: 1140px;
@@ -117,7 +129,6 @@ img {
   .col-xl-12 { flex: 0 0 100%; }
 }
 
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) and (max-width: 1199.98px) {
   .container {
     max-width: 960px;
@@ -137,7 +148,6 @@ img {
   .col-lg-12 { flex: 0 0 100%; }
 }
 
-/* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991.98px) {
   .container {
     max-width: 720px;
@@ -161,7 +171,6 @@ img {
   .d-md-flex { display: flex !important; }
 }
 
-/* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) {
   .container {
     max-width: 540px;
@@ -185,7 +194,6 @@ img {
   .d-sm-flex { display: flex !important; }
 }
 
-/* Extra small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
   .container {
     max-width: 100%;

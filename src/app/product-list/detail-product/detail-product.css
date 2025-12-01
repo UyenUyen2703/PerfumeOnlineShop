@@ -19,47 +19,47 @@
 }
 
 .description {
-  font-family: 'Playwrite New Zealand', cursive;
+  font-family: var(--font-main);
   font-size: 15px;
   line-height: 1.5;
   text-align: justify;
 }
 
 .product-name {
-  font-family: 'Saira Stencil One', cursive;
+  font-family: var(--font-productName);
   font-size: 30px;
   margin-bottom: 10px;
 }
 
 .brand-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-main);
   font-size: 18px;
   color: #555;
   margin-bottom: 10px;
 }
 
 .price {
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-main);
   font-size: 20px;
   color: #e91e63;
   margin-bottom: 15px;
 }
 
-.btn-add-to-cart {
-  font-family: 'Allura', cursive;
-  background-color: #ff9dbe;
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 30px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 30px;
-  align-items: center;
-}
 
-.btn-add-to-cart:hover {
-  background-color: #ff6f91;
-  transform: scale(1.05);
+@media (max-width: 768px) {
+  .detail-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .img_product_detail {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .product-info {
+    max-width: 100%;
+    padding: 0 15px;
+  }
 }

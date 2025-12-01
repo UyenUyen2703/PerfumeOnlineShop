@@ -73,7 +73,10 @@
             class="save-btn"
             [disabled]="validationErrors['full_name']"
             (click)="saveEdit('full_name')"
-            title="Save">✓</button>
+            title="Save"
+          >
+            ✓
+          </button>
           <button class="cancel-btn" (click)="cancelEdit('full_name')" title="Cancel">✗</button>
         </div>
       </div>
@@ -81,8 +84,10 @@
       <!-- Email Field (Read only) -->
       <div class="info-item">
         <label>Email:</label>
-        <span class="info-value">{{ userProfile?.email || user?.email || 'Not provided' }}</span>
-        <span class="readonly-badge">Read only</span>
+        <div class="readonly-field">
+          <span class="info-value">{{ userProfile?.email || user?.email || 'Not provided' }}</span>
+          <span class="readonly-badge">Read only</span>
+        </div>
       </div>
 
       <!-- Phone Field -->
@@ -130,7 +135,10 @@
             class="save-btn"
             [disabled]="validationErrors['phone']"
             (click)="saveEdit('phone')"
-            title="Save">✓</button>
+            title="Save"
+          >
+            ✓
+          </button>
           <button class="cancel-btn" (click)="cancelEdit('phone')" title="Cancel">✗</button>
         </div>
       </div>
@@ -179,7 +187,10 @@
             class="save-btn"
             [disabled]="validationErrors['address']"
             (click)="saveEdit('address')"
-            title="Save">✓</button>
+            title="Save"
+          >
+            ✓
+          </button>
           <button class="cancel-btn" (click)="cancelEdit('address')" title="Cancel">✗</button>
         </div>
       </div>
@@ -224,8 +235,10 @@
 
       <div class="info-item">
         <label>Role:</label>
-        <span class="info-value">{{ userProfile?.role || 'Customer' }}</span>
-        <span class="readonly-badge">Read only</span>
+        <div class="readonly-field">
+          <span class="info-value">{{ userProfile?.role || 'Customer' }}</span>
+          <span class="readonly-badge">Read only</span>
+        </div>
       </div>
 
       <div class="info-item">

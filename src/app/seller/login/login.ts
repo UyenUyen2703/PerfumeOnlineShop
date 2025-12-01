@@ -21,21 +21,6 @@ export class LoginSeller {
 
   constructor(private router: Router) {}
 
-  async debugUser() {
-    // Method để debug user trong database
-    if (!this.loginData.email) return;
-
-    try {
-      const { data: users, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', this.loginData.email);
-
-    } catch (error) {
-      console.error('Debug error:', error);
-    }
-  }
-
   async onSubmit() {
     if (!this.loginData.email || !this.loginData.password) {
       alert('Please fill in all required fields!');
@@ -58,8 +43,6 @@ export class LoginSeller {
       if (!authData.user) {
         throw new Error('Login unsuccessful');
       }
-
-      console.log('User ID:', authData.user.id);
 
       let { data: userData, error: userError } = await supabase
         .from('users')

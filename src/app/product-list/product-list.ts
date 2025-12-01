@@ -21,6 +21,7 @@ export class ProductList implements OnInit, OnDestroy {
   pageSize: number = 6;
   currentPage: number = 1;
   private authSubscription: any;
+  isCategoryOpen: boolean = false;
 
   constructor(
     private supabase: Supabase,
@@ -126,5 +127,16 @@ export class ProductList implements OnInit, OnDestroy {
 
   onProductAdded(product: any): void {
     console.log('Product added to cart:', product);
+  }
+
+  toggleCategory(): void {
+    this.isCategoryOpen = !this.isCategoryOpen;
+  }
+
+  closeCategoryOnMobile(): void {
+    // Only close on mobile devices
+    if (window.innerWidth <= 991) {
+      this.isCategoryOpen = false;
+    }
   }
 }

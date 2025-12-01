@@ -1,0 +1,43 @@
+<div class="add-to-cart-container">
+  <div class="quantity-selector" *ngIf="showQuantitySelector">
+    <label for="quantity">Quantity:</label>
+    <div class="quantity-controls">
+      <button
+        type="button"
+        class="qty-btn"
+        (click)="decreaseQuantity()"
+        [disabled]="selectedQuantity <= 1"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        id="quantity"
+        [(ngModel)]="selectedQuantity"
+        [min]="1"
+        [max]="maxQuantity"
+        class="quantity-input"
+      />
+      <button
+        type="button"
+        class="qty-btn"
+        (click)="increaseQuantity()"
+        [disabled]="selectedQuantity >= maxQuantity"
+      >
+        +
+      </button>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="add-to-cart-btn"
+    [class.success]="isAdded"
+    [disabled]="isDisabled || isLoading"
+    (click)="addToCart()"
+  >
+    <span *ngIf="isLoading" class="loading-spinner"></span>
+    <span *ngIf="!isLoading && !isAdded">{{ buttonText }}</span>
+    <span *ngIf="!isLoading && isAdded">✓ Added to Cart</span>
+  </button>
+</div>

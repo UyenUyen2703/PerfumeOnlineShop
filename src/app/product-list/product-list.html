@@ -1,9 +1,28 @@
 <div class="product-list-container">
-  <div class="category">
-    <h2>Categories</h2>
+  <!-- Toggle button for mobile -->
+  <button
+    class="category-toggle"
+    (click)="toggleCategory()"
+    [class.active]="isCategoryOpen">
+    <span class="toggle-icon">☰</span>
+    <span class="toggle-text">Categories</span>
+  </button>
+
+  <!-- Overlay for mobile when category is open -->
+  <div class="category-overlay"
+       [class.active]="isCategoryOpen"
+       (click)="toggleCategory()"></div>
+
+  <div class="category" [class.open]="isCategoryOpen">
+    <div class="category-header">
+      <h2>Categories</h2>
+      <button class="close-btn" (click)="toggleCategory()">
+        <span>✕</span>
+      </button>
+    </div>
     <div class="category-buttons">
       <button
-        (click)="showAllProducts()"
+        (click)="showAllProducts(); closeCategoryOnMobile()"
         [class.active]="selectedCategory === null"
         class="category-button"
       >
@@ -12,7 +31,7 @@
       <h3>By Category</h3>
       <button
         *ngFor="let category of categories"
-        (click)="filterByCategory(category)"
+        (click)="filterByCategory(category); closeCategoryOnMobile()"
         [class.active]="selectedCategory === category"
         class="category-button"
       >
@@ -21,7 +40,7 @@
       <h3>By Brand</h3>
       <button
         *ngFor="let brand of brands"
-        (click)="filterByBrand(brand)"
+        (click)="filterByBrand(brand); closeCategoryOnMobile()"
         [class.active]="selectedCategory === brand"
         class="category-button"
       >

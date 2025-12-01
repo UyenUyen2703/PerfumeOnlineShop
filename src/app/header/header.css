@@ -29,6 +29,7 @@
 }
 
 .nav-links a {
+  font-family: var(--font-heading);
   text-decoration: none;
   color: rgb(0, 0, 0);
   font-weight: bold;

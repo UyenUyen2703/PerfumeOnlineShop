@@ -260,7 +260,6 @@ span.readonly-badge {
   background: #5a6268;
 }
 
-/* Validation styles */
 .edit-container {
   flex: 1;
   display: flex;
@@ -286,12 +285,10 @@ span.readonly-badge {
   line-height: 1.4;
 }
 
-/* Success feedback */
 .edit-input:valid:not(.error) {
   border-color: #28a745;
 }
 
-/* Phone number formatting helper */
 .phone-helper {
   font-size: 11px;
   color: #6c757d;
@@ -304,15 +301,34 @@ span.readonly-badge {
     align-items: center;
   }
 
-  .avatar-section {
+  .avatar-section, .user-info {
     flex: none;
-  }
-
-  .user-info {
     width: 100%;
   }
 
-  .edit-container {
-    width: 100%;
+  .avatar-container {
+    margin-bottom: 80px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .info-item label {
+    width: auto;
+    margin-bottom: 5px;
+  }
+
+  .edit-btn {
+    right: 5px;
+    top: 5px;
+    transform: none;
+  }
+
+  .readonly-field{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }

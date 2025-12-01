@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -24,9 +24,20 @@ export class Seller {
 
   sellerName: string = '';
   dropdownOpen: boolean = false;
+  mobileMenuOpen: boolean = false;
+
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
+
   logout() {
     try {
       this.authService.signOut();
@@ -37,5 +48,12 @@ export class Seller {
   }
   closeDropdown() {
     this.dropdownOpen = false;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth > 768) {
+      this.mobileMenuOpen = false;
+    }
   }
 }
