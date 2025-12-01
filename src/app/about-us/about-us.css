@@ -19,7 +19,13 @@
   left: 50%;
   width: 2px;
   height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(240, 46, 170, 0.3) 20%, rgba(240, 46, 170, 0.3) 80%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(240, 46, 170, 0.3) 20%,
+    rgba(240, 46, 170, 0.3) 80%,
+    transparent 100%
+  );
   transform: translateX(-50%);
   z-index: -1;
 }
@@ -38,13 +44,9 @@
   border: 1px solid rgba(240, 46, 170, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow:
-    rgba(240, 46, 170, 0.15) 0px 10px 30px,
-    rgba(240, 46, 170, 0.4) 5px 5px,
-    rgba(240, 46, 170, 0.3) 10px 10px,
-    rgba(240, 46, 170, 0.2) 15px 15px,
-    rgba(240, 46, 170, 0.1) 20px 20px,
-    rgba(240, 46, 170, 0.05) 25px 25px;
+  box-shadow: rgba(240, 46, 170, 0.15) 0px 10px 30px, rgba(240, 46, 170, 0.4) 5px 5px,
+    rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px,
+    rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
@@ -63,13 +65,9 @@
 
 .about-us-content:hover {
   transform: translateY(-10px) scale(1.02);
-  box-shadow:
-    rgba(240, 46, 170, 0.25) 0px 20px 50px,
-    rgba(240, 46, 170, 0.4) 8px 8px,
-    rgba(240, 46, 170, 0.3) 16px 16px,
-    rgba(240, 46, 170, 0.2) 24px 24px,
-    rgba(240, 46, 170, 0.1) 32px 32px,
-    rgba(240, 46, 170, 0.05) 40px 40px;
+  box-shadow: rgba(240, 46, 170, 0.25) 0px 20px 50px, rgba(240, 46, 170, 0.4) 8px 8px,
+    rgba(240, 46, 170, 0.3) 16px 16px, rgba(240, 46, 170, 0.2) 24px 24px,
+    rgba(240, 46, 170, 0.1) 32px 32px, rgba(240, 46, 170, 0.05) 40px 40px;
 }
 
 .about-us-content:hover::before {
@@ -79,23 +77,15 @@
 .about-us-content:nth-child(even) {
   flex-direction: row-reverse;
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(240, 46, 170, 0.05) 100%);
-  box-shadow:
-    rgba(240, 46, 170, 0.15) 0px 10px 30px,
-    rgba(240, 46, 170, 0.4) -5px 5px,
-    rgba(240, 46, 170, 0.3) -10px 10px,
-    rgba(240, 46, 170, 0.2) -15px 15px,
-    rgba(240, 46, 170, 0.1) -20px 20px,
-    rgba(240, 46, 170, 0.05) -25px 25px;
+  box-shadow: rgba(240, 46, 170, 0.15) 0px 10px 30px, rgba(240, 46, 170, 0.4) -5px 5px,
+    rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px,
+    rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;
 }
 
 .about-us-content:nth-child(even):hover {
-  box-shadow:
-    rgba(240, 46, 170, 0.25) 0px 20px 50px,
-    rgba(240, 46, 170, 0.4) -8px 8px,
-    rgba(240, 46, 170, 0.3) -16px 16px,
-    rgba(240, 46, 170, 0.2) -24px 24px,
-    rgba(240, 46, 170, 0.1) -32px 32px,
-    rgba(240, 46, 170, 0.05) -40px 40px;
+  box-shadow: rgba(240, 46, 170, 0.25) 0px 20px 50px, rgba(240, 46, 170, 0.4) -8px 8px,
+    rgba(240, 46, 170, 0.3) -16px 16px, rgba(240, 46, 170, 0.2) -24px 24px,
+    rgba(240, 46, 170, 0.1) -32px 32px, rgba(240, 46, 170, 0.05) -40px 40px;
 }
 
 .about-us-content:nth-child(odd) {
@@ -113,9 +103,7 @@
   height: 280px;
   object-fit: cover;
   border-radius: 20px;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 10px 20px rgba(240, 46, 170, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(240, 46, 170, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   flex-shrink: 0;
   position: relative;
@@ -137,9 +125,7 @@
 
 .about-us-image:hover {
   transform: scale(1.08) rotate(2deg);
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.15),
-    0 20px 40px rgba(240, 46, 170, 0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15), 0 20px 40px rgba(240, 46, 170, 0.2);
   border-color: rgba(240, 46, 170, 0.3);
 }
 
@@ -155,7 +141,7 @@
 
 .about-us-header h1,
 .about-us-header h2 {
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--font-title);
   color: #2c3e50;
   margin-bottom: 15px;
   font-weight: 600;
@@ -203,12 +189,17 @@
 }
 
 @keyframes sparkle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.2) rotate(180deg); }
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+  }
 }
 
 .about-us-header h4 {
-  font-family: 'Dancing Script', cursive;
+  font-family: var(--font-subtitle);
   font-weight: bold;
   font-size: 20px;
   color: #7f8c8d;
@@ -216,7 +207,7 @@
 }
 
 .about-us-header p {
-  font-family: 'Playwrite New Zealand', cursive;
+  font-family: var(--font-main);
   color: #555;
   line-height: 1.8;
   font-size: 1.1rem;
@@ -228,7 +219,7 @@
 }
 
 .about-us-list li {
-  font-family: 'Playwrite New Zealand', cursive;
+  font-family: var(--font-main);
   color: #555;
   margin: 10px 0;
   padding-left: 25px;
@@ -245,8 +236,13 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 /* Responsive Design */
