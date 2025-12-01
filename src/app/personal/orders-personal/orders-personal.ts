@@ -174,12 +174,27 @@ export class OrdersPersonal {
     }).format(amount);
   }
 
+  formatPhoneNumber(value: string): string {
+    if (!value) return '';
+    let phone = value.toString().replace(/\D/g, '');
+    if (!phone.startsWith('0')) {
+      phone = '0' + phone;
+    }
+    if (phone.length === 10) {
+      return phone.replace(/^0(\d{3})(\d{3})(\d{3})$/, '0$1 $2 $3');
+    } else if (phone.length === 11) {
+      return phone.replace(/^0(\d{2})(\d{4})(\d{4})$/, '0$1 $2 $3');
+    } else if (phone.length === 9 && phone.startsWith('0')) {
+      return phone.replace(/^0(\d{2})(\d{3})(\d{3})$/, '0$1 $2 $3');
+    }
+    return phone;
+  }
+
   customShowIdOrder(orderId: string): string {
-    const parts = orderId.split('-'); 
+    const parts = orderId.split('-');
     return parts[parts.length - 1];
   }
 
-  //Các hàm để dùng cho thumbnail click mở chi tiết đơn hàng
   openOrderDetail(order: OrderWithItems): void {
     this.selectedOrder = order;
     this.showOrderDetail = true;

@@ -3,13 +3,16 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: hsl(210, 17%, 98%);
   min-height: 100vh;
+  font-family: var(--font-main);
 }
 
 /* Page Header */
 .page-header {
   margin-bottom: 30px;
+  font-family: var(--font-heading);
+
 }
 
 .page-title {
@@ -45,6 +48,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-family: var(--font-heading);
 }
 
 .tab-button:hover {
@@ -144,6 +148,7 @@
   font-size: 16px;
   font-weight: 600;
   color: #333;
+  font-family: var(--font-main);
 }
 
 .order-status {
@@ -156,12 +161,16 @@
 }
 
 /* Status Colors */
-.status-pending, .status-processing, .status-confirmed {
+.status-pending,
+.status-processing,
+.status-confirmed {
   background-color: #fff3cd;
   color: #856404;
 }
 
-.status-shipped, .status-in_transit, .status-out_for_delivery {
+.status-shipped,
+.status-in_transit,
+.status-out_for_delivery {
   background-color: #d1ecf1;
   color: #0c5460;
 }
@@ -171,7 +180,8 @@
   color: #155724;
 }
 
-.status-cancelled, .status-refunded {
+.status-cancelled,
+.status-refunded {
   background-color: #f8d7da;
   color: #721c24;
 }
@@ -230,14 +240,17 @@
   color: #333;
   margin: 0 0 8px 0;
   line-height: 1.4;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  /* word-wrap: break-word; */
+  /* overflow-wrap: break-word; */
+  font-family: var(--font-productName);
+  letter-spacing: 0.3px;
 }
 
 .item-details {
   color: #6c757d;
   font-size: 14px;
   margin: 4px 0;
+  font-family: var(--font-main);
 }
 
 .item-price {
@@ -245,6 +258,7 @@
   font-weight: 600;
   font-size: 16px;
   margin: 8px 0 0 0;
+  font-family: var(--font-main);
 }
 
 /* Item Actions */
@@ -254,9 +268,11 @@
   gap: 8px;
   flex-shrink: 0;
   min-width: 90px;
+  font-family: var(--font-main);
 }
 
-.follow-btn, .review-btn {
+.follow-btn,
+.review-btn {
   padding: 8px 16px;
   border-radius: 6px;
   border: none;
@@ -267,6 +283,7 @@
   min-width: 80px;
   text-align: center;
   color: white;
+  font-family: var(--font-main);
 }
 
 .follow-btn {
@@ -295,17 +312,21 @@
   padding: 16px 24px 20px 24px;
   background-color: #f8f9fa;
   border-top: 1px solid #e9ecef;
+  font-family: var(--font-main);
 }
 
 .order-date {
   color: #6c757d;
   font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-main);
 }
 
 .order-total {
   color: #333;
   font-size: 16px;
   font-weight: 600;
+  font-family: var(--font-main);
 }
 
 /* Order Detail Overlay */
@@ -321,6 +342,7 @@
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
+  font-family: var(--font-main);
 }
 
 .order-detail-modal {
@@ -360,6 +382,7 @@
   color: #333;
   font-size: 18px;
   font-weight: 600;
+  font-family: var(--font-main);
 }
 
 .close-btn {
@@ -416,10 +439,10 @@
 .value {
   color: #333;
   text-align: right;
-  flex: 1;
 }
 
 .value.status {
+  width: fit-content;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -514,6 +537,7 @@
   padding: 16px 24px;
   border-top: 1px solid #eee;
   background: #f8f9fa;
+  font-family: var(--font-main);
 }
 
 .btn-secondary,
@@ -525,6 +549,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: var(--font-main);
 }
 
 .btn-secondary {
@@ -556,7 +581,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.close-button{
+.close-button {
   cursor: pointer;
   transition: color 0.2s ease;
   background-color: transparent;
@@ -592,7 +617,8 @@
     min-width: auto;
   }
 
-  .follow-btn, .review-btn {
+  .follow-btn,
+  .review-btn {
     padding: 6px 12px;
     font-size: 12px;
     min-width: 70px;
@@ -606,8 +632,6 @@
     padding: 16px;
   }
 }
-
-
 
 @media (max-width: 480px) {
   .orders-container {
@@ -649,7 +673,8 @@
     justify-content: flex-end;
   }
 
-  .follow-btn, .review-btn {
+  .follow-btn,
+  .review-btn {
     padding: 6px 10px;
     font-size: 11px;
     min-width: 60px;

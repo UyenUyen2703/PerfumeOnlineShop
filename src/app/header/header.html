@@ -1,4 +1,9 @@
 <div class="header-container">
+  <div class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </div>
   <div class="logo">
     <a routerLink="/">
       <img src="assets/images/logoLT.png" alt="Perfume Online Shop Logo" class="logo-image" />
@@ -6,37 +11,68 @@
   </div>
 
   <div class="nav-links" [class.mobile-open]="mobileMenuOpen">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">Home</a>
-    <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()">Our Best Products</a>
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMobileMenu()"
+      >Home</a
+    >
+    <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()"
+      >Our Best Products</a
+    >
     <a routerLink="/perfume" routerLinkActive="active" (click)="closeMobileMenu()">Perfume</a>
-    <a routerLink="/collections" routerLinkActive="active" (click)="closeMobileMenu()">Collections</a>
+    <a routerLink="/collections" routerLinkActive="active" (click)="closeMobileMenu()"
+      >Collections</a
+    >
     <a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()">About Us</a>
     <a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">Contact</a>
   </div>
 
   <div class="user-actions">
-    <a (click)="checkLogin()" class="login-link">
+    <!-- Personal Dropdown -->
+    <div class="personal-dropdown" *ngIf="isLoggedIn" (click)="togglePersonalDropdown()">
+      <img src="assets/icon/user-icon.png" alt="User Login" class="icon" />
+      <div class="dropdown-menu" [class.show]="personalDropdownOpen">
+        <a routerLink="/personal" class="dropdown-item" (click)="closePersonalDropdown()">
+          <i class="fas fa-user"></i>
+          <span>Personal Info</span>
+        </a>
+        <a routerLink="/personal/orders" class="dropdown-item" (click)="closePersonalDropdown()">
+          <i class="fas fa-shopping-bag"></i>
+          <span>My Orders</span>
+        </a>
+        <a routerLink="/cart" class="dropdown-item" (click)="closePersonalDropdown()">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Cart</span>
+        </a>
+        <a routerLink="/personal/favorites" class="dropdown-item" (click)="closePersonalDropdown()">
+          <i class="fas fa-heart"></i>
+          <span>Favorite</span>
+        </a>
+        <div class="dropdown-divider"></div>
+        <a (click)="logout(); closePersonalDropdown()" class="dropdown-item logout-item">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Login link for non-logged users -->
+    <a *ngIf="!isLoggedIn" (click)="checkLogin()" class="login-link">
       <img src="assets/icon/user-icon.png" alt="User Login" class="icon" />
     </a>
 
-     <a routerLink="/search" class="login-link">
+    <a routerLink="/search" class="login-link">
       <img src="assets/icon/search.png" alt="User search" class="icon" />
     </a>
-
-     <a routerLink="/favoriteList" class="login-link">
-      <img src="assets/icon/heart.png" alt="User favorite list" class="icon" />
-    </a>
-
-    <a *ngIf="isLoggedIn" routerLink="/cart" class="cart-link">
-      <img src="assets/icon/cart-icon.png" alt="Shopping Cart" class="icon" />
-    </a>
-
-    <a *ngIf="isLoggedIn" (click)="logout()" class="logout">Logout</a>
 
     <a *ngIf="!isLoggedIn" routerLink="/login" class="login-btn">Login</a>
   </div>
 
-  <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
-    <span>☰</span>
-  </button>
+  <div
+    class="mobile-menu-overlay"
+    [class.active]="mobileMenuOpen"
+    (click)="closeMobileMenu()"
+  ></div>
 </div>

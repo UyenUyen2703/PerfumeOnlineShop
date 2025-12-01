@@ -830,3 +830,99 @@
     font-size: 1.2rem;
   }
 }
+
+/* Validation Styles */
+.input-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.input-group input.error,
+.input-group textarea.error {
+  border: 2px solid #dc3545;
+  background-color: #fff5f5;
+  box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.15);
+  animation: shake 0.3s ease-in-out;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Shake animation for error inputs */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Slide down animation for error messages */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-hint {
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+/* Valid styles - green border when valid */
+.input-group input.valid,
+.input-group textarea.valid {
+  border: 2px solid #28a745 !important;
+  background-color: #f8fff9 !important;
+  box-shadow: 0 0 0 0.3rem rgba(40, 167, 69, 0.15) !important;
+}
+
+/* Default valid state for HTML5 validation */
+.input-group input:valid:not(.error),
+.input-group textarea:valid:not(.error) {
+  border-color: #28a745;
+  background-color: #f8fff9;
+}
+
+/* Error styles have higher priority */
+.input-group input.error,
+.input-group textarea.error {
+  border: 2px solid #dc3545 !important;
+  background-color: #fff5f5 !important;
+  box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.15) !important;
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Hide error message only when valid AND no error class */
+.input-group input:valid:not(.error) + .error-message,
+.input-group textarea:valid:not(.error) + .error-message {
+  display: none;
+}
+
+/* Phone number specific styling */
+input[type="tel"] {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+/* Address textarea specific styling */
+textarea[placeholder*="Số nhà"] {
+  resize: vertical;
+  min-height: 80px;
+}

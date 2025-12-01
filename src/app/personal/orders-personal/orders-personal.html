@@ -3,7 +3,6 @@
     <h2 class="page-title">My Orders</h2>
   </div>
 
-  <!-- Tab Navigation -->
   <div class="order-tabs">
     <button
       class="tab-button"
@@ -28,17 +27,14 @@
     </button>
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="filteredOrders.length === 0" class="no-orders">
     <div class="empty-icon">📦</div>
     <p class="empty-message">You have no {{ activeTab }} orders yet.</p>
     <a routerLink="/product-list" class="shop-link">Start Shopping</a>
   </div>
 
-  <!-- Orders List -->
   <div *ngIf="filteredOrders.length > 0" class="orders-list">
     <div *ngFor="let order of filteredOrders" class="order-card" (click)="openOrderDetail(order)">
-      <!-- Order Header -->
       <div class="order-header">
         <div class="order-id">
           <strong>#{{ customShowIdOrder(order.order_id || '') }}</strong>
@@ -82,17 +78,13 @@
   </div>
 </div>
 
-<!-- Thêm phần overlay -->
 <div class="order-detail-overlay" *ngIf="showOrderDetail" (click)="closeOnOverlayClick($event)">
   <div class="order-detail-modal">
-    <!-- header -->
     <div class="modal-header">
-      <h3>Order Details - #{{ selectedOrder?.order_id }}</h3>
+      <h3>Order Details - #{{ customShowIdOrder(selectedOrder?.order_id || '') }}</h3>
       <button class="close-button" (click)="closeOrderDetail()">X</button>
     </div>
-    <!-- body -->
     <div class="modal-content">
-      <!-- Infor order -->
       <div class="order-info-section">
         <div class="info-row">
           <span class="label">Status:</span>
@@ -110,7 +102,7 @@
         </div>
         <div class="info-row">
           <span class="label">Recipient Phone:</span>
-          <span class="value">{{ selectedOrder?.recipient_Phone || '' }}</span>
+          <span class="value">{{ formatPhoneNumber(selectedOrder?.recipient_Phone || '') }}</span>
         </div>
         <div class="info-row">
           <span class="label">Delivery Address:</span>
@@ -122,7 +114,6 @@
         </div>
       </div>
 
-      <!-- Danh sách sản phẩm -->
       <div class="products-section">
         <h4>Products Ordered</h4>
         <div class="product-list">
@@ -145,7 +136,6 @@
         </div>
       </div>
 
-      <!-- Tổng tiền -->
       <div class="order-summary">
         <div class="total-amount">
           <span class="label">Total Amount:</span>
@@ -154,7 +144,6 @@
       </div>
     </div>
 
-    <!-- Footer với các actions -->
     <div class="modal-footer">
       <button class="btn-secondary" (click)="closeOrderDetail()">Close</button>
       <button class="btn-primary" (click)="followOrder(selectedOrder?.order_id!)">

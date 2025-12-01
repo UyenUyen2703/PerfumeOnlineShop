@@ -1,7 +1,8 @@
 import { AuthService } from './../services/auth.service';
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +14,7 @@ export class Header implements OnInit {
   isLoggedIn = false;
   currentUser: any = null;
   mobileMenuOpen = false;
+  personalDropdownOpen = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -35,6 +37,14 @@ export class Header implements OnInit {
         this.currentUser = null;
       }
     });
+
+    // Close dropdowns on route change
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.personalDropdownOpen = false;
+        this.mobileMenuOpen = false;
+      });
   }
 
   async checkAuthState() {
@@ -73,5 +83,22 @@ export class Header implements OnInit {
 
   closeMobileMenu() {
     this.mobileMenuOpen = false;
+  }
+
+  togglePersonalDropdown() {
+    this.personalDropdownOpen = !this.personalDropdownOpen;
+  }
+
+  closePersonalDropdown() {
+    this.personalDropdownOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const dropdown = target.closest('.personal-dropdown');
+    if (!dropdown) {
+      this.personalDropdownOpen = false;
+    }
   }
 }

@@ -53,29 +53,50 @@
           <input
             id="recipientName"
             type="text"
-            placeholder="Enter recipient name"
+            placeholder="Nhập họ tên đầy đủ"
             [(ngModel)]="recipientName"
+            (input)="onNameInput()"
+            (blur)="onNameInput()"
+            [class.error]="!!nameError"
+            [class.valid]="!nameError && recipientName.trim().length > 0"
+            maxlength="50"
             required />
+          <div class="error-message" *ngIf="nameError">{{ nameError }}</div>
         </div>
 
         <div class="input-group">
           <label for="recipientPhone">Recipient Phone *</label>
           <input
             id="recipientPhone"
-            type="text"
-            placeholder="Enter recipient phone"
+            type="tel"
+            placeholder="0987654321 (10 số)"
             [(ngModel)]="recipientPhone"
+            (input)="onPhoneInput()"
+            (blur)="onPhoneInput()"
+            [class.error]="!!phoneError"
+            [class.valid]="!phoneError && recipientPhone.trim().length > 0"
+            maxlength="11"
+            pattern="[0-9]*"
             required />
+          <div class="error-message" *ngIf="phoneError">{{ phoneError }}</div>
+          <small class="input-hint">Enter a 10-digit phone number starting with 0</small>
         </div>
 
         <div class="input-group">
           <label for="address">Delivery Address *</label>
           <textarea
             id="address"
-            placeholder="Enter full delivery address"
+            placeholder="E.g., 123 Nguyen Hue Street, Ben Nghe Ward, District 1, Ho Chi Minh City"
             rows="3"
             [(ngModel)]="address"
+            (input)="onAddressInput()"
+            (blur)="onAddressInput()"
+            [class.error]="!!addressError"
+            [class.valid]="!addressError && address.trim().length > 0"
+            maxlength="200"
             required></textarea>
+          <div class="error-message" *ngIf="addressError">{{ addressError }}</div>
+          <small class="input-hint">Please enter complete information: house number + street + ward/commune + district/city</small>
         </div>
       <div class="summary-row total-row">
         <span class="label">CART TOTAL</span>
@@ -93,9 +114,10 @@
 
       <button
         class="checkout-btn"
-        [disabled]="!agreeToTerms || isCartEmpty() || !address.trim() || !recipientName.trim() || !recipientPhone.trim()"
+        [disabled]="isProcessing || !agreeToTerms || isCartEmpty() || !address.trim() || !recipientName.trim() || !recipientPhone.trim() || phoneError || addressError || nameError"
         (click)="checkout()">
-        CHECKOUT 🔒
+        <span *ngIf="isProcessing">⏳ Processing...</span>
+        <span *ngIf="!isProcessing">CHECKOUT 🔒</span>
       </button>
 
       <div class="paypal-section">
@@ -105,7 +127,6 @@
   </div>
 </div>
 
-<!-- Invoice Overlay -->
 <div class="invoice-overlay" [class.show]="showInvoiceOverlay" (click)="closeInvoiceOverlay()">
   <div class="invoice-container" (click)="$event.stopPropagation()">
     <div class="invoice-header">

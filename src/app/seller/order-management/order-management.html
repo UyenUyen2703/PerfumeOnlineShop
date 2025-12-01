@@ -1,35 +1,84 @@
-<igx-grid [data]="order" class="data">
-  <igx-column field="order_id" header="Order ID" dataType="string" width="200px"></igx-column>
-  <igx-column
-    field="recipient_Name"
-    header="Recipient Name"
-    dataType="string"
-    width="200px"
-  ></igx-column>
-  <igx-column
-    field="recipient_Phone"
-    header="Recipient Phone"
-    dataType="string"
-    width="150px"
-  ></igx-column>
-  <igx-column field="address" header="Address" dataType="string" width="300px"></igx-column>
-  <igx-column field="total_amount" header="Total Amount" dataType="number" width="150px">
-    <ng-template igxCell let-cell="cell">
-      {{ formatToCurrency(cell.value) }}
-    </ng-template>
-  </igx-column>
-  <igx-column field="note" header="Note" dataType="string" width="250px"></igx-column>
-  <igx-column field="status" header="Status" dataType="string" width="150px">
-    <ng-template igxCell let-cell="cell">
-      <select
-        class="status-dropdown"
-        [value]="cell.value"
-        (change)="updateOrderStatus(cell.row.data.order_id, $any($event.target).value)"
-      >
-        <option *ngFor="let status of statusOptions" [value]="status.value">
-          {{ status.label }}
-        </option>
-      </select>
-    </ng-template>
-  </igx-column>
-</igx-grid>
+<div class="order-management-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading orders...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+    <button class="retry-btn" (click)="loadOrders()" *ngIf="!isLoading">
+      <i class="fas fa-redo"></i>
+      Retry
+    </button>
+  </div>
+
+  <!-- Orders Grid -->
+  <div *ngIf="!isLoading && !errorMessage" class="grid-container">
+    <igx-grid
+      [data]="order"
+      class="data"
+      *ngIf="order.length > 0"
+      [height]="'600px'"
+      [width]="'100%'"
+      [autoGenerate]="false"
+    >
+      <igx-column field="order_id" header="Order ID" dataType="string" width="200px"></igx-column>
+      <igx-column
+        field="recipient_Name"
+        header="Recipient Name"
+        dataType="string"
+        width="200px"
+      ></igx-column>
+
+      <igx-column field="recipient_Phone" header="Recipient Phone" dataType="string" width="150px">
+        <ng-template igxCell let-cell="cell">
+          {{ formatPhoneNumber(cell.value)  }}
+        </ng-template>
+      </igx-column>
+      <igx-column field="address" header="Address" dataType="string" width="300px"></igx-column>
+      <igx-column field="total_amount" header="Total Amount" dataType="number" width="150px">
+        <ng-template igxCell let-cell="cell">
+          {{ formatToCurrency(cell.value) }}
+        </ng-template>
+      </igx-column>
+      <igx-column field="note" header="Note" dataType="string" width="250px"></igx-column>
+      <igx-column field="status" header="Status" dataType="string" width="180px">
+        <ng-template igxCell let-cell="cell">
+          <select
+            class="status-dropdown"
+            [value]="cell.row.data.status || 'pending'"
+            (change)="updateOrderStatus(cell.row.data.order_id, $any($event.target).value)"
+            [disabled]="isLoading || isUpdating"
+          >
+            <option
+              *ngFor="let status of statusOptions"
+              [value]="status.value"
+              [selected]="status.value === (cell.row.data.status || 'pending')"
+            >
+              {{ status.label }}
+            </option>
+          </select>
+        </ng-template>
+      </igx-column>
+      <igx-column field="created_at" header="Order Date" dataType="date" width="260px">
+        <ng-template igxCell let-cell="cell">
+          {{ cell.value | date : 'short' }}
+        </ng-template>
+      </igx-column>
+    </igx-grid>
+
+    <!-- Empty State -->
+    <div *ngIf="order.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <h3>No Orders Found</h3>
+      <p>You don't have any orders yet. Orders containing your products will appear here.</p>
+    </div>
+  </div>
+</div>

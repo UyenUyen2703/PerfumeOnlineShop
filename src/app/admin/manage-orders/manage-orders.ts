@@ -43,6 +43,11 @@ export class ManageOrders {
     }).format(value);
   }
 
+  formatPhoneNumber(value: number): string {
+    if (!value) return '';
+    return value.toString().replace(/0(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+  }
+
   $any(value: any): any {
     return value;
   }

@@ -11,6 +11,7 @@ import { supabase } from '../../env/enviroment';
 export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
+  private isProcessingPayment = false;
 
   constructor(
     private authService: AuthService,
@@ -135,6 +136,12 @@ export class CartService {
   }
 
   async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<{orderId: string, items: CartItem[], total: number}> {
+    if (this.isProcessingPayment) {
+      throw new Error('Payment already in progress. Please wait...');
+    }
+
+    this.isProcessingPayment = true;
+
     try {
       const user = await this.authService.getUser();
       const item = this.getCartItems();
@@ -142,7 +149,6 @@ export class CartService {
         throw new Error('User not authenticated');
       }
 
-      // Validate required fields
       if (!address.trim()) {
         throw new Error('Delivery address is required');
       }
@@ -155,12 +161,10 @@ export class CartService {
         throw new Error('Recipient phone is required');
       }
 
-      // Kiểm tra tồn kho trước khi đặt hàng (chỉ cảnh báo, không chặn)
       try {
         const stockValidation = await this.productService.validateStockAvailability(item);
         if (!stockValidation.valid) {
           console.warn('Stock validation warnings:', stockValidation.errors);
-          // Vẫn cho phép đặt hàng nhưng ghi log cảnh báo
         }
       } catch (stockError) {
         console.warn('Could not validate stock, proceeding with order:', stockError);
@@ -176,9 +180,7 @@ export class CartService {
         status: 'Pending',
       };
 
-      console.log('Order payload:', orderPayload);
 
-      // Tạo đơn hàng
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([orderPayload])
@@ -189,7 +191,6 @@ export class CartService {
       }
       const orderId = orderData.order_id;
 
-      // Tạo order items
       const orderItems = item.map((CartItem) => ({
         order_id: orderId,
         product_id: CartItem.product_id,
@@ -205,24 +206,19 @@ export class CartService {
         throw error;
       }
 
-      // Cập nhật số lượng sản phẩm (trừ đi số lượng đã mua)
       try {
         await this.productService.updateMultipleProductQuantities(item);
-        console.log('Product quantities updated successfully after purchase');
       } catch (quantityError) {
-        // Nếu cập nhật số lượng thất bại, chỉ log lỗi không chặn đơn hàng
         console.error('Error updating product quantities:', quantityError);
         console.warn('Order completed but inventory may not be updated');
       }
 
-      // Lưu thông tin đơn hàng để trả về
       const orderInfo = {
         orderId: orderId,
-        items: [...item], // Copy items trước khi clear cart
+        items: [...item],
         total: this.getCartTotal()
       };
 
-      // Xóa giỏ hàng sau khi đặt hàng thành công
       this.clearCart();
 
       return orderInfo;
@@ -230,6 +226,8 @@ export class CartService {
     } catch (error) {
       console.error('Error during payment process:', error);
       throw error;
+    } finally {
+      this.isProcessingPayment = false;
     }
   }
 }

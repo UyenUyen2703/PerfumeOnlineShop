@@ -1,0 +1,100 @@
+<div class="product-management-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+    <button class="retry-btn" (click)="loadProducts()" *ngIf="!isLoading">
+      <i class="fas fa-redo"></i>
+      Retry
+    </button>
+  </div>
+
+  <!-- Success State -->
+  <div *ngIf="successMessage" class="success-container">
+    <div class="success-message">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+  </div>
+
+  <!-- Updating State -->
+  <div *ngIf="isUpdating" class="updating-container">
+    <div class="updating-message">
+      <i class="fas fa-spinner fa-spin"></i>
+      Updating quantity...
+    </div>
+  </div>
+
+  <!-- products Grid -->
+  <div *ngIf="!isLoading && !errorMessage" class="grid-container">
+    <igx-grid
+      #grid
+      [data]="product"
+      class="data"
+      *ngIf="product.length > 0"
+      [height]="'600px'"
+      [width]="'100%'"
+      [autoGenerate]="false"
+      (cellEditDone)="onCellEditDone($event)"
+    >
+      <igx-column
+        field="product_id"
+        header="product ID"
+        dataType="string"
+        width="200px"
+      ></igx-column>
+      <igx-column
+        field="name"
+        header="Product Name"
+        dataType="string"
+        width="250px"
+      ></igx-column>
+      <igx-column
+        field="categories.name"
+        header="Category"
+        dataType="string"
+        width="200px"
+      ></igx-column>
+      <igx-column field="brands.name" header="Brand" dataType="string" width="150px"></igx-column>
+      <igx-column field="price" header="Price" dataType="number" width="150px">
+        <ng-template igxCell let-cell="cell">
+          {{ formatToCurrency(cell.value * 1000) }}
+        </ng-template>
+      </igx-column>
+
+      <igx-column
+        field="quantity"
+        header="Quantity"
+        dataType="number"
+        width="150px" [editable]="true"
+      ></igx-column>
+      <igx-column field="created_at" header="Created At" dataType="string" width="200px">
+        <ng-template igxCell let-cell="cell">
+          {{ cell.value | date : 'dd/MM/yyyy' }}
+        </ng-template>
+      </igx-column>
+      <igx-column field="updated_at" header="Updated At" dataType="string" width="200px">
+        <ng-template igxCell let-cell="cell">
+          {{ cell.value | date : 'dd/MM/yyyy' }}
+        </ng-template>
+      </igx-column>
+    </igx-grid>
+
+    <!-- Empty State -->
+    <div *ngIf="product.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <h3>No products Found</h3>
+      <p>You don't have any products yet. products containing your products will appear here.</p>
+    </div>
+  </div>
+</div>
