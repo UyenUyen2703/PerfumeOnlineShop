@@ -11,4 +11,13 @@ export interface User {
   updated_at: string;
 }
 
-
+export interface RegisterData {
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+  password: string;
+  confirmPassword: string;
+  avatar_url: string;
+  gender: string;
+}

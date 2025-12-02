@@ -7,6 +7,33 @@ import { User } from '../../type/user';
   providedIn: 'root',
 })
 export class AuthService {
+  async register(username: string, gender: string, phone: number, address: string, email: string, password: string) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: username,
+          phone: phone.toString(),
+          address: address,
+          user_type: 'customer',
+          gender: gender,
+        }
+      }
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  async signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  }
+
   async signInWithGoogle(): Promise<void> {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -19,6 +46,13 @@ export class AuthService {
   async getUserId(): Promise<string | null> {
     const { data } = await supabase.auth.getUser();
     return data.user ? data.user.id : null;
+  }
+
+  async signInWithFacebook(): Promise<void> {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+    });
+    if (error) throw error;
   }
 
   async uploadAvatarFromUrl(userId: string, avatarUrl: string): Promise<string | null> {
@@ -85,11 +119,11 @@ export class AuthService {
       const newUser: User = {
         user_id: user.id,
         email: user.email,
-        full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.username || null,
         phone: user.user_metadata?.phone || null,
         address: user.user_metadata?.address || null,
         gender: user.user_metadata?.gender || null,
-        avatar_url: avatarStorageUrl || user.user_metadata?.avatar_url || null,
+        avatar_url: avatarStorageUrl && avatarStorageUrl.trim() !== '' ? avatarStorageUrl : null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         role: user.user_metadata?.user_type || 'customer',

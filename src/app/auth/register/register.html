@@ -1,30 +1,158 @@
 <div class="register-container">
   <div class="register-box">
     <h2>Register</h2>
-    <form class="register-form">
+    <form class="register-form" (ngSubmit)="onRegister()" #registerForm="ngForm">
+      <div class="avatar-upload-group">
+        <label for="avatar_url" class="avatar-label">
+          <i class="icon-camera"></i>
+          <span>Choose Avatar</span>
+        </label>
+        <input
+          type="file"
+          id="avatar_url"
+          name="avatar_url"
+          accept="image/*"
+          (change)="onAvatarSelected($event)"
+          class="avatar-input"
+        />
+        <div class="avatar-preview" *ngIf="selectedAvatarUrl">
+          <img [src]="selectedAvatarUrl" alt="Avatar Preview" class="avatar-image" />
+          <button type="button" class="remove-avatar" (click)="removeAvatar()">
+            <i class="icon-close">x</i>
+          </button>
+        </div>
+      </div>
       <div class="input-group">
         <i class="icon-user"></i>
-        <input type="text" id="username" name="username" placeholder="Username" />
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Username"
+          [(ngModel)]="registerData.username"
+          required
+          minlength="3"
+          #username="ngModel"
+        />
+        <div class="error-message" *ngIf="username.invalid && username.touched">
+          <small *ngIf="username.errors?.['required']">Username is required</small>
+          <small *ngIf="username.errors?.['minlength']"
+            >Username must be at least 3 characters</small
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="icon-user"></i>
-        <input type="text" id="email" name="email" placeholder="Email" />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Email"
+          [(ngModel)]="registerData.email"
+          required
+          email
+          #email="ngModel"
+        />
+        <div class="error-message" *ngIf="email.invalid && email.touched">
+          <small *ngIf="email.errors?.['required']">Email is required</small>
+          <small *ngIf="email.errors?.['email']">Please enter a valid email</small>
+        </div>
+      </div>
+      <div class="gender-group">
+        <label class="gender-label">Gender:</label>
+        <div class="gender-options">
+          <div class="gender-option">
+            <input
+              type="radio"
+              id="male"
+              name="gender"
+              value="Male"
+              [(ngModel)]="registerData.gender"
+              required
+            />
+            <label for="male" data-icon="👨">Male</label>
+          </div>
+          <div class="gender-option">
+            <input
+              type="radio"
+              id="female"
+              name="gender"
+              value="Female"
+              [(ngModel)]="registerData.gender"
+              required
+            />
+            <label for="female" data-icon="👩">Female</label>
+          </div>
+          <div class="gender-option">
+            <input
+              type="radio"
+              id="other"
+              name="gender"
+              value="Other"
+              [(ngModel)]="registerData.gender"
+              required
+            />
+            <label for="other" data-icon="👤">Other</label>
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <i class="icon-user"></i>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="Phone"
+          [(ngModel)]="registerData.phone"
+          required
+          pattern="[0-9]{10,11}"
+          #phone="ngModel"
+        />
+        <div class="error-message" *ngIf="phone.invalid && phone.touched">
+          <small *ngIf="phone.errors?.['required']">Phone is required</small>
+          <small *ngIf="phone.errors?.['pattern']">Phone must be 10-11 digits</small>
+        </div>
       </div>
 
       <div class="input-group">
         <i class="icon-user"></i>
-        <input type="text" id="phone" name="phone" placeholder="Phone" />
-      </div>
-
-      <div class="input-group">
-        <i class="icon-user"></i>
-        <input type="text" id="address" name="address" placeholder="Address" />
+        <input
+          type="text"
+          id="address"
+          name="address"
+          placeholder="Address"
+          [(ngModel)]="registerData.address"
+          required
+          minlength="10"
+          #address="ngModel"
+        />
+        <div class="error-message" *ngIf="address.invalid && address.touched">
+          <small *ngIf="address.errors?.['required']">Address is required</small>
+          <small *ngIf="address.errors?.['minlength']"
+            >Address must be at least 10 characters</small
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="icon-lock"></i>
-        <input type="password" id="password" name="password" placeholder="Password" />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          [(ngModel)]="registerData.password"
+          required
+          minlength="6"
+          #password="ngModel"
+        />
+        <div class="error-message" *ngIf="password.invalid && password.touched">
+          <small *ngIf="password.errors?.['required']">Password is required</small>
+          <small *ngIf="password.errors?.['minlength']"
+            >Password must be at least 6 characters</small
+          >
+        </div>
       </div>
 
       <div class="input-group">
@@ -34,12 +162,41 @@
           id="confirm-password"
           name="confirm-password"
           placeholder="Confirm Password"
+          [(ngModel)]="registerData.confirmPassword"
+          required
+          #confirmPassword="ngModel"
         />
+        <div class="error-message" *ngIf="confirmPassword.invalid && confirmPassword.touched">
+          <small *ngIf="confirmPassword.errors?.['required']">Confirm password is required</small>
+        </div>
+        <div
+          class="error-message"
+          *ngIf="registerData.password !== registerData.confirmPassword && confirmPassword.touched"
+        >
+          <small>Passwords do not match</small>
+        </div>
+      </div>
+      <div class="error-message" *ngIf="errorMessage">
+        <small>{{ errorMessage }}</small>
+      </div>
+      <div class="success-message" *ngIf="successMessage">
+        <small>{{ successMessage }}</small>
       </div>
       <div>
         <p>Already have an account? <a routerLink="/login" class="login">Sign in</a></p>
       </div>
-      <button type="submit" class="register-btn">Sign up</button>
+      <button
+        type="submit"
+        class="register-btn"
+        [disabled]="
+          registerForm.invalid ||
+          isLoading ||
+          registerData.password !== registerData.confirmPassword
+        "
+      >
+        <span *ngIf="!isLoading">Sign up</span>
+        <span *ngIf="isLoading">Creating account...</span>
+      </button>
     </form>
   </div>
   <div class="register-banner-container">
