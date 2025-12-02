@@ -68,11 +68,9 @@ export class PersonalInfor implements OnInit {
       return false;
     }
 
-    // Convert to string and remove all non-digit characters
     const phoneStr = phone.toString();
     const cleanPhone = phoneStr.replace(/\D/g, '');
 
-    // Check if at least 10 digits (more flexible)
     if (cleanPhone.length < 10) {
       this.validationErrors['phone'] = 'Phone number must be at least 10 digits';
       return false;
@@ -122,7 +120,6 @@ export class PersonalInfor implements OnInit {
       return false;
     }
 
-    // Check for some common Vietnamese address keywords
     const vietnameseAddressKeywords = [
       'đường',
       'phố',
@@ -169,7 +166,6 @@ export class PersonalInfor implements OnInit {
       return false;
     }
 
-    // Only allow letters, spaces, and Vietnamese characters
     const namePattern = /^[a-zA-ZÀ-ÿĂăÂâÊêÔôƠơƯưĐđ\s]+$/;
 
     if (!namePattern.test(name)) {
@@ -195,9 +191,13 @@ export class PersonalInfor implements OnInit {
   }
 
   getAvatarUrl(): string | null {
-    if (this.userProfile?.avatar_URL) {
-      return this.authService.getAvatarUrl(this.userProfile.avatar_URL);
+    if (this.userProfile?.avatar_url) {
+      if (!this.userProfile.avatar_url.startsWith('http')) {
+        return this.authService.getAvatarUrl(this.userProfile.avatar_url);
+      }
+      return this.userProfile.avatar_url;
     }
+
     if (this.user?.user_metadata?.avatar_url) {
       return this.user.user_metadata.avatar_url;
     }
@@ -223,14 +223,14 @@ export class PersonalInfor implements OnInit {
       const newAvatarUrl = await this.authService.uploadAvatarFromFile(this.user.id, file);
 
       if (newAvatarUrl) {
-        if (this.userProfile?.avatar_URL && !this.userProfile.avatar_URL.startsWith('http')) {
-          await this.authService.deleteAvatarFromStorage(this.userProfile.avatar_URL);
+        if (this.userProfile?.avatar_url && !this.userProfile.avatar_url.startsWith('http') ) {
+          await this.authService.deleteAvatarFromStorage(this.userProfile.avatar_url);
         }
 
         const success = await this.authService.updateUserAvatar(this.user.id, newAvatarUrl);
         if (success) {
           if (this.userProfile) {
-            this.userProfile.avatar_URL = newAvatarUrl;
+            this.userProfile.avatar_url = newAvatarUrl;
           }
           await this.loadUser();
         } else {
@@ -282,7 +282,6 @@ export class PersonalInfor implements OnInit {
     const valueStr = value.toString();
     let isValid = true;
 
-    // Validate based on field type
     switch (field) {
       case 'phone':
         isValid = this.validatePhone(value);
@@ -294,7 +293,7 @@ export class PersonalInfor implements OnInit {
         isValid = this.validateFullName(valueStr);
         break;
       case 'gender':
-        isValid = valueStr !== ''; // Gender just needs to be selected
+        isValid = valueStr !== '';
         if (!isValid) {
           this.validationErrors['gender'] = 'Please select a gender';
         } else {
@@ -303,7 +302,6 @@ export class PersonalInfor implements OnInit {
         break;
     }
 
-    // If validation fails, don't save
     if (!isValid) {
       console.error('Validation failed for field:', field, this.validationErrors[field]);
       return;
@@ -315,11 +313,10 @@ export class PersonalInfor implements OnInit {
         updated_at: new Date().toISOString(),
       };
 
-      // For phone, save clean digits as string (preserve leading zeros)
       if (field === 'phone' && this.tempUserData.phone) {
         const phoneStr = this.tempUserData.phone.toString();
         const cleanPhone = phoneStr.replace(/\D/g, '');
-        updateData.phone = cleanPhone; // Keep as string to preserve leading zero
+        updateData.phone = cleanPhone;
       }
 
       const { data, error } = await supabase
@@ -349,16 +346,13 @@ export class PersonalInfor implements OnInit {
   formatPhoneNumber(phone: string | number | null): string {
     if (!phone) return 'Not provided';
 
-    // Convert to string first to handle both string and number inputs
     const phoneStr = phone.toString();
     const digits = phoneStr.replace(/\D/g, '');
 
-    // Format Vietnamese phone number: 0xxx xxx xxx
     if (digits.length === 10 && digits.startsWith('0')) {
       return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
     }
 
-    // If 11 digits (with country code): +84 xxx xxx xxx
     if (digits.length === 11 && digits.startsWith('84')) {
       return `+84 ${digits.slice(2, 5)} ${digits.slice(5, 8)} ${digits.slice(8)}`;
     }

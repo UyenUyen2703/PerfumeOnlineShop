@@ -25,10 +25,10 @@ export class Supabase {
     const { data, error } = await supabase.from('products').select(`
         *,
         brands (
-          id,
+          brand_id,
           name
         ), categories (
-          id,
+          category_id,
           name
         )
       `);
@@ -46,7 +46,6 @@ export class Supabase {
           brand_id,
           name
         ), categories (
-          id,
           category_id,
           name
         )
@@ -66,7 +65,7 @@ export class Supabase {
           `
           *,
           categories!inner (
-            id,
+            category_id,
             name
           )
         `
@@ -79,7 +78,7 @@ export class Supabase {
 
       const { data: categoryData, error: categoryError } = await supabase
         .from('categories')
-        .select('id, category_id')
+        .select('category_id')
         .eq('name', categoryName)
         .single();
 
@@ -89,12 +88,11 @@ export class Supabase {
       }
       let products = [];
 
-      if (categoryData.id) {
+      if (categoryData.category_id) {
         const { data: productsById } = await supabase
           .from('products')
           .select('*')
-          .eq('category_id', categoryData.id);
-
+          .eq('category_id', categoryData.category_id);
         if (productsById && productsById.length > 0) {
           products = productsById;
         }
@@ -126,7 +124,7 @@ export class Supabase {
           `
           *,
           brands!inner (
-            id,
+            brand_id,
             name, logo_url
           )
         `
@@ -137,7 +135,7 @@ export class Supabase {
       }
       const { data: brandData, error: brandError } = await supabase
         .from('brands')
-        .select('id, brand_id')
+        .select('brand_id')
         .eq('name', brandName)
         .single();
       if (brandError) {
@@ -145,11 +143,11 @@ export class Supabase {
         return [];
       }
       let products = [];
-      if (brandData.id) {
+      if (brandData.brand_id) {
         const { data: productsById } = await supabase
           .from('products')
           .select('*')
-          .eq('brand_id', brandData.id);
+          .eq('brand_id', brandData.brand_id);
         if (productsById && productsById.length > 0) {
           products = productsById;
         }
@@ -201,7 +199,6 @@ export class Supabase {
     }
   }
 
-  // Lấy orders của user hiện tại đã đăng nhập
   async getCurrentUserOrders() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -216,7 +213,6 @@ export class Supabase {
     }
   }
 
-  // Lấy một order cụ thể theo order_id và user_id (bảo mật)
   async getOrderUserId(orderId: string, userId: string) {
     try {
       const { data, error } = await supabase

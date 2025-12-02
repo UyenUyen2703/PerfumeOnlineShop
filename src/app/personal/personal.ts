@@ -36,8 +36,8 @@ export class Personal implements OnInit {
   }
 
   getAvatarUrl(): string | null {
-    if (this.userProfile?.avatar_URL) {
-      return this.authService.getAvatarUrl(this.userProfile.avatar_URL);
+    if (this.userProfile?.avatar_url) {
+      return this.authService.getAvatarUrl(this.userProfile.avatar_url);
     }
     if (this.user?.user_metadata?.avatar_url) {
       return this.user.user_metadata.avatar_url;
@@ -64,15 +64,14 @@ export class Personal implements OnInit {
       const newAvatarUrl = await this.authService.uploadAvatarFromFile(this.user.id, file);
 
       if (newAvatarUrl) {
-        // Delete old avatar from storage if it exists
-        if (this.userProfile?.avatar_URL && !this.userProfile.avatar_URL.startsWith('http')) {
-          await this.authService.deleteAvatarFromStorage(this.userProfile.avatar_URL);
+        if (this.userProfile?.avatar_url && !this.userProfile.avatar_url.startsWith('http')) {
+          await this.authService.deleteAvatarFromStorage(this.userProfile.avatar_url);
         }
 
         const success = await this.authService.updateUserAvatar(this.user.id, newAvatarUrl);
         if (success) {
           if (this.userProfile) {
-            this.userProfile.avatar_URL = newAvatarUrl;
+            this.userProfile.avatar_url = newAvatarUrl;
           }
           await this.loadUser();
         } else {

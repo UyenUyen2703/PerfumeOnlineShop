@@ -18,7 +18,6 @@ export class AuthService {
 
   async getUserId(): Promise<string | null> {
     const { data } = await supabase.auth.getUser();
-    console.log('User ID:', data.user ? data.user.id : null);
     return data.user ? data.user.id : null;
   }
 
@@ -46,7 +45,7 @@ export class AuthService {
       const filePath = `${fileName}`;
 
       const { data, error } = await supabase.storage
-        .from('avatars')
+        .from('images-storage')
         .upload(filePath, blob, { cacheControl: '3600', upsert: false });
 
       if (error) {
@@ -90,7 +89,7 @@ export class AuthService {
         phone: user.user_metadata?.phone || null,
         address: user.user_metadata?.address || null,
         gender: user.user_metadata?.gender || null,
-        avatar_URL: avatarStorageUrl || user.user_metadata?.avatar_url || null,
+        avatar_url: avatarStorageUrl || user.user_metadata?.avatar_url || null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         role: user.user_metadata?.user_type || 'customer',
@@ -136,7 +135,7 @@ export class AuthService {
       const fileExt = file.name.split('.').pop();
       const fileName = `avatars/${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
-      const { data, error } = await supabase.storage.from('avatars').upload(filePath, file, {
+      const { data, error } = await supabase.storage.from('images-storage').upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
       });
@@ -158,7 +157,7 @@ export class AuthService {
       const { error } = await supabase
         .from('users')
         .update({
-          avatar_URL: avatarUrl,
+          avatar_url: avatarUrl,
           updated_at: new Date().toISOString(),
         })
         .eq('user_id', userId);
@@ -181,15 +180,13 @@ export class AuthService {
       const fileName = urlParts[urlParts.length - 1];
       const filePath = fileName;
 
-      console.log('Deleting avatar from storage:', filePath);
-      const { error } = await supabase.storage.from('avatars').remove([filePath]);
+      const { error } = await supabase.storage.from('images-storage').remove([filePath]);
 
       if (error) {
         console.error('Error deleting old avatar from storage:', error);
         return false;
       }
 
-      console.log('Old avatar deleted from storage successfully');
       return true;
     } catch (error) {
       console.error('Error in deleteAvatarFromStorage:', error);
@@ -200,14 +197,12 @@ export class AuthService {
   getAvatarUrl(avatarPath: string | null): string | null {
     if (!avatarPath) return null;
 
-    // If it's already a full URL (Google avatar or external), return as is
-    if (avatarPath.startsWith('http')) {
+    if (avatarPath.startsWith('http') || avatarPath.startsWith('https')) {
       return avatarPath;
     }
 
-    // If it's a storage path, get the public URL from Supabase
     const { data } = supabase.storage
-      .from('avatars')
+      .from('images-storage')
       .getPublicUrl(avatarPath);
 
     return data.publicUrl;

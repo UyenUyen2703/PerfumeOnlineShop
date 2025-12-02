@@ -32,10 +32,7 @@ export const canActivateSeller: CanActivateFn = async () => {
   const router = inject(Router);
 
   try {
-    console.log('Seller guard: Kiểm tra quyền truy cập...');
-
     const authUser = await authService.getUser();
-    console.log('Seller guard: Auth user:', authUser?.id);
 
     if (!authUser) {
       console.log('Seller guard: Không có user, chuyển hướng về login');
@@ -63,8 +60,6 @@ export const canActivateSeller: CanActivateFn = async () => {
       error = result.error;
     }
 
-    console.log('Seller guard: User data từ DB:', { userData, error });
-
     if (error) {
       console.error('Seller guard: Error fetching user data:', error);
       if (error.code === 'PGRST116') {
@@ -78,7 +73,6 @@ export const canActivateSeller: CanActivateFn = async () => {
       return true;
     }
 
-    console.log('Seller guard: Access denied - role:', userData?.role);
     router.navigate(['/login-seller']);
     return false;
   } catch (error) {
@@ -99,7 +93,6 @@ export const canActivateAdmin: CanActivateFn = async () => {
       return false;
     }
 
-    // Get user data from database to check role
     const { data: userData, error } = await supabase
       .from('users')
       .select('role')
