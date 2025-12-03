@@ -1,10 +1,11 @@
 import { NgForOf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Supabase } from '../supabase';
-import { CurrencyService } from '../services/currency.service';
-import { CartService } from '../services/cart.service';
 import { AuthService } from '../services/auth.service';
+import { CartService } from '../services/cart.service';
+import { CurrencyService } from '../services/currency.service';
+import { NotificationService } from '../services/notification.service';
+import { Supabase } from '../supabase';
 
 @Component({
   selector: 'app-home-page',
@@ -12,7 +13,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })
-export class HomePage {
+export class HomePage implements OnInit {
   products: any = [];
   constructor(
     private supabase: Supabase,
@@ -20,9 +21,25 @@ export class HomePage {
     private route: ActivatedRoute,
     public currencyService: CurrencyService,
     private cartService: CartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) {
     this.loadProducts();
+  }
+
+  ngOnInit() {
+    // Kiểm tra nếu có thông báo login thành công từ query params
+    this.route.queryParams.subscribe(params => {
+      if (params['loginSuccess'] === 'true') {
+        this.notificationService.success('Chào mừng bạn đến với cửa hàng nước hoa!');
+        // Xóa query parameter sau khi hiển thị thông báo
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true
+        });
+      }
+    });
   }
 
   private async loadProducts() {

@@ -1,13 +1,12 @@
-import { Order } from './../../type/order';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { CartItem } from '../../type/order';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { supabase } from '../../env/enviroment';
-import { CartItem } from '../../type/order';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-cart',
@@ -36,8 +35,9 @@ export class Cart implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cartService: CartService
-  ) {}
+    private cartService: CartService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     this.cartSubscription = this.cartService.cartItems$.subscribe(
@@ -81,16 +81,17 @@ export class Cart implements OnInit, OnDestroy {
 
   async checkout(): Promise<void> {
     if (this.isProcessing) {
+      this.notificationService.error('Order is already being processed. Please wait.');
       return;
     }
 
     if (!this.agreeToTerms) {
-      alert('Please agree to the terms and conditions before proceeding.');
+      this.notificationService.error('Please agree to the terms and conditions before proceeding.');
       return;
     }
 
     if (this.cartService.isCartEmpty()) {
-      alert('Cart is empty!');
+      this.notificationService.error('Cart is empty!');
       return;
     }
 
@@ -151,9 +152,9 @@ export class Cart implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Checkout error:', error);
       if (error instanceof Error) {
-        alert(`Đặt hàng thất bại: ${error.message}`);
+        this.notificationService.error(`Order failed: ${error.message}`);
       } else {
-        alert('An error occurred while processing your order. Please try again.');
+        this.notificationService.error('An error occurred while processing your order. Please try again.');
       }
     } finally {
       this.isProcessing = false;
@@ -304,6 +305,6 @@ export class Cart implements OnInit, OnDestroy {
 
   isFormValid(): boolean {
     return !this.nameError && !this.phoneError && !this.addressError &&
-           !!this.recipientName.trim() && !!this.recipientPhone.trim() && !!this.address.trim();
+      !!this.recipientName.trim() && !!this.recipientPhone.trim() && !!this.address.trim();
   }
 }

@@ -16,6 +16,10 @@
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
+            "allowedCommonJsDependencies": [
+              "tslib",
+              "@supabase/postgrest-js"
+            ],
             "assets": [
               {
                 "glob": "**/*",
@@ -100,5 +104,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

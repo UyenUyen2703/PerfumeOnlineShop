@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { CanActivate, Router, CanActivateFn } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { CanActivate, CanActivateFn, Router } from '@angular/router';
 import { supabase } from '../../env/enviroment';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -93,24 +93,46 @@ export const canActivateAdmin: CanActivateFn = async () => {
       return false;
     }
 
-    const { data: userData, error } = await supabase
+    console.log('Admin guard: Checking user role for:', authUser.email);
+
+    // Get user data from database to check role - thử cả user_id và email như seller guard
+    let { data: userData, error } = await supabase
       .from('users')
-      .select('role')
+      .select('*')
       .eq('user_id', authUser.id)
       .single();
 
+    // Nếu không tìm thấy bằng user_id, thử tìm bằng email
+    if (error && error.code === 'PGRST116') {
+      console.log('Admin guard: Không tìm thấy bằng user_id, thử tìm bằng email...');
+      const result = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', authUser.email)
+        .single();
+
+      userData = result.data;
+      error = result.error;
+    }
+
     if (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Admin guard: Error fetching user data:', error);
+      if (error.code === 'PGRST116') {
+        console.log('Admin guard: User không tồn tại trong DB');
+      }
       router.navigate(['/login-admin']);
       return false;
     }
 
+    console.log('Admin guard: User data:', userData);
+
     if (userData && userData.role === 'admin') {
+      console.log('Admin guard: Access granted - User is admin');
       return true;
     }
 
+    console.log('Admin guard: Access denied - User role:', userData?.role);
     router.navigate(['/login-admin']);
-    console.warn('Access denied - Admins only');
     return false;
   } catch (error) {
     console.error('Error checking admin authentication:', error);
