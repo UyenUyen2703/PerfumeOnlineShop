@@ -4,6 +4,7 @@ import { Router, RouterLinkActive } from '@angular/router';
 import { Supabase } from '../supabase';
 import { CurrencyService } from '../services/currency.service';
 import { AuthService } from '../services/auth.service';
+import { ProductService } from '../services/product.service';
 import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.component';
 
 @Component({
@@ -18,16 +19,19 @@ export class ProductList implements OnInit, OnDestroy {
   brands: string[] = [];
   selectedCategory: string | null = null;
   public Math = Math;
-  pageSize: number = 6;
+  pageSize: number = 8;
   currentPage: number = 1;
   private authSubscription: any;
   isCategoryOpen: boolean = false;
+  showAllBrands: boolean = false;
+  maxVisibleBrands: number = 5;
 
   constructor(
     private supabase: Supabase,
     private router: Router,
     public currencyService: CurrencyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private productService: ProductService
   ) {}
 
   ngOnInit() {
@@ -138,5 +142,24 @@ export class ProductList implements OnInit, OnDestroy {
     if (window.innerWidth <= 991) {
       this.isCategoryOpen = false;
     }
+  }
+
+  getImageUrl(relativePath: string): string {
+    return this.productService.getImageUrl(relativePath);
+  }
+
+  get visibleBrands() {
+    if (this.showAllBrands) {
+      return this.brands;
+    }
+    return this.brands.slice(0, this.maxVisibleBrands);
+  }
+
+  get hasMoreBrands() {
+    return this.brands.length > this.maxVisibleBrands;
+  }
+
+  toggleBrandsVisibility() {
+    this.showAllBrands = !this.showAllBrands;
   }
 }

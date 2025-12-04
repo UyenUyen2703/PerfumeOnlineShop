@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
 import { CurrencyService } from '../../services/currency.service';
 import { AuthService } from '../../services/auth.service';
+import { ProductService } from '../../services/product.service';
 import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
 
 @Component({
@@ -19,7 +20,8 @@ export class DetailProduct implements OnInit {
     private route: ActivatedRoute,
     public currencyService: CurrencyService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private productService: ProductService
   ) {}
 
   ngOnInit() {
@@ -67,5 +69,9 @@ export class DetailProduct implements OnInit {
 
   onProductAdded(product: any): void {
     console.log('Product added to cart:', product);
+  }
+
+  getImageUrl(relativePath: string): string {
+    return this.productService.getImageUrl(relativePath);
   }
 }

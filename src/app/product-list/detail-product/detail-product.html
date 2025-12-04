@@ -1,6 +1,6 @@
 <div class="detail-container" *ngFor="let product of productList">
   <div class="product-image">
-    <img [src]="product.image_url" alt="{{ product.name }}" class="img_product_detail" />
+    <img [src]="getImageUrl(product.image_url)" alt="{{ product.name }}" class="img_product_detail" />
   </div>
   <div class="product-info">
     <h2 class="product-name">{{ product.name }}</h2>
@@ -13,7 +13,7 @@
         product_id: product.product_id,
         name: product.name,
         price: product.price * 1000,
-        image: product.image_url,
+        image: getImageUrl(product.image_url),
         code: '#' + product.product_id,
         options: (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
       }"

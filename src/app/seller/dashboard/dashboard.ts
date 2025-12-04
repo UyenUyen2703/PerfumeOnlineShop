@@ -1,4 +1,5 @@
 import { ExportService } from './../../services/export.service';
+import { ProductService } from './../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +37,10 @@ export class SellerDashboard {
   category: any[] = [];
   brand: any[] = [];
   isLoading: boolean = false;
-  constructor(private exportService: ExportService) {}
+  constructor(
+    private exportService: ExportService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit() {
     this.loadProducts();
@@ -89,5 +93,25 @@ export class SellerDashboard {
     } else if (this.selectedGrid === 'category') {
       this.exportService.exportToExcel(this.category, 'categories_data');
     }
+  }
+
+  async importFile(event: any) {
+    this.isLoading = true;
+
+    await this.exportService.onFileChange(event, this.selectedGrid);
+
+    if (this.selectedGrid === 'product') {
+      await this.loadProducts();
+    } else if (this.selectedGrid === 'brand') {
+      await this.loadBrands();
+    } else if (this.selectedGrid === 'category') {
+      await this.loadCategories();
+    }
+
+    this.isLoading = false;
+  }
+
+  getImageUrl(relativePath: string): string {
+    return this.productService.getImageUrl(relativePath);
   }
 }

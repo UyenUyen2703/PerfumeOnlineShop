@@ -19,9 +19,10 @@
       <img src="assets/icon/export.png" alt="Down Arrow" class="btn" />
     </button>
 
-    <button [disabled]="!selectedGrid" (class.disabled-button)="(!selectedGrid)" class="file-btn">
-      <img src="assets/icon/import.png" alt="Down Arrow" class="btn" />
+    <button [disabled]="!selectedGrid" (class.disabled-button)="(!selectedGrid)" class="file-btn" (click)="importFileInput.click()">
+      <img src="assets/icon/import.png" alt="Import" class="btn" />
     </button>
+    <input #importFileInput type="file" accept=".xlsx,.xls" (change)="importFile($event)" style="display: none;">
 
     <button [disabled]="!selectedGrid" (class.disabled-button)="(!selectedGrid)" class="file-btn">
       <img src="assets/icon/report.png" alt="Down Arrow" class="btn" />
@@ -41,7 +42,7 @@
     <igx-column field="image_url" header="Image" dataType="string" width="150px">
       <ng-template igxCell let-cell="cell">
         <img
-          [src]="cell.value"
+          [src]="getImageUrl(cell.value)"
           alt="Product Image"
           style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px"
         />
@@ -91,7 +92,7 @@
     <igx-column field="logo_url" header="Logo" dataType="string" width="200px">
       <ng-template igxCell let-cell="cell">
         <img
-          [src]="cell.value"
+          [src]="getImageUrl(cell.value)"
           alt="Logo"
           style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px"
         />

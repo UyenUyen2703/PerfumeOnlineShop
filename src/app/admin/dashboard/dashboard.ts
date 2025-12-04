@@ -1,4 +1,5 @@
 import { ExportService } from './../../services/export.service';
+import { ProductService } from './../../services/product.service';
 import { supabase } from './../../../env/enviroment';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -31,7 +32,10 @@ export class Dashboard implements OnInit {
   category: any[] = [];
   isLoading: boolean = false;
 
-  constructor(private exportService: ExportService) {}
+  constructor(
+    private exportService: ExportService,
+    private productService: ProductService
+  ) {}
   ngOnInit() {
     this.loadProducts();
     this.loadBrand();
@@ -89,5 +93,9 @@ export class Dashboard implements OnInit {
     else if (this.selectedGrid === 'category') {
       this.exportService.exportToExcel(this.category, 'categories_data');
     }
+  }
+
+  getImageUrl(relativePath: string): string {
+    return this.productService.getImageUrl(relativePath);
   }
 }

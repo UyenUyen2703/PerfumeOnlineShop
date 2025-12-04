@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 import { CurrencyService } from '../services/currency.service';
 import { NotificationService } from '../services/notification.service';
+import { ProductService } from '../services/product.service';
 import { Supabase } from '../supabase';
 
 @Component({
@@ -22,7 +23,8 @@ export class HomePage implements OnInit {
     public currencyService: CurrencyService,
     private cartService: CartService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private productService: ProductService
   ) {
     this.loadProducts();
   }
@@ -63,7 +65,7 @@ export class HomePage implements OnInit {
         product_id: product.product_id,
         name: product.name,
         price: product.price * 1000,
-        image: product.image_url,
+        image: this.getImageUrl(product.image_url),
         quantity: 1,
         options: (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
       };
@@ -77,5 +79,9 @@ export class HomePage implements OnInit {
 
   onProductAdded(product: any): void {
     console.log('Product added to cart:', product);
+  }
+
+  getImageUrl(relativePath: string): string {
+    return this.productService.getImageUrl(relativePath);
   }
 }

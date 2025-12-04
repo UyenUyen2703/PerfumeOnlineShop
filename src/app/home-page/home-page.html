@@ -22,7 +22,7 @@
         <p class="description">{{ product.description }}</p>
         <button class="btn-buy" (click)="addToCart(product, $event)">Buy Now</button>
       </div>
-      <img [src]="product.image_url" alt="{{ product.name }}" (click)="goToDetail(product.product_id)" class="img_product" />
+      <img [src]="getImageUrl(product.image_url)" alt="{{ product.name }}" (click)="goToDetail(product.product_id)" class="img_product" />
     </div>
     <button class="btn-viewmore" routerLink="/perfume">View More</button>
   </div>

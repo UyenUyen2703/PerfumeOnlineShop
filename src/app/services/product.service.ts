@@ -9,6 +9,29 @@ import { Product } from '../../type/product';
 export class ProductService {
   constructor() {}
 
+  // Helper function để convert đường dẫn tương đối thành URL đầy đủ
+  getImageUrl(relativePath: string): string {
+    if (!relativePath) return '';
+
+    // Nếu đã là URL đầy đủ (http/https), trả về như cũ
+    if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+      return relativePath;
+    }
+
+    // Nếu là đường dẫn tĩnh (assets/images/...), giữ nguyên
+    if (relativePath.startsWith('assets/') || relativePath.startsWith('./assets/') || relativePath.startsWith('/assets/')) {
+      return relativePath;
+    }
+
+    // Nếu là đường dẫn từ Supabase Storage (/products/...), convert thành URL đầy đủ
+    if (relativePath.startsWith('/products/') || relativePath.startsWith('products/')) {
+      return supabase.storage.from('images-storage').getPublicUrl(relativePath).data.publicUrl;
+    }
+
+    // Mặc định trả về đường dẫn gốc
+    return relativePath;
+  }
+
   async updateProductQuantity(productId: string, quantityPurchased: number): Promise<void> {
     try {
       // Lấy thông tin sản phẩm hiện tại
