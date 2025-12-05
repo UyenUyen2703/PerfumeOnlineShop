@@ -23,6 +23,11 @@ export class Cart implements OnInit, OnDestroy {
   recipientName: string = '';
   recipientPhone: string = '';
   private cartSubscription?: Subscription;
+  private buyNowModeSubscription?: Subscription;
+  private buyNowItemSubscription?: Subscription;
+
+  isBuyNowMode: boolean = false;
+  buyNowItem: CartItem | null = null;
 
   showInvoiceOverlay: boolean = false;
   invoiceData: any = null;
@@ -46,11 +51,28 @@ export class Cart implements OnInit, OnDestroy {
       }
     );
 
+    this.buyNowModeSubscription = this.cartService.buyNowMode$.subscribe(
+      isBuyNowMode => {
+        this.isBuyNowMode = isBuyNowMode;
+      }
+    );
+
+    this.buyNowItemSubscription = this.cartService.buyNowItem$.subscribe(
+      item => {
+        this.buyNowItem = item;
+      }
+    );
   }
 
   ngOnDestroy(): void {
     if (this.cartSubscription) {
       this.cartSubscription.unsubscribe();
+    }
+    if (this.buyNowModeSubscription) {
+      this.buyNowModeSubscription.unsubscribe();
+    }
+    if (this.buyNowItemSubscription) {
+      this.buyNowItemSubscription.unsubscribe();
     }
   }
 
@@ -60,23 +82,56 @@ export class Cart implements OnInit, OnDestroy {
   }
 
   getCartTotal(): string {
-    return this.formatToCurrency(this.cartService.getCartTotal());
+    const total = this.isBuyNowMode ? this.cartService.getBuyNowTotal() : this.cartService.getCartTotal();
+    return this.formatToCurrency(total);
+  }
+
+  getCurrentItems(): CartItem[] {
+    return this.isBuyNowMode && this.buyNowItem ? [this.buyNowItem] : this.cartItems;
   }
 
   increaseQuantity(itemId: string): void {
-    this.cartService.increaseQuantity(itemId);
+    if (this.isBuyNowMode && this.buyNowItem && this.buyNowItem.product_id === itemId) {
+      this.cartService.updateBuyNowQuantity(this.buyNowItem.quantity + 1);
+    } else {
+      this.cartService.increaseQuantity(itemId);
+    }
   }
 
   decreaseQuantity(itemId: string): void {
-    this.cartService.decreaseQuantity(itemId);
+    if (this.isBuyNowMode && this.buyNowItem && this.buyNowItem.product_id === itemId) {
+      if (this.buyNowItem.quantity > 1) {
+        this.cartService.updateBuyNowQuantity(this.buyNowItem.quantity - 1);
+      }
+    } else {
+      this.cartService.decreaseQuantity(itemId);
+    }
   }
 
   removeItem(itemId: string): void {
-    this.cartService.removeItem(itemId);
+    if (this.isBuyNowMode && this.buyNowItem && this.buyNowItem.product_id === itemId) {
+      // Trong buy now mode, remove item sẽ clear buy now mode
+      this.cartService.clearBuyNowMode();
+    } else {
+      this.cartService.removeItem(itemId);
+    }
   }
 
   addToCart(product: any): void {
     this.cartService.addToCart(product);
+  }
+
+  viewFullCart(): void {
+    // Thêm sản phẩm buy now vào cart thông thường nếu người dùng muốn
+    if (this.isBuyNowMode && this.buyNowItem) {
+      this.cartService.addToCart(this.buyNowItem);
+    }
+    this.cartService.clearBuyNowMode();
+  }
+
+  continueShopping(): void {
+    this.cartService.clearBuyNowMode();
+    this.router.navigate(['/']);
   }
 
   async checkout(): Promise<void> {
@@ -90,9 +145,17 @@ export class Cart implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.cartService.isCartEmpty()) {
-      this.notificationService.error('Cart is empty!');
-      return;
+    // Kiểm tra empty cart theo mode hiện tại
+    if (this.isBuyNowMode) {
+      if (!this.buyNowItem) {
+        this.notificationService.error('No product selected for purchase!');
+        return;
+      }
+    } else {
+      if (this.cartService.isCartEmpty()) {
+        this.notificationService.error('Cart is empty!');
+        return;
+      }
     }
 
     const isNameValid = this.validateName();
@@ -171,10 +234,16 @@ export class Cart implements OnInit, OnDestroy {
   }
 
   isCartEmpty(): boolean {
+    if (this.isBuyNowMode) {
+      return !this.buyNowItem;
+    }
     return this.cartService.isCartEmpty();
   }
 
   getTotalItemCount(): number {
+    if (this.isBuyNowMode && this.buyNowItem) {
+      return this.buyNowItem.quantity;
+    }
     return this.cartService.getTotalItemCount();
   }
 

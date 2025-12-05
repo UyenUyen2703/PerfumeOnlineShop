@@ -1,1 +1,40 @@
-<p>contact works!</p>
+<div class="contact-container">
+  <h2>Contact Us</h2>
+  <div class="contact-content">
+    <div class="contact-seller">
+      <div>
+        <h3>Contact Seller Directly</h3>
+        <p>
+          If you have specific inquiries about our products, feel free to reach out to the seller
+          directly:
+        </p>
+        <ul>
+          <li><strong>Email:</strong> seller@example.com</li>
+        </ul>
+      </div>
+    </div>
+
+
+    <form (ngSubmit)="onSubmit()" #contactForm="ngForm" class="contact-form">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Full name" ngModel required />
+
+        <label for="email">Email*:</label>
+        <input type="text" id="email" name="email" placeholder="Email *" ngModel required />
+
+        <label for="message">Message:</label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="Have questions? We have answers!"
+          ngModel
+          required
+        ></textarea>
+      </div>
+      <button type="submit" [disabled]="!contactForm.valid" class="btn-submit">Submit</button>
+    </form>
+
+    <img src="assets/contact-image.jpg" alt="Contact Us" class="contact-image" />
+  </div>
+</div>

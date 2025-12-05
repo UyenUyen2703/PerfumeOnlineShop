@@ -7,6 +7,7 @@ import { User } from '../../type/user';
   providedIn: 'root',
 })
 export class AuthService {
+  
   async register(username: string, gender: string, phone: number, address: string, email: string, password: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -34,7 +35,7 @@ export class AuthService {
     return data;
   }
 
-  async signInWithGoogle(): Promise<void> {
+  async signInWithGoogle(){
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
     });

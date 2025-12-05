@@ -1,4 +1,3 @@
-/* Contact Page Responsive Styles */
 .contact-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -6,6 +5,13 @@
   background-color: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.contact-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 2rem;
 }
 
 .contact-header {
@@ -22,9 +28,14 @@
 
 .contact-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
   align-items: start;
+}
+
+.contact-image{
+  width: 100%;
+  border-radius: 1rem;
 }
 
 .contact-form {

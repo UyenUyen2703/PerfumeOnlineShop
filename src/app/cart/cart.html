@@ -2,7 +2,8 @@
   <!-- Left side - Product List -->
   <div class="cart-left">
     <div class="cart-header">
-      <h3>Shopping Cart ({{getTotalItemCount()}} items)</h3>
+      <h3>{{ isBuyNowMode ? 'Buy Now' : 'Shopping Cart' }} ({{ getTotalItemCount() }} items)</h3>
+      <div *ngIf="isBuyNowMode" class="buy-now-badge">Quick Purchase</div>
     </div>
 
     <!-- Empty cart message -->
@@ -12,22 +13,24 @@
     </div>
 
     <!-- Product Items -->
-    <div *ngFor="let item of cartItems" class="cart-item">
-      <button class="remove-btn" (click)="removeItem(item.product_id)">&times;</button>
+    <div *ngFor="let item of getCurrentItems()" class="cart-item">
+      <button *ngIf="!isBuyNowMode" class="remove-btn" (click)="removeItem(item.product_id)">
+        &times;
+      </button>
       <div class="product-image">
         <img [src]="item.image" [alt]="item.name" />
       </div>
       <div class="product-details">
-        <h4 class="product-name">{{item.name}}</h4>
-        <p class="product-options">{{item.options}}</p>
+        <h4 class="product-name">{{ item.name }}</h4>
+        <p class="product-options">{{ item.options }}</p>
       </div>
-      <div class="product-price">{{formatToCurrency(item.price)}}</div>
+      <div class="product-price">{{ formatToCurrency(item.price) }}</div>
       <div class="quantity-controls">
         <button class="qty-btn" (click)="decreaseQuantity(item.product_id)">−</button>
-        <span class="quantity">{{item.quantity}}</span>
+        <span class="quantity">{{ item.quantity }}</span>
         <button class="qty-btn" (click)="increaseQuantity(item.product_id)">+</button>
       </div>
-      <div class="item-total">{{formatToCurrency(getItemTotal(item))}}</div>
+      <div class="item-total">{{ formatToCurrency(getItemTotal(item)) }}</div>
     </div>
 
     <!-- Add a note section -->
@@ -36,9 +39,9 @@
       <textarea
         placeholder="Some words to In-House team"
         rows="3"
-        [(ngModel)]="orderNote"></textarea>
+        [(ngModel)]="orderNote"
+      ></textarea>
     </div>
-
   </div>
 
   <!-- Right side - Cart Summary -->
@@ -60,7 +63,8 @@
             [class.error]="!!nameError"
             [class.valid]="!nameError && recipientName.trim().length > 0"
             maxlength="50"
-            required />
+            required
+          />
           <div class="error-message" *ngIf="nameError">{{ nameError }}</div>
         </div>
 
@@ -77,7 +81,8 @@
             [class.valid]="!phoneError && recipientPhone.trim().length > 0"
             maxlength="11"
             pattern="[0-9]*"
-            required />
+            required
+          />
           <div class="error-message" *ngIf="phoneError">{{ phoneError }}</div>
           <small class="input-hint">Enter a 10-digit phone number starting with 0</small>
         </div>
@@ -94,119 +99,130 @@
             [class.error]="!!addressError"
             [class.valid]="!addressError && address.trim().length > 0"
             maxlength="200"
-            required></textarea>
+            required
+          ></textarea>
           <div class="error-message" *ngIf="addressError">{{ addressError }}</div>
-          <small class="input-hint">Please enter complete information: house number + street + ward/commune + district/city</small>
+          <small class="input-hint"
+            >Please enter complete information: house number + street + ward/commune +
+            district/city</small
+          >
         </div>
-      <div class="summary-row total-row">
-        <span class="label">CART TOTAL</span>
-        <span class="value">VND {{getCartTotal()}}</span>
-      </div>
-      <p class="shipping-note">Shipping & taxes calculated at checkout</p>
+        <div class="summary-row total-row">
+          <span class="label">CART TOTAL</span>
+          <span class="value">VND {{ getCartTotal() }}</span>
+        </div>
+        <p class="shipping-note">Shipping & taxes calculated at checkout</p>
 
-      <div class="terms-checkbox">
-        <input
-          type="checkbox"
-          id="terms"
-          [(ngModel)]="agreeToTerms" />
-        <label for="terms">I agree to <a href="#">Terms & Conditions</a></label>
-      </div>
+        <div class="terms-checkbox">
+          <input type="checkbox" id="terms" [(ngModel)]="agreeToTerms" />
+          <label for="terms">I agree to <a href="#">Terms & Conditions</a></label>
+        </div>
 
-      <button
-        class="checkout-btn"
-        [disabled]="isProcessing || !agreeToTerms || isCartEmpty() || !address.trim() || !recipientName.trim() || !recipientPhone.trim() || phoneError || addressError || nameError"
-        (click)="checkout()">
-        <span *ngIf="isProcessing">⏳ Processing...</span>
-        <span *ngIf="!isProcessing">CHECKOUT 🔒</span>
-      </button>
+        <button
+          class="checkout-btn"
+          [disabled]="
+            isProcessing ||
+            !agreeToTerms ||
+            isCartEmpty() ||
+            !address.trim() ||
+            !recipientName.trim() ||
+            !recipientPhone.trim() ||
+            phoneError ||
+            addressError ||
+            nameError
+          "
+          (click)="checkout()"
+        >
+          <span *ngIf="isProcessing">⏳ Processing...</span>
+          <span *ngIf="!isProcessing">CHECKOUT 🔒</span>
+        </button>
 
-      <div class="paypal-section">
-        <img src="assets/Logo-VNPAY.webp" alt="VNPay" class="vnpay-logo" />
+        <div class="paypal-section">
+          <img src="assets/Logo-VNPAY.webp" alt="VNPay" class="vnpay-logo" />
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="invoice-overlay" [class.show]="showInvoiceOverlay" (click)="closeInvoiceOverlay()">
-  <div class="invoice-container" (click)="$event.stopPropagation()">
-    <div class="invoice-header">
-      <h2>🧾 PURCHASE ORDER INVOICE </h2>
-      <button class="close-btn" (click)="closeInvoiceOverlay()">×</button>
-    </div>
-
-    <div class="invoice-body">
-      <div class="order-info">
-        <div class="info-row">
-          <span class="label">Order ID:</span>
-          <span class="value">#{{ invoiceData?.orderId }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Order Date:</span>
-          <span class="value">{{ invoiceData?.orderDate }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Recipient Name:</span>
-          <span class="value">{{ invoiceData?.recipientName }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Recipient Phone:</span>
-          <span class="value">{{ invoiceData?.recipientPhone }}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Delivery Address:</span>
-          <span class="value">{{ invoiceData?.address }}</span>
-        </div>
-        <div class="info-row" *ngIf="invoiceData?.note">
-          <span class="label">Note:</span>
-          <span class="value">{{ invoiceData?.note }}</span>
-        </div>
+  <div class="invoice-overlay" [class.show]="showInvoiceOverlay" (click)="closeInvoiceOverlay()">
+    <div class="invoice-container" (click)="$event.stopPropagation()">
+      <div class="invoice-header">
+        <h2>🧾 PURCHASE ORDER INVOICE</h2>
+        <button class="close-btn" (click)="closeInvoiceOverlay()">×</button>
       </div>
 
-      <div class="items-section">
-        <h3>Order Details</h3>
-        <div class="items-table">
-          <div class="table-header">
-            <div class="col-image">Image</div>
-            <div class="col-name">Product Name</div>
-            <div class="col-price">Unit Price</div>
-            <div class="col-qty">Quantity</div>
-            <div class="col-total">Total</div>
+      <div class="invoice-body">
+        <div class="order-info">
+          <div class="info-row">
+            <span class="label">Order ID:</span>
+            <span class="value">#{{ invoiceData?.orderId }}</span>
           </div>
-          <div class="table-row" *ngFor="let item of invoiceData?.items">
-            <div class="col-image">
-              <img [src]="item.image" [alt]="item.name" class="item-image">
-            </div>
-            <div class="col-name">
-              <div class="item-name">{{ item.name }}</div>
-              <div class="item-options" *ngIf="item.options">{{ item.options }}</div>
-            </div>
-            <div class="col-price">{{ formatToCurrency(item.price) }}</div>
-            <div class="col-qty">{{ item.quantity }}</div>
-            <div class="col-total">{{ formatToCurrency(item.price * item.quantity) }}</div>
+          <div class="info-row">
+            <span class="label">Order Date:</span>
+            <span class="value">{{ invoiceData?.orderDate }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Recipient Name:</span>
+            <span class="value">{{ invoiceData?.recipientName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Recipient Phone:</span>
+            <span class="value">{{ invoiceData?.recipientPhone }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Delivery Address:</span>
+            <span class="value">{{ invoiceData?.address }}</span>
+          </div>
+          <div class="info-row" *ngIf="invoiceData?.note">
+            <span class="label">Note:</span>
+            <span class="value">{{ invoiceData?.note }}</span>
           </div>
         </div>
-      </div>
 
-      <div class="total-section">
-        <div class="total-row">
-          <span class="total-label">TOTAL:</span>
-          <span class="total-amount">{{ formatToCurrency(invoiceData?.total || 0) }}</span>
+        <div class="items-section">
+          <h3>Order Details</h3>
+          <div class="items-table">
+            <div class="table-header">
+              <div class="col-image">Image</div>
+              <div class="col-name">Product Name</div>
+              <div class="col-price">Unit Price</div>
+              <div class="col-qty">Quantity</div>
+              <div class="col-total">Total</div>
+            </div>
+            <div class="table-row" *ngFor="let item of invoiceData?.items">
+              <div class="col-image">
+                <img [src]="item.image" [alt]="item.name" class="item-image" />
+              </div>
+              <div class="col-name">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-options" *ngIf="item.options">{{ item.options }}</div>
+              </div>
+              <div class="col-price">{{ formatToCurrency(item.price) }}</div>
+              <div class="col-qty">{{ item.quantity }}</div>
+              <div class="col-total">{{ formatToCurrency(item.price * item.quantity) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-section">
+          <div class="total-row">
+            <span class="total-label">TOTAL:</span>
+            <span class="total-amount">{{ formatToCurrency(invoiceData?.total || 0) }}</span>
+          </div>
+        </div>
+
+        <div class="status-section">
+          <div class="status-badge">🕒 Status: <strong>Processing</strong></div>
+          <p class="status-note">
+            Thank you for your order! We will process it and contact you as soon as possible.
+          </p>
         </div>
       </div>
 
-      <div class="status-section">
-        <div class="status-badge">
-          🕒 Status: <strong>Processing</strong>
-        </div>
-        <p class="status-note">
-          Thank you for your order! We will process it and contact you as soon as possible.
-        </p>
+      <div class="invoice-footer">
+        <button class="btn btn-print" (click)="printInvoice()">🖨️ Print Invoice</button>
+        <button class="btn btn-close" (click)="closeInvoiceOverlay()">Close</button>
       </div>
-    </div>
-
-    <div class="invoice-footer">
-      <button class="btn btn-print" (click)="printInvoice()">🖨️ Print Invoice</button>
-      <button class="btn btn-close" (click)="closeInvoiceOverlay()">Close</button>
     </div>
   </div>
 </div>

@@ -208,4 +208,88 @@ export class ProductService {
       return false;
     }
   }
+
+  // Search methods
+  async searchProducts(searchTerm: string, categoryId?: string, brandId?: string, sortBy: string = 'name'): Promise<Product[]> {
+    try {
+      let query = supabase
+        .from('products')
+        .select('*')
+        .gt('quantity', 0); // Only show products in stock
+
+      // Add search filter if provided
+      if (searchTerm && searchTerm.trim()) {
+        query = query.ilike('name', `%${searchTerm.trim()}%`);
+      }
+
+      // Add category filter if provided
+      if (categoryId) {
+        query = query.eq('category_id', categoryId);
+      }
+
+      // Add brand filter if provided
+      if (brandId) {
+        query = query.eq('brand_id', brandId);
+      }
+
+      // Add sorting
+      if (sortBy === 'price_asc') {
+        query = query.order('price', { ascending: true });
+      } else if (sortBy === 'price_desc') {
+        query = query.order('price', { ascending: false });
+      } else {
+        query = query.order('name', { ascending: true });
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error searching products:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error in searchProducts:', error);
+      return [];
+    }
+  }
+
+  async getCategories(): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error in getCategories:', error);
+      return [];
+    }
+  }
+
+  async getBrands(): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching brands:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error in getBrands:', error);
+      return [];
+    }
+  }
 }

@@ -12,6 +12,10 @@ export class CartService {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
   private isProcessingPayment = false;
+  private buyNowModeSubject = new BehaviorSubject<boolean>(false);
+  public buyNowMode$ = this.buyNowModeSubject.asObservable();
+  private buyNowItemSubject = new BehaviorSubject<CartItem | null>(null);
+  public buyNowItem$ = this.buyNowItemSubject.asObservable();
 
   constructor(
     private authService: AuthService,
@@ -135,6 +139,45 @@ export class CartService {
     return item ? item.quantity : 0;
   }
 
+  setBuyNowMode(product: any): void {
+    const buyNowItem: CartItem = {
+      product_id: product.product_id,
+      name: product.name,
+      options: product.options || '',
+      price: product.price,
+      quantity: product.quantity || 1,
+      image: product.image || 'assets/images/default-product.jpg',
+    };
+    this.buyNowModeSubject.next(true);
+    this.buyNowItemSubject.next(buyNowItem);
+  }
+
+  clearBuyNowMode(): void {
+    this.buyNowModeSubject.next(false);
+    this.buyNowItemSubject.next(null);
+  }
+
+  isBuyNowMode(): boolean {
+    return this.buyNowModeSubject.value;
+  }
+
+  getBuyNowItem(): CartItem | null {
+    return this.buyNowItemSubject.value;
+  }
+
+  getBuyNowTotal(): number {
+    const item = this.getBuyNowItem();
+    return item ? item.price * item.quantity : 0;
+  }
+
+  updateBuyNowQuantity(newQuantity: number): void {
+    const item = this.getBuyNowItem();
+    if (item && newQuantity > 0) {
+      item.quantity = newQuantity;
+      this.buyNowItemSubject.next(item);
+    }
+  }
+
   async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<{orderId: string, items: CartItem[], total: number}> {
     if (this.isProcessingPayment) {
       throw new Error('Payment already in progress. Please wait...');
@@ -144,7 +187,7 @@ export class CartService {
 
     try {
       const user = await this.authService.getUser();
-      const item = this.getCartItems();
+      const item = this.isBuyNowMode() ? [this.getBuyNowItem()!] : this.getCartItems();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -172,7 +215,7 @@ export class CartService {
 
       const orderPayload = {
         user_id: user.id,
-        total_amount: this.getCartTotal(),
+        total_amount: this.isBuyNowMode() ? this.getBuyNowTotal() : this.getCartTotal(),
         address: address.trim(),
         recipient_Name: recipientName.trim(),
         recipient_Phone: recipientPhone.trim(),
@@ -216,10 +259,14 @@ export class CartService {
       const orderInfo = {
         orderId: orderId,
         items: [...item],
-        total: this.getCartTotal()
+        total: this.isBuyNowMode() ? this.getBuyNowTotal() : this.getCartTotal()
       };
 
-      this.clearCart();
+      if (this.isBuyNowMode()) {
+        this.clearBuyNowMode();
+      } else {
+        this.clearCart();
+      }
 
       return orderInfo;
 

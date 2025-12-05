@@ -26,6 +26,7 @@ import { LoginAdmin } from './admin/login/login';
 import { RegisterAdmin } from './admin/register/register';
 import { Analyst } from './seller/analyst/analyst';
 import { ManageProduct } from './seller/manage-product/manage-product';
+import { Contact } from './contact/contact';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,10 @@ export const routes: Routes = [
   {
     path: 'search',
     component: Search,
+  },
+  {
+    path: 'contact',
+    component: Contact,
   },
   {
     path: 'cart',

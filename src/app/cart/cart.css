@@ -16,6 +16,14 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.cart-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+}
+
 .cart-header h3 {
   font-size: clamp(20px, 4vw, 24px);
   margin-bottom: 30px;
@@ -25,9 +33,62 @@
   padding-bottom: 10px;
 }
 
+.buy-now-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.buy-now-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.view-full-cart-btn,
+.continue-shopping-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.view-full-cart-btn {
+  background: #28a745;
+  color: white;
+}
+
+.view-full-cart-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.continue-shopping-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.continue-shopping-btn:hover {
+  background: #545b62;
+  transform: translateY(-1px);
+}
+
 .cart-item {
   display: grid;
-  grid-template-columns: 40px 80px 2fr 100px 120px 80px;
+  grid-template-columns: 90px 100px 2fr 100px 100px 10px;
   gap: 15px;
   align-items: center;
   padding: 20px 0;
@@ -86,7 +147,8 @@
   color: #333;
 }
 
-.product-code, .product-options {
+.product-code,
+.product-options {
   font-size: 12px;
   color: #666;
   margin: 0 0 5px 0;
@@ -213,7 +275,7 @@
   font-size: 14px;
 }
 
-.terms-checkbox input[type="checkbox"] {
+.terms-checkbox input[type='checkbox'] {
   width: 16px;
   height: 16px;
 }
@@ -308,7 +370,8 @@
   font-size: 14px;
 }
 
-.input-group input, .input-group textarea {
+.input-group input,
+.input-group textarea {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e1e1e1;
@@ -324,19 +387,22 @@
   min-height: 80px;
 }
 
-.input-group input:focus, .input-group textarea:focus {
+.input-group input:focus,
+.input-group textarea:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-.input-group input::placeholder, .input-group textarea::placeholder {
+.input-group input::placeholder,
+.input-group textarea::placeholder {
   color: #999;
   font-style: italic;
 }
 
-.input-group label[for="recipientName"]::after, .input-group label[for="address"]::after {
-  content: " *";
+.input-group label[for='recipientName']::after,
+.input-group label[for='address']::after {
+  content: ' *';
   color: #dc3545;
   font-weight: bold;
 }
@@ -353,18 +419,28 @@
 
 /* Responsive Design */
 @media (min-width: 992px) {
-  .cart-container { gap: 40px; }
-  .cart-left { padding: 25px; }
+  .cart-container {
+    gap: 40px;
+  }
+  .cart-left {
+    padding: 25px;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-  .cart-container { gap: 25px; padding: 15px; }
+  .cart-container {
+    gap: 25px;
+    padding: 15px;
+  }
   .cart-item {
     grid-template-columns: 35px 70px 2fr 90px 110px 70px;
     gap: 12px;
     padding: 15px 0;
   }
-  .product-image { width: 70px; height: 70px; }
+  .product-image {
+    width: 70px;
+    height: 70px;
+  }
 }
 
 /* Small devices (576px to 767px) */
@@ -683,7 +759,11 @@
   border-bottom: none;
 }
 
-.col-image, .col-name, .col-price, .col-qty, .col-total {
+.col-image,
+.col-name,
+.col-price,
+.col-qty,
+.col-total {
   padding: 0 5px;
 }
 
@@ -707,7 +787,9 @@
   color: #6c757d;
 }
 
-.col-price, .col-qty, .col-total {
+.col-price,
+.col-qty,
+.col-total {
   text-align: center;
   font-weight: 600;
 }
@@ -807,12 +889,15 @@
     max-height: 95vh;
   }
 
-  .table-header, .table-row {
+  .table-header,
+  .table-row {
     grid-template-columns: 60px 1fr 80px 40px 90px;
     font-size: 0.8rem;
   }
 
-  .invoice-header, .invoice-body, .invoice-footer {
+  .invoice-header,
+  .invoice-body,
+  .invoice-footer {
     padding: 20px;
   }
 
@@ -861,9 +946,16 @@
 
 /* Shake animation for error inputs */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 /* Slide down animation for error messages */
@@ -916,13 +1008,13 @@
 }
 
 /* Phone number specific styling */
-input[type="tel"] {
+input[type='tel'] {
   font-family: monospace;
   letter-spacing: 1px;
 }
 
 /* Address textarea specific styling */
-textarea[placeholder*="Số nhà"] {
+textarea[placeholder*='Số nhà'] {
   resize: vertical;
   min-height: 80px;
 }

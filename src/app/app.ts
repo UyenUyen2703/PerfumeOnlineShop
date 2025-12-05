@@ -26,7 +26,7 @@ export class App implements OnInit {
     private authService: AuthService,
     private router: Router,
     private notificationService: NotificationService
-  ) { }
+  ) {}
 
   async ngOnInit() {
     this.router.events
@@ -36,21 +36,28 @@ export class App implements OnInit {
       });
     this.currentUrl.set(this.router.url);
 
-    // Lắng nghe auth state changes cho OAuth
     this.authService.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session && !this.hasShownLoginSuccess) {
-        // Kiểm tra nếu đang ở trang login thì chuyển về home với thông báo
         const currentUrl = this.router.url;
-        if (currentUrl.includes('/login') &&
+        if (
+          currentUrl.includes('/login') &&
           !currentUrl.includes('/login-admin') &&
-          !currentUrl.includes('/login-seller')) {
+          !currentUrl.includes('/login-seller')
+        ) {
           this.hasShownLoginSuccess = true;
-          this.notificationService.success('Đăng nhập thành công!');
           setTimeout(() => {
             this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
           }, 1000);
         }
       }
+      this.authService.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN') {
+          console.log('OAuth success:', session?.user);
+
+          await this.authService.addUserToDatabase(session?.user);
+          this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+        }
+      });
     });
 
     try {
@@ -85,9 +92,6 @@ export class App implements OnInit {
 
   isAdminAuthRoute(): boolean {
     const url = this.currentUrl();
-    return (
-      url.startsWith('/login-admin') ||
-      url.startsWith('/register-admin')
-    );
+    return url.startsWith('/login-admin') || url.startsWith('/register-admin');
   }
 }

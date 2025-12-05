@@ -9,10 +9,9 @@
   position: relative;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden; 
 }
 
-/* Toggle button for mobile category sidebar */
 .category-toggle {
   display: none;
 }
@@ -37,7 +36,6 @@
   font-size: 14px;
 }
 
-/* Overlay for mobile category */
 .category-overlay {
   display: none;
   position: fixed;
@@ -46,7 +44,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Tăng lên nhưng vẫn thấp hơn toggle button */
+  z-index: 1000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -57,7 +55,6 @@
   pointer-events: all;
 }
 
-/* Đảm bảo overlay không che khuất toggle button */
 .category-overlay {
   pointer-events: none;
 }
@@ -66,7 +63,6 @@
   pointer-events: all;
 }
 
-/* Đảm bảo toggle button luôn hiển thị khi sidebar mở */
 .category.open ~ .category-toggle,
 .category-overlay.active ~ .category-toggle {
   display: flex !important;
@@ -76,7 +72,6 @@
   z-index: 9999 !important;
 }
 
-/* Tạo vùng an toàn cho toggle button */
 .category-overlay.active::before {
   content: '';
   position: absolute;

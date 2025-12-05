@@ -69,7 +69,8 @@ export class HomePage implements OnInit {
         quantity: 1,
         options: (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
       };
-      this.cartService.addToCart(productToAdd);
+      // Sử dụng buy now mode thay vì thêm vào cart
+      this.cartService.setBuyNowMode(productToAdd);
       this.router.navigate(['/cart']);
     } catch (error) {
       console.error('Error adding product to cart:', error);
