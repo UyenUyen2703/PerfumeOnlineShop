@@ -7,7 +7,7 @@ import { User } from '../../type/user';
   providedIn: 'root',
 })
 export class AuthService {
-  
+
   async register(username: string, gender: string, phone: number, address: string, email: string, password: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -99,17 +99,17 @@ export class AuthService {
     try {
       const { data: existingUser, error: checkError } = await supabase
         .from('users')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+        .select('*', { count: 'exact' })
+        .eq('user_id', user.id);
+
+      if (existingUser && existingUser.length > 0) {
+        console.log('User already exists in database:', existingUser[0].user_id);
+        return existingUser[0];
+      }
 
       if (checkError && checkError.code !== 'PGRST116') {
         console.error('Error checking existing user:', checkError);
         throw checkError;
-      }
-
-      if (existingUser) {
-        return existingUser;
       }
 
       let avatarStorageUrl = null;
@@ -132,15 +132,24 @@ export class AuthService {
 
       const { data: insertedUser, error: insertError } = await supabase
         .from('users')
-        .insert(newUser)
-        .select()
-        .single();
+        .insert([newUser])
+        .select();
 
       if (insertError) {
+        // If duplicate key error, return existing user instead of throwing
+        if (insertError.code === '23505') {
+          console.warn('User already exists (duplicate key), fetching existing user...');
+          const { data: fetchedUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+          return fetchedUser;
+        }
         console.error('Error adding user to database:', insertError);
         throw insertError;
       } else {
-        return insertedUser;
+        return insertedUser && insertedUser[0] ? insertedUser[0] : insertedUser;
       }
     } catch (error) {
       console.error('Fatal error in addUserToDatabase:', error);

@@ -27,6 +27,7 @@ import { RegisterAdmin } from './admin/register/register';
 import { Analyst } from './seller/analyst/analyst';
 import { ManageProduct } from './seller/manage-product/manage-product';
 import { Contact } from './contact/contact';
+import { NotificationCenter } from './seller/notification-center/notification-center';
 
 export const routes: Routes = [
   {
@@ -50,7 +51,7 @@ export const routes: Routes = [
     component: AboutUs,
   },
   {
-    path: 'detail/:product_id',
+    path: '/:product_id',
     component: DetailProduct,
   },
   {
@@ -133,6 +134,10 @@ export const routes: Routes = [
       {
         path: 'seller-order-management',
         component: OrderManagement,
+      },
+      {
+        path: 'notifications',
+        component: NotificationCenter,
       },
       {
         path: 'analytics',

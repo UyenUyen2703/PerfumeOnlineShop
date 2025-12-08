@@ -50,10 +50,12 @@
 
       <div class="seller-user-menu">
         <div class="seller-notifications">
-          <button class="notification-btn">
-            <i class="fas fa-bell"></i>
-            <span class="notification-badge">2</span>
-          </button>
+          <app-notification-dropdown></app-notification-dropdown>
+          <span class="notification-count-badge"
+                *ngIf="(notificationService.unreadCount$ | async) as count"
+                [class.show]="count > 0">
+            {{ count }}
+          </span>
         </div>
 
         <div class="seller-profile-dropdown" (click)="toggleDropdown()">

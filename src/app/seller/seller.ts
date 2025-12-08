@@ -3,15 +3,21 @@ import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
+import { NotificationDropdown } from '../components/notification-dropdown/notification-dropdown';
 
 @Component({
   selector: 'app-seller',
-  imports: [RouterOutlet, CommonModule, FormsModule, RouterModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, RouterModule, NotificationDropdown],
   templateUrl: './seller.html',
   styleUrls: ['./seller.css'],
 })
 export class Seller {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    public notificationService: NotificationService
+  ) {}
   isLoginandRegisterRoute(): boolean {
     const url = window.location.pathname;
     return url.startsWith('/login-seller') || url.startsWith('/register-seller');

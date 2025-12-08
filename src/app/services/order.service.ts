@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { supabase } from '../../env/enviroment';
-import { Order, OrderItem } from '../../type/order';
+import { Order, OrderItem, SellerNotification } from '../../type/order';
 import { AuthService } from './auth.service';
 import { ProductService } from './product.service';
 
@@ -8,20 +8,17 @@ import { ProductService } from './product.service';
   providedIn: 'root',
 })
 export class OrderService {
-  constructor(
-    private authService: AuthService,
-    private productService: ProductService
-  ) {}
+  constructor(private authService: AuthService, private productService: ProductService) {}
   async placeOrder(order: Order, item: OrderItem[]) {
     try {
       // Kiểm tra tồn kho trước khi tạo đơn hàng (chỉ cảnh báo)
-      const cartItems = item.map(orderItem => ({
+      const cartItems = item.map((orderItem) => ({
         product_id: orderItem.product_id,
         quantity: orderItem.quantity,
         name: '',
         options: '',
         price: orderItem.unit_price,
-        image: ''
+        image: '',
       }));
 
       try {
@@ -51,9 +48,7 @@ export class OrderService {
         quantity: orderItem.quantity,
         unit_price: orderItem.unit_price,
       }));
-      const { data, error } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const { data, error } = await supabase.from('order_items').insert(orderItems);
       if (error) {
         throw new Error(error.message);
       }
@@ -165,7 +160,7 @@ export class OrderService {
         .from('orders')
         .update({
           status: newStatus,
-          ...(newStatus === 'Shipped' && { shipped_date: new Date().toISOString() })
+          ...(newStatus === 'Shipped' && { shipped_date: new Date().toISOString() }),
         })
         .eq('order_id', orderId);
 
@@ -180,11 +175,6 @@ export class OrderService {
     }
   }
 
-  /**
-   * Lấy chi tiết đơn hàng kèm theo thông tin sản phẩm
-   * @param orderId - ID của đơn hàng
-   * @returns Promise<any>
-   */
   async getOrderWithDetails(orderId: string): Promise<any> {
     try {
       const user = await this.authService.getUser();
@@ -194,7 +184,8 @@ export class OrderService {
 
       const { data, error } = await supabase
         .from('orders')
-        .select(`
+        .select(
+          `
           *,
           order_items (
             *,
@@ -205,7 +196,8 @@ export class OrderService {
               quantity
             )
           )
-        `)
+        `
+        )
         .eq('order_id', orderId)
         .eq('user_id', user.id)
         .single();

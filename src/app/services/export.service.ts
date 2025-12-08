@@ -21,6 +21,22 @@ export class ExportService {
   }
 
   //import
+  private async getSellerIdBySellerId(sellerIdentifier: string): Promise<string | null> {
+    // Hàm này lấy user_id của seller từ tên hoặc email
+    const { data, error } = await supabase
+      .from('users')
+      .select('user_id')
+      .eq('role', 'seller')
+      .or(`email.eq.${sellerIdentifier},full_name.eq.${sellerIdentifier}`)
+      .single();
+    
+    if (error || !data) {
+      console.error('Error fetching seller ID:', error);
+      return null;
+    }
+    return data.user_id;
+  }
+
   private async getBrandIdByName(brandName: string): Promise<number | null> {
     const { data, error } = await supabase
       .from('brands')
@@ -94,6 +110,13 @@ export class ExportService {
     for (const row of rows) {
       const brandId = await this.getBrandIdByName(row['brand_id']);
       const categoryId = await this.getCategoryIdByName(row['category_id']);
+      const sellerId = await this.getSellerIdBySellerId(row['seller_id']);
+
+      // Nếu không tìm thấy seller, bỏ qua row này
+      if (!sellerId) {
+        console.warn('Seller not found for:', row['seller_id']);
+        continue;
+      }
 
       let uploadedImage = '';
       const imgUrl = row['image_url'];
@@ -116,6 +139,7 @@ export class ExportService {
         brand_id: brandId,
         category_id: categoryId,
         image_url: uploadedImage,
+        seller_id: sellerId,
       });
     }
 

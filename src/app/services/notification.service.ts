@@ -1,10 +1,14 @@
 import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationService {
+    private unreadCountSubject = new BehaviorSubject<number>(0);
+    public unreadCount$ = this.unreadCountSubject.asObservable();
+
     constructor(private snackBar: MatSnackBar) { }
 
     success(message: string): void {
@@ -23,5 +27,13 @@ export class NotificationService {
             horizontalPosition: 'right',
             verticalPosition: 'top'
         });
+    }
+
+    updateUnreadCount(count: number): void {
+        this.unreadCountSubject.next(count);
+    }
+
+    getUnreadCount$(): Observable<number> {
+        return this.unreadCount$;
     }
 }

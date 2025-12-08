@@ -1,0 +1,256 @@
+<div class="notification-center-container">
+  <!-- Header -->
+  <div class="notification-header">
+    <div class="header-content">
+      <h1 class="header-title">
+        <span class="bell-icon">
+          <img src="assets/icon/notification.png" alt="Notification Icon" class="icon-image" />
+        </span>
+        Notification Center
+      </h1>
+      <span class="unread-badge" *ngIf="getUnreadCount() > 0"> {{ getUnreadCount() }} unread </span>
+    </div>
+    <button
+      class="mark-all-btn"
+      *ngIf="getUnreadCount() > 0"
+      (click)="markAllAsRead()"
+      title="Mark all as read"
+    >
+      Mark all as read
+    </button>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search notifications..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+      />
+    </div>
+
+    <div class="filter-buttons">
+      <button
+        class="filter-btn"
+        [class.active]="filterType === 'all'"
+        (click)="filterType = 'all'; onFilterChange()"
+      >
+        All ({{ notifications.length }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filterType === 'unread'"
+        (click)="filterType = 'unread'; onFilterChange()"
+      >
+        Unread ({{ getUnreadCount() }})
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="filterType === 'read'"
+        (click)="filterType = 'read'; onFilterChange()"
+      >
+        Read ({{ notifications.length - getUnreadCount() }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading notifications...</p>
+  </div>
+
+  <!-- Notifications List -->
+  <div class="notifications-list" *ngIf="!isLoading">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredNotifications.length === 0">
+      <div class="empty-icon">📭</div>
+      <h3>No notifications</h3>
+      <p *ngIf="filterType === 'all' && notifications.length === 0">
+        You will receive notifications when customers place orders
+      </p>
+      <p
+        *ngIf="
+          filterType !== 'all' || (notifications.length > 0 && filteredNotifications.length === 0)
+        "
+      >
+        No notifications match the filter criteria
+      </p>
+    </div>
+
+    <!-- Notification Items -->
+    <div
+      class="notification-item"
+      *ngFor="let notification of filteredNotifications"
+      [class.unread]="!notification.is_read"
+      [class.read]="notification.is_read"
+      (click)="viewOrderDetails(notification)"
+    >
+      <!-- Notification Icon -->
+      <div class="notification-icon">
+        {{ getNotificationIcon(notification.type) }}
+      </div>
+
+      <!-- Notification Content -->
+      <div class="notification-content">
+        <div class="notification-header-row">
+          <h3 class="notification-title">{{ notification.title }}</h3>
+          <span class="notification-time">{{ formatDate(notification.created_at) }}</span>
+        </div>
+        <p class="notification-message">{{ notification.content }}</p>
+
+        <!-- Metadata -->
+        <div class="notification-metadata" *ngIf="notification.metadata">
+          <span class="badge badge-order" *ngIf="notification.metadata.order_id">
+            <strong>Order:</strong> {{ formatOrderId(notification.metadata.order_id) }}
+          </span>
+          <span class="badge badge-product" *ngIf="notification.metadata.product_name">
+            <strong>Product:</strong> {{ notification.metadata.product_name }}
+          </span>
+          <span class="badge badge-quantity" *ngIf="notification.metadata.quantity">
+            <strong>Quantity:</strong> {{ notification.metadata.quantity }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="notification-actions">
+        <button
+          class="action-btn view-order-btn"
+          *ngIf="notification.metadata?.orderId"
+          (click)="viewOrderDetails(notification)"
+          title="View order details"
+        >
+          <i class="fas fa-eye"></i> View Order
+        </button>
+        <button
+          class="action-btn read-btn"
+          *ngIf="!notification.is_read"
+          (click)="markAsRead(notification)"
+          title="Mark as read"
+        >
+          <i class="fas fa-check"></i> Read
+        </button>
+        <button
+          class="action-btn unread-btn"
+          *ngIf="notification.is_read"
+          (click)="markAsUnread(notification)"
+          title="Mark as unread"
+        >
+          <i class="fas fa-undo"></i> Unread
+        </button>
+        <button
+          class="action-btn delete-btn"
+          (click)="deleteNotification(notification)"
+          title="Delete notification"
+        >
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="order-modal-overlay" *ngIf="showOrderModal" (click)="closeOrderModal()">
+  <div class="order-modal" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Order Details</h2>
+      <button class="close-btn" (click)="closeOrderModal()">✕</button>
+    </div>
+
+    <!-- Modal Loading -->
+    <div class="modal-loading" *ngIf="isLoadingOrderDetails">
+      <div class="spinner"></div>
+      <p>Loading order details...</p>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="modal-content" *ngIf="!isLoadingOrderDetails && orderDetails">
+      <!-- Order Header Info -->
+      <div class="order-header-info">
+        <div class="info-group">
+          <label>Order ID:</label>
+          <span class="order-id">{{ formatOrderId(orderDetails.order_id) }}</span>
+        </div>
+        <div class="info-group">
+          <label>Status:</label>
+          <span class="order-status" [ngClass]="getOrderStatusBadgeClass(orderDetails.status)">
+            {{ orderDetails.status }}
+          </span>
+        </div>
+        <div class="info-group">
+          <label>Created:</label>
+          <span>{{ formatDate(orderDetails.created_at) }}</span>
+        </div>
+      </div>
+
+      <!-- Customer Info -->
+      <div class="section">
+        <h3 class="section-title">Customer Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Recipient Name:</label>
+            <span>{{ orderDetails.recipient_Name }}</span>
+          </div>
+          <div class="info-item">
+            <label>Phone:</label>
+            <span>{{ orderDetails.recipient_Phone }}</span>
+          </div>
+          <div class="info-item">
+            <label>Address:</label>
+            <span>{{ orderDetails.address }}</span>
+          </div>
+          <div class="info-item" *ngIf="orderDetails.note">
+            <label>Note:</label>
+            <span>{{ orderDetails.note }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="section">
+        <h3 class="section-title">Order Items</h3>
+        <div class="items-list">
+          <div class="item-card" *ngFor="let item of orderItems">
+            <div class="item-image">
+              <img [src]="item.product_image" [alt]="item.product_name" />
+            </div>
+            <div class="item-info">
+              <h4 class="item-name">{{ item.product_name }}</h4>
+              <div class="item-details">
+                <span class="item-qty">Qty: {{ item.quantity }}</span>
+                <span class="item-price">VNĐ{{ item.unit_price | number : '1.2-2' }}</span>
+              </div>
+              <div class="item-total">
+                Total: <strong>VNĐ{{ item.quantity * item.unit_price | number : '1.2-2' }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>VNĐ{{ orderDetails.total_amount | number : '1.2-2' }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total Amount:</span>
+          <span>VNĐ{{ orderDetails.total_amount | number : '1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="btn-close" (click)="closeOrderModal()">Close</button>
+    </div>
+  </div>
+</div>

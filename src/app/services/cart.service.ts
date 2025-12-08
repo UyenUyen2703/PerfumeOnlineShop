@@ -4,6 +4,7 @@ import { ProductService } from './product.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { supabase } from '../../env/enviroment';
+import { OrderService } from './order.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,8 @@ export class CartService {
 
   constructor(
     private authService: AuthService,
-    private productService: ProductService
+    private productService: ProductService,
+    private orderService: OrderService
   ) {
     this.loadCartFromStorage();
   }
@@ -30,7 +32,9 @@ export class CartService {
 
   addToCart(product: any): void {
     const currentItems = this.getCartItems();
-    const existingItemIndex = currentItems.findIndex((item) => item.product_id === product.product_id);
+    const existingItemIndex = currentItems.findIndex(
+      (item) => item.product_id === product.product_id
+    );
 
     if (existingItemIndex > -1) {
       currentItems[existingItemIndex].quantity += product.quantity || 1;
@@ -178,7 +182,12 @@ export class CartService {
     }
   }
 
-  async paymentProcess(address: string, recipientName: string, recipientPhone: string, note: string): Promise<{orderId: string, items: CartItem[], total: number}> {
+  async paymentProcess(
+    address: string,
+    recipientName: string,
+    recipientPhone: string,
+    note: string
+  ): Promise<{ orderId: string; items: CartItem[]; total: number }> {
     if (this.isProcessingPayment) {
       throw new Error('Payment already in progress. Please wait...');
     }
@@ -223,7 +232,6 @@ export class CartService {
         status: 'Pending',
       };
 
-
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([orderPayload])
@@ -241,9 +249,7 @@ export class CartService {
         unit_price: CartItem.price,
       }));
 
-      const { data, error } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const { data, error } = await supabase.from('order_items').insert(orderItems);
 
       if (error) {
         throw error;
@@ -256,10 +262,50 @@ export class CartService {
         console.warn('Order completed but inventory may not be updated');
       }
 
+      try {
+        for (const cartItem of item) {
+          // Get product details to find the seller
+          const { data: productData, error: productError } = await supabase
+            .from('products')
+            .select('seller_id, name')
+            .eq('product_id', cartItem.product_id)
+            .single();
+
+          if (productError || !productData) {
+            console.warn(`Could not find product ${cartItem.product_id} for notification`);
+            continue;
+          }
+
+          if (productData.seller_id) {
+            const notificationPayload = {
+              seller_id: productData.seller_id,
+              title: 'New Order Placed',
+              content: `A new order (ID: ${orderId}) has been placed for your product "${productData.name || cartItem.name}".`,
+              type: 'order',
+              is_read: false,
+              metadata: {
+                orderId: orderId,
+                productId: cartItem.product_id,
+                customerId: user.id,
+              },
+            };
+            const { error: notificationError } = await supabase
+              .from('seller_notifications')
+              .insert([notificationPayload]);
+            if (notificationError) {
+              console.error('Error creating notification for seller:', notificationError);
+            }
+          }
+        }
+      } catch (notificationError) {
+        console.error('Error creating seller notifications:', notificationError);
+        console.warn('Order completed but seller notifications may not have been created');
+      }
+
       const orderInfo = {
         orderId: orderId,
         items: [...item],
-        total: this.isBuyNowMode() ? this.getBuyNowTotal() : this.getCartTotal()
+        total: this.isBuyNowMode() ? this.getBuyNowTotal() : this.getCartTotal(),
       };
 
       if (this.isBuyNowMode()) {
@@ -269,7 +315,6 @@ export class CartService {
       }
 
       return orderInfo;
-
     } catch (error) {
       console.error('Error during payment process:', error);
       throw error;

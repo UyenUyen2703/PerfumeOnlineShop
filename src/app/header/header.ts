@@ -1,4 +1,5 @@
 import { AuthService } from './../services/auth.service';
+import { NotificationService } from './../services/notification.service';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,7 +17,11 @@ export class Header implements OnInit {
   mobileMenuOpen = false;
   personalDropdownOpen = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    public notificationService: NotificationService
+  ) {}
 
   async ngOnInit() {
     await this.checkAuthState();

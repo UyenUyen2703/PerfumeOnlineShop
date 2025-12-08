@@ -11,7 +11,7 @@ import { IgxFilterDirective } from "igniteui-angular";
 
 @Component({
   selector: 'app-search',
-  imports: [CommonModule, FormsModule, AddToCartComponent, IgxFilterDirective],
+  imports: [CommonModule, FormsModule, AddToCartComponent],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })

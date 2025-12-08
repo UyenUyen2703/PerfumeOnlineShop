@@ -1,0 +1,79 @@
+<div class="notification-dropdown-container">
+  <button class="notification-bell" (click)="toggleDropdown()" [class.has-unread]="unreadCount > 0">
+    <i class="fas fa-bell"></i>
+    <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div class="notification-dropdown-menu" *ngIf="dropdownOpen" [@slideDown]>
+    <!-- Header -->
+    <div class="dropdown-header">
+      <h3>Notifications</h3>
+      <span class="close-btn" (click)="closeDropdown()">
+        <i class="fas fa-close"></i>
+      </span>
+    </div>
+
+    <!-- Loading State -->
+    <div class="dropdown-loading" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="dropdown-empty" *ngIf="!isLoading && displayedNotifications.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-inbox"></i>
+      </div>
+      <p>No notifications</p>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="dropdown-notifications" *ngIf="!isLoading && displayedNotifications.length > 0">
+      <div
+        class="notification-item"
+        *ngFor="let notification of displayedNotifications"
+        [class.unread]="!notification.is_read"
+      >
+        <!-- Icon -->
+        <div class="notification-icon">
+          <span [innerHTML]="getNotificationIcon(notification.type)"></span>
+        </div>
+
+        <!-- Content -->
+        <div class="notification-content">
+          <h4 class="notification-title">{{ notification.title }}</h4>
+          <p class="notification-message">{{ notification.content | slice : 0 : 50 }}...</p>
+          <span class="notification-time">{{ formatDate(notification.created_at) }}</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="notification-item-actions">
+          <button
+            class="action-icon"
+            *ngIf="!notification.is_read"
+            (click)="markAsRead(notification, $event)"
+            title="Mark as read"
+          >
+            <i class="fas fa-check"></i>
+          </button>
+          <button
+            class="action-icon delete"
+            (click)="deleteNotification(notification, $event)"
+            title="Delete"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer with Show More Button -->
+    <div class="dropdown-footer" *ngIf="!isLoading">
+      <a routerLink="/seller/notifications" class="show-more-btn" (click)="closeDropdown()">
+        View all notifications
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</div>

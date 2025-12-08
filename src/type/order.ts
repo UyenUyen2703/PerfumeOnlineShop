@@ -26,3 +26,15 @@ export interface OrderItem {
   quantity: number;
   unit_price: number;
 }
+
+export interface SellerNotification {
+  id?: string;
+  user_id: string;
+  title: string;
+  content: string;
+  type: string;
+  is_read: boolean;
+  metadata?: any;
+  created_at?: string;
+  updated_at?: string;
+}

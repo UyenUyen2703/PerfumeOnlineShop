@@ -51,7 +51,7 @@ export class ProductService {
         return;
       }
       const currentQuantity = product.quantity || 0;
-      const newQuantity = Math.max(0, currentQuantity - quantityPurchased); // Đảm bảo không âm
+      const newQuantity = Math.max(0, currentQuantity - quantityPurchased);
 
       const { error: updateError } = await supabase
         .from('products')
@@ -292,4 +292,6 @@ export class ProductService {
       return [];
     }
   }
+
+
 }
