@@ -30,29 +30,58 @@
         {{ brand }}
       </button>
       @if (hasMoreBrands) {
-        <button
-          (click)="toggleBrandsVisibility()"
-          class="view-more-button"
-        >
-          {{ showAllBrands ? 'View Less' : 'View More' }}
-        </button>
+      <button (click)="toggleBrandsVisibility()" class="view-more-button">
+        {{ showAllBrands ? 'View Less' : 'View More' }}
+      </button>
       }
     </div>
   </div>
 
   <div class="products-grid">
-    <div *ngFor="let product of paginatedProducts" class="product-item">
-      <img [src]="getImageUrl(product.image_url)" alt="{{ product.name }}" class="img" (click)="goToDetail(product.product_id)" />
+    <div
+      *ngFor="let product of paginatedProducts"
+      class="product-item"
+      [routerLink]="['/detail', product.product_id]"
+    >
+      @if(product.discount > 0) {
+      <h2 class="discount">{{ product.discount }}%</h2>
+      }
+      <img
+        [src]="getImageUrl(product.image_url)"
+        alt="{{ product.name }}"
+        class="img"
+        (click)="goToDetail(product.product_id)"
+      />
       <div class="product-details">
         <h3>{{ product.name }}</h3>
-        <p>{{ currencyService.convertNumberToCurrency(product.price * 1000) }}</p>
+
+        <div class="price-info">
+          @if(product.discount == 0) {
+          <p class="no-discount">
+            {{ currencyService.convertNumberToCurrency(product.price * 1000) }}
+          </p>
+          }@else {
+          <div class="with-discount">
+            <p class="original-price">
+              {{ currencyService.convertNumberToCurrency(product.price * 1000) }}
+            </p>
+            <p class="discounted-price">
+              {{
+                currencyService.convertNumberToCurrency(
+                  caculateDiscountedPrice(product.price, product.discount) * 1000
+                )
+              }}
+            </p>
+          </div>
+          }
+        </div>
       </div>
 
       <app-add-to-cart
         [product]="{
           product_id: product.product_id,
           name: product.name,
-          price: product.price * 1000,
+          price: caculateDiscountedPrice(product.price, product.discount) * 1000,
           image: getImageUrl(product.image_url),
           code: '#' + product.product_id,
           options:

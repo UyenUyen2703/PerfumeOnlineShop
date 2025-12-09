@@ -33,7 +33,7 @@ export class CartService {
   addToCart(product: any): void {
     const currentItems = this.getCartItems();
     const existingItemIndex = currentItems.findIndex(
-      (item) => item.product_id === product.product_id
+      (item) => item.product_id === product.product_id && item.size_ml === product.size_ml
     );
 
     if (existingItemIndex > -1) {
@@ -46,6 +46,7 @@ export class CartService {
         price: product.price,
         quantity: product.quantity || 1,
         image: product.image || 'assets/images/default-product.jpg',
+        size_ml: product.size_ml,
       };
       currentItems.push(newItem);
     }

@@ -7,6 +7,7 @@ import { CurrencyService } from '../services/currency.service';
 import { NotificationService } from '../services/notification.service';
 import { ProductService } from '../services/product.service';
 import { Supabase } from '../supabase';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-home-page',
@@ -16,6 +17,7 @@ import { Supabase } from '../supabase';
 })
 export class HomePage implements OnInit {
   products: any = [];
+  isLoading = true;
   constructor(
     private supabase: Supabase,
     private router: Router,
@@ -25,13 +27,11 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private notificationService: NotificationService,
     private productService: ProductService
-  ) {
-    this.loadProducts();
-  }
+  ) {}
 
   ngOnInit() {
     // Kiểm tra nếu có thông báo login thành công từ query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(take(1)).subscribe(params => {
       if (params['loginSuccess'] === 'true') {
         this.notificationService.success('Chào mừng bạn đến với cửa hàng nước hoa!');
         // Xóa query parameter sau khi hiển thị thông báo
@@ -42,11 +42,22 @@ export class HomePage implements OnInit {
         });
       }
     });
+    this.loadProducts();
   }
 
   private async loadProducts() {
-    const products = await this.supabase.getProducts();
-    this.products = products.slice(0, 3);
+    try {
+      this.isLoading = true;
+      const products = await this.supabase.getProducts();
+      if (products && products.length > 0) {
+        this.products = products.slice(0, 3);
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+      this.products = [];
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   goToDetail(productId: string) {

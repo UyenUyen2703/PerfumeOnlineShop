@@ -1,6 +1,7 @@
 <div class="personal-container">
   <nav class="personal-nav">
     <button 
+      type="button"
       routerLink="/personal" 
       routerLinkActive="active" 
       [routerLinkActiveOptions]="{exact: true}"
@@ -8,14 +9,18 @@
       Personal Information
     </button>
     <button 
+      type="button"
       routerLink="/personal/orders" 
       routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: false}"
       class="btn btn-link">
       My Orders
     </button>
     <button 
+      type="button"
       routerLink="/personal/favorites" 
       routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: false}"
       class="btn btn-link">
       Favorites List
     </button>

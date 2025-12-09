@@ -1,15 +1,53 @@
 .product-list-container {
   display: flex;
   flex-direction: row;
-  padding: 20px;
-  gap: 20px;
+  padding: 30px;
+  gap: 30px;
   min-height: 100vh;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   position: relative;
   width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden; 
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%);
+}
+
+.discount{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(255, 23, 68, 0.4);
+  z-index: 100;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(5px);
+}
+
+.price-info{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.original-price{
+  text-decoration: line-through;
+  color: #bcc1c5;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.discounted-price, .no-discount{
+  font-size: 19px;
+  font-weight: 700;
+  color: #ff1744;
+  letter-spacing: -0.5px;
 }
 
 .category-toggle {
@@ -85,31 +123,34 @@
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   height: fit-content;
-  gap: 25px;
-  width: 84%;
+  gap: 28px;
+  width: 85%;
   overflow-y: auto;
+  padding-right: 10px;
 }
 
 .product-item {
-  box-shadow: rgba(100, 100, 111, 0.15) 0px 7px 29px 0px;
-  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(200, 200, 220, 0.3);
   position: relative;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .product-item:hover {
-  transform: translateY(-4px);
-  box-shadow: rgba(100, 100, 111, 0.25) 0px 12px 35px 0px;
-  background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  border-color: rgba(255, 23, 68, 0.2);
 }
 
 .product-item::before {
@@ -118,10 +159,10 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ff69b4, #ffa8cc);
+  height: 4px;
+  background: linear-gradient(90deg, #ff1744, #ff5252);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s ease;
 }
 
 .product-item:hover::before {
@@ -130,13 +171,14 @@
 
 .img {
   width: 100%;
-  height: 220px;
-  border-radius: 15px;
+  height: 240px;
+  border-radius: 12px;
   object-fit: contain;
   object-position: center;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  padding: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
 }
 
 app-add-to-cart {
@@ -210,16 +252,16 @@ app-add-to-cart .quantity-input::-webkit-inner-spin-button {
 }
 
 app-add-to-cart .add-to-cart-btn {
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8fab 50%, #ffa8cc 100%);
+  padding: 12px 22px;
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3), 0 2px 4px rgba(255, 105, 180, 0.2);
+  letter-spacing: 0.4px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.3);
   position: relative;
   overflow: hidden;
   min-height: 44px;
@@ -231,9 +273,9 @@ app-add-to-cart .add-to-cart-btn {
 }
 
 app-add-to-cart .add-to-cart-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  background: linear-gradient(135deg, #e83e8c 0%, #ff69b4 50%, #ff8fab 100%);
-  box-shadow: 0 6px 18px rgba(255, 105, 180, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #d81438 0%, #ff1744 100%);
+  box-shadow: 0 10px 24px rgba(255, 23, 68, 0.4);
 }
 
 app-add-to-cart .add-to-cart-btn:active:not(:disabled) {
@@ -276,46 +318,30 @@ app-add-to-cart .add-to-cart-btn:disabled {
 }
 
 .product-details h3 {
-  margin: 12px 0;
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.4;
-  min-height: 45px;
+  margin: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2d3436;
+  color: #1a1a2e;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.product-details p {
-  margin: 12px 0;
-  font-size: 19px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8fab 50%, #ffa8cc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 4px rgba(255, 105, 180, 0.1);
-  letter-spacing: -0.01em;
 }
 
 .category {
   width: 15%;
-  min-width: 220px;
-  padding: 25px;
+  min-width: 240px;
+  padding: 28px;
   height: fit-content;
   position: sticky;
-  top: 20px;
-  border-radius: 20px;
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  top: 30px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(200, 200, 220, 0.3);
   backdrop-filter: blur(10px);
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 30px, rgba(255, 105, 180, 0.1) 0px 2px 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .category-header {
@@ -342,17 +368,13 @@ app-add-to-cart .add-to-cart-btn:disabled {
 }
 
 .category h2 {
-  margin-bottom: 30px;
-  background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: clamp(20px, 3vw, 26px);
+  margin-bottom: 28px;
+  color: #1a1a2e;
+  font-size: 22px;
   font-weight: 700;
   text-align: left;
-  border-bottom: 3px solid transparent;
-  border-image: linear-gradient(90deg, #ff69b4, #ff8fab, #ffa8cc) 1;
-  padding-bottom: 15px;
+  border-bottom: 3px solid #ff1744;
+  padding-bottom: 16px;
   letter-spacing: -0.02em;
   font-family: var(--font-main);
 }
@@ -365,24 +387,28 @@ app-add-to-cart .add-to-cart-btn:disabled {
 }
 
 h3 {
-  font-size: 20px;
-  text-align: center;
+  font-size: 18px;
+  text-align: left;
   font-family: var(--font-productName);
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 12px;
 }
 
 .category-button {
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-  border: 2px solid rgba(233, 236, 239, 0.8);
-  color: #495057;
-  padding: 16px 22px;
+  background: #f5f7fa;
+  border: 2px solid transparent;
+  color: #4a5568;
+  padding: 14px 18px;
   text-align: left;
   text-decoration: none;
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  font-weight: 600;
-  border-radius: 15px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  border-radius: 10px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -391,35 +417,35 @@ h3 {
 }
 
 .category-button:hover {
-  color: #2d3436;
-  background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
-  border-color: rgba(255, 105, 180, 0.3);
-  transform: translateX(3px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  color: #1a1a2e;
+  background: #eff2f7;
+  border-color: #ff1744;
+  transform: translateX(4px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .category-button.active {
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8fab 50%, #ffa8cc 100%);
-  border: 2px solid rgba(255, 105, 180, 0.5);
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
+  border: 2px solid #ff1744;
   color: white;
-  transform: translateX(3px);
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-  font-weight: 700;
+  transform: translateX(4px);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.3);
+  font-weight: 600;
 }
 
 .view-more-button {
-  background: linear-gradient(145deg, #e9ecef 0%, #f8f9fa 100%);
-  border: 2px dashed rgba(255, 105, 180, 0.4);
-  color: #ff69b4;
+  background: #f5f7fa;
+  border: 2px dashed #ff1744;
+  color: #ff1744;
   padding: 12px 18px;
   text-align: center;
   text-decoration: none;
   display: block;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 10px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -429,11 +455,11 @@ h3 {
 }
 
 .view-more-button:hover {
-  background: linear-gradient(145deg, #ff69b4 0%, #ff8fab 100%);
-  border: 2px solid rgba(255, 105, 180, 0.6);
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
+  border: 2px solid #ff1744;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.3);
 }
 
 .view-more-button::before {
@@ -453,26 +479,26 @@ h3 {
 
 .add-to-cart-button {
   margin-top: 15px;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8fab 50%, #ffa8cc 100%);
+  padding: 12px 22px;
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 10px;
   cursor: pointer;
   justify-content: center;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3), 0 2px 4px rgba(255, 105, 180, 0.2);
+  letter-spacing: 0.4px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.3);
   position: relative;
   overflow: hidden;
 }
 
 .add-to-cart-button:hover {
-  transform: translateY(-2px) scale(1.05);
-  background: linear-gradient(135deg, #e83e8c 0%, #ff69b4 50%, #ff8fab 100%);
-  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4), 0 4px 8px rgba(255, 105, 180, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #d81438 0%, #ff1744 100%);
+  box-shadow: 0 10px 24px rgba(255, 23, 68, 0.4);
 }
 
 .add-to-cart-button::before {
@@ -500,16 +526,16 @@ h3 {
 }
 
 .pagination button {
-  background: linear-gradient(135deg, #f2b3a9 0%, #ffc3ba 100%);
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 20px;
+  background: #f5f7fa;
+  color: #4a5568;
+  border: 2px solid transparent;
+  padding: 12px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(242, 179, 169, 0.3);
-  min-width: 44px; /* Minimum touch target size */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  min-width: 44px;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -518,20 +544,22 @@ h3 {
 
 .pagination button.active,
 .pagination button:hover {
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8fab 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+  background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.3);
 }
 
 @media (max-width: 768px) {
   .product-list-container {
     flex-direction: column;
-    padding: 15px;
+    padding: 20px;
+    gap: 20px;
   }
 
   .products-grid {
     width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 20px;
   }
 
@@ -542,7 +570,7 @@ h3 {
     width: 75%;
     max-width: 300px;
     height: 100%;
-    padding: 30px 20px;
+    padding: 24px 18px;
     box-shadow: rgba(0, 0, 0, 0.2) 2px 0px 12px;
     transition: left 0.3s ease;
     z-index: 1001;

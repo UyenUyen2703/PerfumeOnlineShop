@@ -5,6 +5,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  size_ml?: number;
 }
 
 export interface Order {

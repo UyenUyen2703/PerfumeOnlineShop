@@ -2,18 +2,26 @@
   <h2>Contact Us</h2>
   <div class="contact-content">
     <div class="contact-seller">
-      <div>
-        <h3>Contact Seller Directly</h3>
-        <p>
-          If you have specific inquiries about our products, feel free to reach out to the seller
-          directly:
-        </p>
-        <ul>
-          <li><strong>Email:</strong> seller@example.com</li>
-        </ul>
-      </div>
-    </div>
+      <p>
+        If you have specific inquiries about our products, feel free to reach out to the seller
+        directly:
+      </p>
+      <ul>
+        <li>
+          <i class="fas fa-envelope"></i>
+          <strong>Email:</strong> perfumeseller@perfume.com
+        </li>
+        <li>
+          <i class="fas fa-phone"></i>
+          <strong>Phone:</strong> (+84) 123 456 789
+        </li>
 
+        <li>
+          <i class="fas fa-map-marker-alt"></i>
+          <strong>Address:</strong> 123 Perfume St, Fragrance City
+        </li>
+      </ul>
+    </div>
 
     <form (ngSubmit)="onSubmit()" #contactForm="ngForm" class="contact-form">
       <div class="form-group">
@@ -32,8 +40,9 @@
           required
         ></textarea>
       </div>
-      <button type="submit" [disabled]="!contactForm.valid" class="btn-submit">Submit</button>
+      <button type="submit" [disabled]="!contactForm.valid" class="submit-btn">Submit</button>
     </form>
 
     <img src="assets/contact-image.jpg" alt="Contact Us" class="contact-image" />
+  </div>
 </div>

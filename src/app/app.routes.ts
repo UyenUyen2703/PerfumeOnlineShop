@@ -51,7 +51,7 @@ export const routes: Routes = [
     component: AboutUs,
   },
   {
-    path: '/:product_id',
+    path: 'detail/:product_id',
     component: DetailProduct,
   },
   {

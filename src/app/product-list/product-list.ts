@@ -1,6 +1,6 @@
 import { NgForOf } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterLinkActive } from '@angular/router';
+import { Router, RouterLinkActive, RouterLink } from '@angular/router';
 import { Supabase } from '../supabase';
 import { CurrencyService } from '../services/currency.service';
 import { AuthService } from '../services/auth.service';
@@ -9,7 +9,7 @@ import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.compon
 
 @Component({
   selector: 'app-product-list',
-  imports: [NgForOf, AddToCartComponent],
+  imports: [NgForOf, AddToCartComponent, RouterLink],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
@@ -45,6 +45,11 @@ export class ProductList implements OnInit, OnDestroy {
         }, 500);
       }
     });
+  }
+
+  caculateDiscountedPrice(price: number, discountPercentage: number): number {
+    const discountAmount = (price * discountPercentage) / 100;
+    return price - discountAmount;
   }
 
   ngOnDestroy() {

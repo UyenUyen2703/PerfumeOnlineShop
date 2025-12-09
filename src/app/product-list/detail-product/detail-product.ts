@@ -1,4 +1,4 @@
-import { NgForOf } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
@@ -15,6 +15,7 @@ import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.com
 })
 export class DetailProduct implements OnInit {
   productList: any = [];
+  selectedSize: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,9 +34,20 @@ export class DetailProduct implements OnInit {
     });
   }
 
+  caculateDiscountedPrice(price: number, discountPercentage: number): number {
+    const discountAmount = (price * discountPercentage) / 100;
+    return price - discountAmount;
+  }
+
   private async loadProductsOfId(productId: string) {
     const product = await this.fetchProductById(productId);
     this.productList = [product];
+    // Initialize selectedSize with the first available size
+    if (product.size_ml && Array.isArray(product.size_ml) && product.size_ml.length > 0) {
+      this.selectedSize = product.size_ml[0];
+    } else if (product.size_ml && typeof product.size_ml === 'number') {
+      this.selectedSize = product.size_ml;
+    }
   }
 
   private async fetchProductById(productId: string) {
@@ -73,5 +85,19 @@ export class DetailProduct implements OnInit {
 
   getImageUrl(relativePath: string): string {
     return this.productService.getImageUrl(relativePath);
+  }
+
+  getSizeOptions(product: any): number[] {
+    if (!product.size_ml) {
+      return [];
+    }
+    if (Array.isArray(product.size_ml)) {
+      return product.size_ml;
+    }
+    return [product.size_ml];
+  }
+
+  selectSize(size: number): void {
+    this.selectedSize = size;
   }
 }
