@@ -30,6 +30,9 @@
   </div>
 
   <div class="user-actions">
+    <div>
+      <h3 *ngIf="isLoggedIn" class="welcome-message">Welcome, {{ userFullName || 'User' }}!</h3>
+    </div>
     <!-- Personal Dropdown -->
     <div class="personal-dropdown" *ngIf="isLoggedIn" (click)="togglePersonalDropdown()">
       <img src="assets/icon/user-icon.png" alt="User Login" class="icon" />

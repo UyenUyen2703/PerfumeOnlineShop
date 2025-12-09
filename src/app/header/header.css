@@ -5,6 +5,14 @@
   transition: height 0.3s ease;
 }
 
+.welcome-message{
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 15px 0 0;
+}
+
 .header-container {
   position: relative;
   top: 0;
@@ -20,13 +28,6 @@
   flex-wrap: wrap;
 }
 
-.nav-links {
-  display: flex;
-  gap: 30px;
-  margin-left: 20px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
 
 .nav-links a {
   font-family: var(--font-heading);

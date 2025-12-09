@@ -118,7 +118,7 @@ export class NotificationDropdown implements OnInit, OnDestroy {
     try {
       const { error } = await supabase
         .from('seller_notifications')
-        .update({ is_read: true })
+        .update({ is_read: true, 'updated_at': new Date().toISOString() })
         .eq('id', notification.id);
 
       if (error) {

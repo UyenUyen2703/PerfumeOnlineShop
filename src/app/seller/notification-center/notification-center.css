@@ -108,7 +108,7 @@
 
 .search-input {
   width: 100%;
-  padding: 10px 12px 10px 40px; 
+  padding: 10px 12px 10px 40px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
@@ -243,19 +243,6 @@
 .notification-item.unread {
   border-left-color: #ff4757;
   background: linear-gradient(to right, rgba(255, 71, 87, 0.02) 0%, transparent 100%);
-}
-
-.notification-item.unread::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
-  background: #ff4757;
-  border-radius: 50%;
-  margin-left: 14px;
 }
 
 .notification-item.read {

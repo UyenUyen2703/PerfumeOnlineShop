@@ -20,7 +20,18 @@
           </label>
         </div>
       </div>
+      <div class="crop-modal" *ngIf="showCrop">
+        <div class="crop-box">
+          <h4>Crop avatar</h4>
 
+          <div id="croppie-container" style="width: 300px; height: 300px; margin: auto"></div>
+
+          <div class="crop-actions">
+            <button (click)="cancelCrop()">Huỷ</button>
+            <button class="primary" (click)="confirmCrop()">Lưu</button>
+          </div>
+        </div>
+      </div>
       <div *ngIf="uploadError" class="error-message">
         {{ uploadError }}
       </div>

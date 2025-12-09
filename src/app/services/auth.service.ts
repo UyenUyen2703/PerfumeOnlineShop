@@ -7,8 +7,14 @@ import { User } from '../../type/user';
   providedIn: 'root',
 })
 export class AuthService {
-
-  async register(username: string, gender: string, phone: number, address: string, email: string, password: string) {
+  async register(
+    username: string,
+    gender: string,
+    phone: number,
+    address: string,
+    email: string,
+    password: string
+  ) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -19,8 +25,8 @@ export class AuthService {
           address: address,
           user_type: 'customer',
           gender: gender,
-        }
-      }
+        },
+      },
     });
     if (error) throw error;
     return data;
@@ -35,7 +41,7 @@ export class AuthService {
     return data;
   }
 
-  async signInWithGoogle(){
+  async signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
     });
@@ -169,19 +175,26 @@ export class AuthService {
   async uploadAvatarFromFile(userId: string, file: File): Promise<string | null> {
     try {
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
+      const fileType = file.type || 'image/png';
+      if (!allowedTypes.includes(fileType)) {
         throw new Error('Invalid file type. Only JPEG, PNG, and WebP are allowed.');
       }
       const maxSize = 2 * 1024 * 1024;
       if (file.size > maxSize) {
         throw new Error('File too large. Maximum size is 2MB.');
       }
-      const fileExt = file.name.split('.').pop();
+      let fileExt = 'png';
+      if (file.name && file.name.includes('.')) {
+        fileExt = file.name.split('.').pop()!.toLowerCase();
+      } else if (fileType) {
+        fileExt = fileType.split('/').pop()!.toLowerCase();
+      }
       const fileName = `avatars/${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const filePath = fileName;
       const { data, error } = await supabase.storage.from('images-storage').upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
+        contentType: fileType,
       });
 
       if (error) {
@@ -189,13 +202,13 @@ export class AuthService {
         throw error;
       }
 
-
       return data?.path || filePath;
     } catch (error) {
       console.error('Error in uploadAvatarFromFile:', error);
       throw error;
     }
   }
+
   async updateUserAvatar(userId: string, avatarUrl: string): Promise<boolean> {
     try {
       const { error } = await supabase
@@ -238,6 +251,30 @@ export class AuthService {
     }
   }
 
+  async getUserFullName(): Promise<string | null> {
+    try {
+      const user = await this.getUser();
+      if (!user) {
+        return null;
+      }
+      const { data, error } = await supabase
+        .from('users')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user full name:', error);
+        return null;
+      }
+
+      return data?.full_name || null;
+    } catch (error) {
+      console.error('Error in getUserFullName:', error);
+      return null;
+    }
+  }
+
   getAvatarUrl(avatarPath: string | null): string | null {
     if (!avatarPath) return null;
 
@@ -245,9 +282,7 @@ export class AuthService {
       return avatarPath;
     }
 
-    const { data } = supabase.storage
-      .from('images-storage')
-      .getPublicUrl(avatarPath);
+    const { data } = supabase.storage.from('images-storage').getPublicUrl(avatarPath);
 
     return data.publicUrl;
   }

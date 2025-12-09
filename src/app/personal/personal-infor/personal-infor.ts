@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../../type/user';
 import { supabase } from '../../../env/enviroment';
+import Croppie from 'croppie';
 
 @Component({
   selector: 'app-personal-infor',
@@ -20,6 +21,9 @@ export class PersonalInfor implements OnInit {
   isUploading = false;
   uploadError: string | null = null;
   isEditing: boolean = false;
+  showCrop: boolean = false;
+  croppie: any = null;
+  selectedImageBase64: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -59,6 +63,51 @@ export class PersonalInfor implements OnInit {
 
   ngOnInit() {
     this.loadUser();
+  }
+
+  cancelCrop() {
+    this.showCrop = false;
+    this.croppie?.destroy();
+    this.croppie = null;
+  }
+
+  async confirmCrop() {
+    if (!this.croppie) return;
+
+    try {
+      const blob: Blob = await this.croppie.result({
+        type: 'blob',
+        size: { width: 400, height: 400 },
+        format: 'png',
+        quality: 1,
+      });
+
+      if (!blob) {
+        throw new Error('Crop result is empty');
+      }
+
+      const file = new File([blob], `avatars/${Date.now()}.png`, { type: 'image/png' });
+
+      this.showCrop = false;
+      this.croppie.destroy();
+      this.croppie = null;
+
+      await this.uploadAvatar(file);
+    } catch (err) {
+      console.error('Crop error:', err);
+      this.uploadError = 'Crop failed';
+    }
+  }
+
+  private base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
   }
 
   // Validation methods
@@ -206,9 +255,50 @@ export class PersonalInfor implements OnInit {
 
   onAvatarFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.uploadAvatar(input.files[0]);
-    }
+    if (!input.files || !input.files[0]) return;
+
+    const file = input.files[0];
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.showCrop = true;
+
+      setTimeout(() => {
+        this.croppie = new Croppie(document.getElementById('croppie-container')!, {
+          viewport: { width: 250, height: 250, type: 'circle' },
+          boundary: { width: 300, height: 300 },
+          enableExif: true,
+        });
+
+        this.croppie.bind({
+          url: reader.result,
+        });
+      });
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  openCropper(base64: string) {
+    this.showCrop = true;
+
+    setTimeout(() => {
+      const el = document.getElementById('croppie-container');
+      if (!el) return;
+
+      this.croppie?.destroy();
+
+      this.croppie = new Croppie(el, {
+        viewport: { width: 180, height: 180, type: 'circle' },
+        boundary: { width: 300, height: 300 },
+        showZoomer: true,
+        enableExif: true,
+      });
+
+      this.croppie.bind({
+        url: base64,
+      });
+    });
   }
 
   private async uploadAvatar(file: File) {
@@ -223,7 +313,7 @@ export class PersonalInfor implements OnInit {
       const newAvatarUrl = await this.authService.uploadAvatarFromFile(this.user.id, file);
 
       if (newAvatarUrl) {
-        if (this.userProfile?.avatar_url && !this.userProfile.avatar_url.startsWith('http') ) {
+        if (this.userProfile?.avatar_url && !this.userProfile.avatar_url.startsWith('http')) {
           await this.authService.deleteAvatarFromStorage(this.userProfile.avatar_url);
         }
 

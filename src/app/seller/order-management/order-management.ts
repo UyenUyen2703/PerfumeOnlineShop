@@ -151,7 +151,7 @@ export class OrderManagement implements OnInit, OnDestroy {
 
       const { data, error } = await supabase
         .from('orders')
-        .update({ status: newStatus })
+        .update({ status: newStatus, 'updated_at': new Date().toISOString() })
         .eq('order_id', orderId);
 
       if (error) throw error;

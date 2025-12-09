@@ -10,6 +10,51 @@
   margin-bottom: 30px;
 }
 
+.crop-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.crop-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  width: 360px;
+  max-width: 90%;
+}
+
+.crop-box h4 {
+  margin-bottom: 8px;
+}
+
+#croppie-container {
+  margin: auto;
+}
+
+.crop-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.crop-actions button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.crop-actions .primary {
+  background: #4f46e5;
+  color: #fff;
+}
+
 .avatar-section {
   flex: 0 0 200px;
 }
@@ -181,7 +226,8 @@
   margin-left: 10px;
 }
 
-.save-btn, .cancel-btn {
+.save-btn,
+.cancel-btn {
   width: 28px;
   height: 28px;
   border: none;
@@ -230,7 +276,7 @@ span.readonly-badge {
   color: white !important;
 }
 
-.edit-icon{
+.edit-icon {
   width: 14px;
   height: 14px;
 }
@@ -301,7 +347,8 @@ span.readonly-badge {
     align-items: center;
   }
 
-  .avatar-section, .user-info {
+  .avatar-section,
+  .user-info {
     flex: none;
     width: 100%;
   }
@@ -326,7 +373,7 @@ span.readonly-badge {
     transform: none;
   }
 
-  .readonly-field{
+  .readonly-field {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

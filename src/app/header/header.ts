@@ -16,6 +16,7 @@ export class Header implements OnInit {
   currentUser: any = null;
   mobileMenuOpen = false;
   personalDropdownOpen = false;
+  userFullName: string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -41,9 +42,11 @@ export class Header implements OnInit {
         this.isLoggedIn = false;
         this.currentUser = null;
       }
-    });
+      this.userFullName = await this.authService.getUserFullName();
+    }
 
-    // Close dropdowns on route change
+  );
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {

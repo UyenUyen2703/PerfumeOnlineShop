@@ -28,10 +28,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
   isLoadingOrderDetails: boolean = false;
   showOrderModal: boolean = false;
 
-  constructor(
-    private authService: AuthService,
-    private notificationService: NotificationService
-  ) {}
+  constructor(private authService: AuthService, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.initializeComponent();
@@ -105,16 +102,15 @@ export class NotificationCenter implements OnInit, OnDestroy {
     let filtered = [...this.notifications];
 
     if (this.filterType === 'read') {
-      filtered = filtered.filter(n => n.is_read === true);
+      filtered = filtered.filter((n) => n.is_read === true);
     } else if (this.filterType === 'unread') {
-      filtered = filtered.filter(n => n.is_read === false);
+      filtered = filtered.filter((n) => n.is_read === false);
     }
 
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(n =>
-        n.title.toLowerCase().includes(term) ||
-        n.content.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (n) => n.title.toLowerCase().includes(term) || n.content.toLowerCase().includes(term)
       );
     }
 
@@ -135,7 +131,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
     try {
       const { error } = await supabase
         .from('seller_notifications')
-        .update({ is_read: true })
+        .update({ is_read: true, updated_at: new Date().toISOString() })
         .eq('id', notification.id);
 
       if (error) {
@@ -157,7 +153,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
     try {
       const { error } = await supabase
         .from('seller_notifications')
-        .update({ is_read: false })
+        .update({ is_read: false, updated_at: new Date().toISOString() })
         .eq('id', notification.id);
 
       if (error) {
@@ -187,7 +183,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
         return;
       }
 
-      this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      this.notifications = this.notifications.filter((n) => n.id !== notification.id);
       this.applyFilters();
       this.updateUnreadCountService();
     } catch (error) {
@@ -199,15 +195,13 @@ export class NotificationCenter implements OnInit, OnDestroy {
     if (this.notifications.length === 0) return;
 
     try {
-      const unreadIds = this.notifications
-        .filter(n => !n.is_read && n.id)
-        .map(n => n.id);
+      const unreadIds = this.notifications.filter((n) => !n.is_read && n.id).map((n) => n.id);
 
       if (unreadIds.length === 0) return;
 
       const { error } = await supabase
         .from('seller_notifications')
-        .update({ is_read: true })
+        .update({ is_read: true, updated_at: new Date().toISOString() })
         .in('id', unreadIds);
 
       if (error) {
@@ -215,7 +209,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
         return;
       }
 
-      this.notifications.forEach(n => n.is_read = true);
+      this.notifications.forEach((n) => (n.is_read = true));
       this.applyFilters();
       this.updateUnreadCountService();
     } catch (error) {
@@ -224,7 +218,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
   }
 
   getUnreadCount(): number {
-    return this.notifications.filter(n => !n.is_read).length;
+    return this.notifications.filter((n) => !n.is_read).length;
   }
 
   private updateUnreadCountService(): void {
@@ -234,16 +228,32 @@ export class NotificationCenter implements OnInit, OnDestroy {
 
   getNotificationIcon(type: string): string {
     switch (type) {
+      case 'order':
+        return '<i class="fas fa-shopping-cart"></i>';
+
       case 'new_order':
-        return '🛒';
+        return '<i class="fas fa-cart-plus text-primary"></i>';
+
       case 'order_shipped':
-        return '📦';
+        return '<i class="fas fa-truck text-info"></i>';
+
       case 'order_delivered':
-        return '✅';
+        return '<i class="fas fa-check-circle text-success"></i>';
+
       case 'order_cancelled':
-        return '❌';
+        return '<i class="fas fa-times-circle text-danger"></i>';
+
+      case 'payment_success':
+        return '<i class="fas fa-credit-card text-success"></i>';
+
+      case 'payment_failed':
+        return '<i class="fas fa-exclamation-triangle text-warning"></i>';
+
+      case 'message':
+        return '<i class="fas fa-envelope"></i>';
+
       default:
-        return '🔔';
+        return '<i class="fas fa-bell"></i>';
     }
   }
 
@@ -266,7 +276,7 @@ export class NotificationCenter implements OnInit, OnDestroy {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 
@@ -292,7 +302,6 @@ export class NotificationCenter implements OnInit, OnDestroy {
     this.selectedOrderId = notification.metadata.orderId;
     this.isLoadingOrderDetails = true;
     this.showOrderModal = true;
-
 
     try {
       // Fetch order details
@@ -369,4 +378,3 @@ export class NotificationCenter implements OnInit, OnDestroy {
     }
   }
 }
-
