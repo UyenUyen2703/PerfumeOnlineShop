@@ -1,9 +1,11 @@
 import { AuthService } from './../services/auth.service';
 import { NotificationService } from './../services/notification.service';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { WishlistService } from './../services/wishlist.service';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -11,21 +13,25 @@ import { filter } from 'rxjs/operators';
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
-export class Header implements OnInit {
+export class Header implements OnInit, OnDestroy {
   isLoggedIn = false;
   currentUser: any = null;
   mobileMenuOpen = false;
   personalDropdownOpen = false;
   userFullName: string | null = null;
+  wishlistCount = 0;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    public notificationService: NotificationService
+    public notificationService: NotificationService,
+    private wishlistService: WishlistService
   ) {}
 
   async ngOnInit() {
     await this.checkAuthState();
+    await this.loadWishlistCount();
 
     this.authService.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
@@ -35,17 +41,17 @@ export class Header implements OnInit {
           await this.authService.addUserToDatabase(session.user);
           this.isLoggedIn = true;
           this.currentUser = session.user;
+          await this.loadWishlistCount();
         } catch (error) {
           console.error('Error adding user to database after sign in:', error);
         }
       } else if (event === 'SIGNED_OUT') {
         this.isLoggedIn = false;
         this.currentUser = null;
+        this.wishlistCount = 0;
       }
       this.userFullName = await this.authService.getUserFullName();
-    }
-
-  );
+    });
 
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -53,6 +59,30 @@ export class Header implements OnInit {
         this.personalDropdownOpen = false;
         this.mobileMenuOpen = false;
       });
+
+    // Subscribe to wishlist changes
+    this.wishlistService.wishlist$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((wishlist) => {
+        this.wishlistCount = wishlist.length;
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private async loadWishlistCount() {
+    try {
+      const userId = await this.authService.getUserId();
+      if (userId) {
+        await this.wishlistService.getUserWishlist(userId);
+        this.wishlistCount = this.wishlistService.getWishlistCount();
+      }
+    } catch (error) {
+      console.error('Error loading wishlist count:', error);
+    }
   }
 
   async checkAuthState() {

@@ -55,10 +55,93 @@
 
     <div class="chart-container">
       <div class="chart-card">
-        <h3>Monthly Revenue</h3>
+        <h3>Daily Revenue This Month</h3>
         <div class="chart-wrapper">
           <canvas id="monthlyRevenueChart"></canvas>
         </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-card">
+        <h3>Monthly Revenue This Year</h3>
+        <div class="chart-wrapper">
+          <canvas id="yearlyRevenueChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="reports-section">
+    <h2 class="section-title">Export Reports</h2>
+
+    <div class="reports-grid">
+      <div class="report-card">
+        <div class="report-icon">
+          <i class="fas fa-file-invoice"></i>
+        </div>
+        <div class="report-content">
+          <h3>Orders Report</h3>
+          <p>Export detailed orders report with customer information</p>
+          <div class="date-filters">
+            <input type="date" [(ngModel)]="dateFrom" placeholder="From Date">
+            <input type="date" [(ngModel)]="dateTo" placeholder="To Date">
+          </div>
+          <button class="export-btn orders-btn" (click)="exportOrdersReport()">
+            <i class="fas fa-download"></i> Export Orders
+          </button>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <div class="report-icon">
+          <i class="fas fa-box"></i>
+        </div>
+        <div class="report-content">
+          <h3>Products Report</h3>
+          <p>Export complete products inventory report</p>
+          <button class="export-btn products-btn" (click)="exportProductsReport()">
+            <i class="fas fa-download"></i> Export Products
+          </button>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <div class="report-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="report-content">
+          <h3>Revenue Report</h3>
+          <p>Export monthly revenue analysis report</p>
+          <div class="year-filter">
+            <select [(ngModel)]="selectedYear">
+              <option [value]="year" *ngFor="let year of availableYears">{{year}}</option>
+            </select>
+          </div>
+          <button class="export-btn revenue-btn" (click)="exportRevenueReport()">
+            <i class="fas fa-download"></i> Export Revenue
+          </button>
+        </div>
+      </div>
+
+      <div class="report-card comprehensive">
+        <div class="report-icon">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="report-content">
+          <h3>Comprehensive Report</h3>
+          <p>Export complete business overview with all metrics</p>
+          <button class="export-btn comprehensive-btn" (click)="exportComprehensiveReport()">
+            <i class="fas fa-download"></i> Export Complete Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-overlay" *ngIf="isExporting">
+      <div class="loading-content">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Generating report... Please wait</p>
       </div>
     </div>
   </div>

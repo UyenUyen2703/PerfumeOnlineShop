@@ -51,7 +51,8 @@
         </a>
         <a routerLink="/personal/favorites" class="dropdown-item" (click)="closePersonalDropdown()">
           <i class="fas fa-heart"></i>
-          <span>Favorite</span>
+          <span>Favorites</span>
+          <span class="badge" *ngIf="wishlistCount > 0">{{ wishlistCount }}</span>
         </a>
         <div class="dropdown-divider"></div>
         <a (click)="logout(); closePersonalDropdown()" class="dropdown-item logout-item">

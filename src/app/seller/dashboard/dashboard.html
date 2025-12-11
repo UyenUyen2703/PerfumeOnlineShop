@@ -24,8 +24,8 @@
     </button>
     <input #importFileInput type="file" accept=".xlsx,.xls" (change)="importFile($event)" style="display: none;">
 
-    <button [disabled]="!selectedGrid" (class.disabled-button)="(!selectedGrid)" class="file-btn">
-      <img src="assets/icon/report.png" alt="Down Arrow" class="btn" />
+    <button [disabled]="!selectedGrid" (class.disabled-button)="(!selectedGrid)" class="file-btn" (click)="openReportModal()">
+      <img src="assets/icon/report.png" alt="Export Reports" class="btn" />
     </button>
   </div>
 </div>
@@ -48,7 +48,7 @@
         />
       </ng-template>
     </igx-column>
-    <igx-column field="discount" header="Discount" dataType="string" width="100px"></igx-column>
+    <igx-column field="discount" header="Discount" dataType="string" width="100px" resizable="true"></igx-column>
     <igx-column field="name" header="Product Name" dataType="string" width="200px"></igx-column>
     <igx-column field="price" header="Price" dataType="number" width="150px"></igx-column>
     <igx-column
@@ -141,4 +141,83 @@
       </ng-template>
     </igx-column>
   </igx-grid>
+</div>
+
+<div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3><i class="fas fa-file-export"></i> Export Business Reports</h3>
+      <button class="close-btn" (click)="closeReportModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="report-options">
+        <div class="report-option" (click)="exportOrdersReport()">
+          <div class="report-icon orders">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div class="report-details">
+            <h4>Orders Report</h4>
+            <p>Export detailed orders with customer info and filters</p>
+          </div>
+          <div class="export-btn">
+            <i class="fas fa-download"></i>
+          </div>
+        </div>
+
+        <div class="report-option" (click)="exportProductsReport()">
+          <div class="report-icon products">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="report-details">
+            <h4>Products Report</h4>
+            <p>Complete inventory report with stock levels</p>
+          </div>
+          <div class="export-btn">
+            <i class="fas fa-download"></i>
+          </div>
+        </div>
+
+        <div class="report-option" (click)="exportRevenueReport()">
+          <div class="report-icon revenue">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="report-details">
+            <h4>Revenue Report</h4>
+            <p>Monthly revenue analysis and trends</p>
+          </div>
+          <div class="export-btn">
+            <i class="fas fa-download"></i>
+          </div>
+        </div>
+
+        <div class="report-option comprehensive" (click)="exportComprehensiveReport()">
+          <div class="report-icon comprehensive">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="report-details">
+            <h4>Comprehensive Report</h4>
+            <p>Complete business overview with all metrics</p>
+          </div>
+          <div class="export-btn">
+            <i class="fas fa-download"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeReportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" *ngIf="isExporting">
+  <div class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Generating report... Please wait</p>
+  </div>
 </div>

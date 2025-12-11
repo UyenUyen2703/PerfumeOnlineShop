@@ -43,6 +43,10 @@
       class="product-item"
       [routerLink]="['/detail', product.product_id]"
     >
+      <button class="wishlist-btn" (click)="toggleFavorite(product, $event)">
+        <i [class]="isFavorite(product.product_id) ? 'fas fa-heart liked' : 'far fa-heart'"> </i>
+      </button>
+
       @if(product.discount > 0) {
       <h2 class="discount">{{ product.discount }}%</h2>
       }

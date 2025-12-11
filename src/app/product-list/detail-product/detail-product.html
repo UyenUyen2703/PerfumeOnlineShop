@@ -53,22 +53,44 @@
     </div>
     }
 
-    <app-add-to-cart
-      [product]="{
-        product_id: product.product_id,
-        name: product.name,
-        price: product.price * 1000,
-        image: getImageUrl(product.image_url),
-        code: '#' + product.product_id,
-        size_ml: selectedSize,
-        options:
-          (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
-      }"
-      [showQuantitySelector]="true"
-      [showCartInfo]="true"
-      [maxQuantity]="10"
-      (productAdded)="onProductAdded($event)"
-    >
-    </app-add-to-cart>
+    <!-- Wishlist Message -->
+    @if(wishlistMessage) {
+    <div class="wishlist-message" [class.success]="isInWishlist">
+      {{ wishlistMessage }}
+    </div>
+    }
+
+    <!-- Action Buttons -->
+    <div class="product-actions">
+      <app-add-to-cart
+        [product]="{
+          product_id: product.product_id,
+          name: product.name,
+          price: product.price * 1000,
+          image: getImageUrl(product.image_url),
+          code: '#' + product.product_id,
+          size_ml: selectedSize,
+          options:
+            (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
+        }"
+        [showQuantitySelector]="true"
+        [showCartInfo]="true"
+        [maxQuantity]="10"
+        (productAdded)="onProductAdded($event)"
+      >
+      </app-add-to-cart>
+
+      <button
+        type="button"
+        class="wishlist-button"
+        [class.in-wishlist]="isInWishlist"
+        [disabled]="wishlistLoading"
+        (click)="toggleWishlist(product.product_id)"
+        [title]="isInWishlist ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'"
+      >
+        <span class="wishlist-icon">{{ isInWishlist ? '❤️' : '🤍' }}</span>
+        {{ isInWishlist ? 'Yêu Thích' : 'Thêm Yêu Thích' }}
+      </button>
+    </div>
   </div>
 </div>

@@ -18,7 +18,9 @@
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
               "tslib",
-              "@supabase/postgrest-js"
+              "@supabase/postgrest-js",
+              "file-saver",
+              "xlsx"
             ],
             "assets": [
               {

@@ -1,0 +1,149 @@
+<div class="favorite-list-container">
+  <!-- Header Section -->
+  <div class="favorite-header">
+    <h1>Wish List</h1>
+    <p class="items-count" *ngIf="wishlist.length > 0">
+      {{ wishlist.length }} products
+    </p>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" *ngIf="error && !loading">
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && wishlist.length === 0">
+    <div class="empty-icon">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </div>
+    <h2>Empty Wish List</h2>
+    <p>You haven't added any products to your wish list yet.</p>
+    <a href="/perfume" class="btn btn-primary">Explore Products </a>
+  </div>
+
+  <!-- Wishlist Items -->
+  <div class="wishlist-content" *ngIf="!loading && wishlist.length > 0">
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="select-controls">
+        <input
+          type="checkbox"
+          id="select-all"
+          class="select-all-checkbox"
+          [checked]="isAllSelected()"
+          (change)="selectAll()"
+        />
+        <label for="select-all" class="select-label">
+          Select All ({{ selectedItems.size }}/{{ wishlist.length }})
+        </label>
+      </div>
+
+      <div class="bulk-actions" *ngIf="selectedItems.size > 0">
+        <button class="btn btn-success btn-sm" (click)="addSelectedToCart()">
+          <span class="action-icon">🛒</span>
+          Add to cart ({{ selectedItems.size }})
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="removeSelectedItems()">
+          <span class="action-icon">🗑️</span>
+          Remove ({{ selectedItems.size }})
+        </button>
+      </div>
+    </div>
+
+    <!-- Wishlist Grid -->
+    <div class="wishlist-grid">
+      <div class="wishlist-item" *ngFor="let item of wishlist">
+        <!-- Checkbox -->
+        <div class="item-checkbox">
+          <input
+            type="checkbox"
+            [id]="'item-' + item.product_id"
+            class="item-checkbox-input"
+            [checked]="isItemSelected(item.product_id)"
+            (change)="toggleSelectItem(item.product_id)"
+          />
+        </div>
+
+        <!-- Product Card -->
+        <div class="product-card">
+          <!-- Product Image -->
+          <div class="product-image-wrapper">
+            <img
+              *ngIf="item.product"
+              [src]="productService.getImageUrl(item.product.image_url || '')"
+              [alt]="item.product.name"
+              class="product-image"
+            />
+            <div class="stock-badge" [ngClass]="getStockStatusClass(item)">
+              {{ getStockStatus(item) }}
+            </div>
+            <div class="discount-badge" *ngIf="item.product && item.product.discount && item.product.discount > 0">
+              -{{ item.product.discount }}%
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="product-info">
+            <h3 class="product-name">
+              <a [routerLink]="['/detail', item.product?.product_id]">
+                {{ item.product?.name }}
+              </a>
+            </h3>
+
+            <div class="product-meta">
+              <p class="product-brand" *ngIf="item.product && item.product.brands">
+                Brand: {{ item.product.brands.name }}
+              </p>
+              <p class="product-size" *ngIf="item.product && item.product.size_ml">
+                Size: {{ item.product.size_ml }}ml
+              </p>
+            </div>
+
+            <!-- Price Section -->
+            <div class="price-section">
+              <div class="price">
+                <span class="current-price">{{ formatPrice(getDisplayPrice(item)) }}</span>
+                <span class="original-price" *ngIf="getDiscountedPrice(item) && item.product">
+                  {{ formatPrice((item.product.price * 1000) || 0) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Added Date -->
+            <p class="added-date">
+              Created at: {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="product-actions">
+            <button
+              class="btn btn-primary btn-add-cart"
+              (click)="addToCart(item)"
+              [disabled]="isOutOfStock(item)"
+            >
+              <span class="action-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </span>
+              Add to cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

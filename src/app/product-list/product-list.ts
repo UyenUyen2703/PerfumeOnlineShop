@@ -5,6 +5,7 @@ import { Supabase } from '../supabase';
 import { CurrencyService } from '../services/currency.service';
 import { AuthService } from '../services/auth.service';
 import { ProductService } from '../services/product.service';
+import { WishlistService } from '../services/wishlist.service';
 import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.component';
 
 @Component({
@@ -25,26 +26,45 @@ export class ProductList implements OnInit, OnDestroy {
   isCategoryOpen: boolean = false;
   showAllBrands: boolean = false;
   maxVisibleBrands: number = 5;
+  favorites: string[] = [];
+  userId: string | null = null;
 
   constructor(
     private supabase: Supabase,
     private router: Router,
     public currencyService: CurrencyService,
     private authService: AuthService,
-    private productService: ProductService
+    private productService: ProductService,
+    private wishlistService: WishlistService
   ) {}
 
   ngOnInit() {
     this.loadProducts();
     this.loadCategories();
     this.loadBrands();
+    this.initializeUser();
     this.authSubscription = this.authService.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
+        await this.initializeUser();
         setTimeout(() => {
           this.loadProducts();
         }, 500);
+      } else if (event === 'SIGNED_OUT') {
+        this.userId = null;
+        this.favorites = [];
       }
     });
+  }
+
+  private async initializeUser() {
+    try {
+      this.userId = await this.authService.getUserId();
+      if (this.userId) {
+        await this.loadFavorites();
+      }
+    } catch (error) {
+      console.error('Error initializing user:', error);
+    }
   }
 
   caculateDiscountedPrice(price: number, discountPercentage: number): number {
@@ -166,5 +186,44 @@ export class ProductList implements OnInit, OnDestroy {
 
   toggleBrandsVisibility() {
     this.showAllBrands = !this.showAllBrands;
+  }
+
+  async loadFavorites() {
+    if (!this.userId) return;
+
+    try {
+      const wishlist = await this.wishlistService.getUserWishlist(this.userId);
+      this.favorites = wishlist.map((item) => item.product_id);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+    }
+  }
+
+  isFavorite(productId: string): boolean {
+    return this.favorites.includes(productId);
+  }
+
+  async toggleFavorite(product: any, event: MouseEvent) {
+    event.stopPropagation();
+
+    if (!this.userId) {
+      alert('Bạn cần đăng nhập!');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const exists = this.isFavorite(product.product_id);
+
+    if (exists) {
+      const success = await this.wishlistService.removeFromWishlist(this.userId, product.product_id);
+      if (success) {
+        this.favorites = this.favorites.filter((id) => id !== product.product_id);
+      }
+    } else {
+      const success = await this.wishlistService.addToWishlist(this.userId, product.product_id);
+      if (success) {
+        this.favorites.push(product.product_id);
+      }
+    }
   }
 }

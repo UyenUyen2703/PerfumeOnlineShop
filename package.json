@@ -33,6 +33,7 @@
     "@angular/router": "^20.3.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@supabase/supabase-js": "^2.77.0",
+    "buffer": "^6.0.3",
     "chart.js": "^4.5.1",
     "croppie": "^2.6.5",
     "docx": "^9.5.1",

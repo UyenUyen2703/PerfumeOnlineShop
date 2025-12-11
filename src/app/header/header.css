@@ -178,6 +178,36 @@
 }
 
 .logout-item:hover {
+  background: #f8d7da;
+  color: #dc3545 !important;
+}
+
+/* Wishlist Badge */
+.dropdown-item .badge {
+  margin-left: auto;
+  background-color: #ff69b4;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+  animation: badge-appear 0.3s ease;
+}
+
+@keyframes badge-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.logout-item {
   background: #f8d7da !important;
   color: #721c24 !important;
 }

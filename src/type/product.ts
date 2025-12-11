@@ -11,4 +11,7 @@ export interface Product {
   size_ml?: number | number[];
   created_at?: string;
   updated_at?: string;
+  brands?: {
+    name: string;
+  };
 }

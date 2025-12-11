@@ -1,5 +1,6 @@
 import { ExportService } from './../../services/export.service';
 import { ProductService } from './../../services/product.service';
+import { AuthService } from './../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -37,12 +38,21 @@ export class SellerDashboard {
   category: any[] = [];
   brand: any[] = [];
   isLoading: boolean = false;
+
+  // Report Modal Properties
+  showReportModal: boolean = false;
+  isExporting: boolean = false;
+  currentSellerId: string | null = null;
+
   constructor(
     private exportService: ExportService,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Get current seller ID
+    this.currentSellerId = await this.authService.getUserId();
     this.loadProducts();
     this.loadCategories();
     this.loadBrands();
@@ -113,5 +123,102 @@ export class SellerDashboard {
 
   getImageUrl(relativePath: string): string {
     return this.productService.getImageUrl(relativePath);
+  }
+
+  openReportModal() {
+    this.showReportModal = true;
+  }
+
+  closeReportModal() {
+    this.showReportModal = false;
+  }
+
+  async exportOrdersReport() {
+    if (!this.currentSellerId) {
+      this.currentSellerId = await this.authService.getUserId();
+      if (!this.currentSellerId) {
+        alert('Please log in to export reports.');
+        return;
+      }
+    }
+
+    this.isExporting = true;
+    this.closeReportModal();
+
+    try {
+      await this.exportService.generateSellerOrdersReport(this.currentSellerId);
+    } catch (error) {
+      console.error('Error exporting orders report:', error);
+      alert('Failed to export orders report. Please try again.');
+    } finally {
+      this.isExporting = false;
+    }
+  }
+
+  async exportProductsReport() {
+    if (!this.currentSellerId) {
+      this.currentSellerId = await this.authService.getUserId();
+      if (!this.currentSellerId) {
+        alert('Please log in to export reports.');
+        return;
+      }
+    }
+
+    this.isExporting = true;
+    this.closeReportModal();
+
+    try {
+      await this.exportService.generateSellerProductsReport(this.currentSellerId);
+    } catch (error) {
+      console.error('Error exporting products report:', error);
+      alert('Failed to export products report. Please try again.');
+    } finally {
+      this.isExporting = false;
+    }
+  }
+
+  async exportRevenueReport() {
+    if (!this.currentSellerId) {
+      this.currentSellerId = await this.authService.getUserId();
+      if (!this.currentSellerId) {
+        alert('Please log in to export reports.');
+        return;
+      }
+    }
+
+    this.isExporting = true;
+    this.closeReportModal();
+
+    try {
+      const currentYear = new Date().getFullYear();
+      await this.exportService.generateSellerRevenueReport(this.currentSellerId, currentYear);
+    } catch (error) {
+      console.error('Error exporting revenue report:', error);
+      alert('Failed to export revenue report. Please try again.');
+    } finally {
+      this.isExporting = false;
+    }
+  }
+
+  async exportComprehensiveReport() {
+    if (!this.currentSellerId) {
+      this.currentSellerId = await this.authService.getUserId();
+      if (!this.currentSellerId) {
+        alert('Please log in to export reports.');
+        return;
+      }
+    }
+
+    this.isExporting = true;
+    this.closeReportModal();
+
+    try {
+      await this.exportService.generateComprehensiveSellerReport(this.currentSellerId);
+    } catch (error) {
+      console.error('Error exporting comprehensive report:', error);
+      alert('Failed to export comprehensive report. Please try again.');
+    } finally {
+      this.isExporting = false;
+    }
   }
 }

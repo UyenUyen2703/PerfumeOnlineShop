@@ -5,7 +5,6 @@
     <p>Loading products...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage" class="error-container">
     <div class="error-message">
       <i class="fas fa-exclamation-triangle"></i>
@@ -16,35 +15,36 @@
       Retry
     </button>
   </div>
-
-  <!-- Success State -->
   <div *ngIf="successMessage" class="success-container">
     <div class="success-message">
       <i class="fas fa-check-circle"></i>
       {{ successMessage }}
     </div>
   </div>
-
-  <!-- Updating State -->
   <div *ngIf="isUpdating" class="updating-container">
     <div class="updating-message">
       <i class="fas fa-spinner fa-spin"></i>
       Updating quantity...
     </div>
   </div>
-
-  <!-- products Grid -->
   <div *ngIf="!isLoading && !errorMessage" class="grid-container">
     <igx-grid
       #grid
       [data]="product"
       class="data"
       *ngIf="product.length > 0"
-      [height]="'600px'"
+      [height]="'500px'"
       [width]="'100%'"
       [autoGenerate]="false"
       (cellEditDone)="onCellEditDone($event)"
+      (columnResized)="(true)"
     >
+      <igx-column [editable]="false">
+        <ng-template igxCell let-cell="cell">
+          <button igxButton="raised" color="danger" (click)="deleteProduct(cell.row.data.product_id)">Delete</button>
+        </ng-template>
+      </igx-column>
+
       <igx-column
         field="product_id"
         header="product ID"
@@ -56,6 +56,8 @@
         header="Product Name"
         dataType="string"
         width="250px"
+        [editable]="true"
+        resizable="true"
       ></igx-column>
       <igx-column
         field="categories.name"
@@ -63,7 +65,16 @@
         dataType="string"
         width="200px"
       ></igx-column>
-      <igx-column field="brands.name" header="Brand" dataType="string" width="150px"></igx-column>
+      <igx-column field="brand_name" header="Brand" width="100px" [editable]="true">
+        <ng-template igxCellEditor let-cell="cell">
+          <igx-select #brandSelect [(ngModel)]="cell.editValue" (opened)="brandSelect.open()">
+            {{ cell.value }}
+            <igx-select-item *ngFor="let b of brands" [value]="b.name">
+              {{ b.name }}
+            </igx-select-item>
+          </igx-select>
+        </ng-template>
+      </igx-column>
       <igx-column field="price" header="Price" dataType="number" width="150px">
         <ng-template igxCell let-cell="cell">
           {{ formatToCurrency(cell.value * 1000) }}
@@ -74,7 +85,8 @@
         field="quantity"
         header="Quantity"
         dataType="number"
-        width="150px" [editable]="true"
+        width="150px"
+        [editable]="true"
       ></igx-column>
       <igx-column field="created_at" header="Created At" dataType="string" width="200px">
         <ng-template igxCell let-cell="cell">
