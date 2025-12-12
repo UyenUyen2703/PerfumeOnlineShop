@@ -27,20 +27,28 @@
       [width]="'100%'"
       [autoGenerate]="false"
     >
-      <igx-column field="order_id" header="Order ID" dataType="string" width="200px"></igx-column>
+      <igx-column field="order_id" header="Order ID" dataType="string" width="150px">
+        <ng-template igxCell let-cell="cell">
+          {{ formatColumnOrderId(cell.value) }}
+        </ng-template>
+      </igx-column>
       <igx-column
         field="recipient_Name"
         header="Recipient Name"
         dataType="string"
-        width="200px"
+        width="150px"
       ></igx-column>
 
       <igx-column field="recipient_Phone" header="Recipient Phone" dataType="string" width="150px">
         <ng-template igxCell let-cell="cell">
-          {{ formatPhoneNumber(cell.value)  }}
+          {{ formatPhoneNumber(cell.value) }}
         </ng-template>
       </igx-column>
-      <igx-column field="address" header="Address" dataType="string" width="300px"></igx-column>
+      <igx-column field="address" header="Address" dataType="string" width="300px">
+        <ng-template igxCell let-cell="cell">
+          {{ formatAddress(cell.value) }}
+        </ng-template>
+      </igx-column>
       <igx-column field="total_amount" header="Total Amount" dataType="number" width="150px">
         <ng-template igxCell let-cell="cell">
           {{ formatToCurrency(cell.value) }}

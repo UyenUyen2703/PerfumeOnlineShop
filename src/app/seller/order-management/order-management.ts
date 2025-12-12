@@ -117,6 +117,22 @@ export class OrderManagement implements OnInit, OnDestroy {
     return phone;
   }
 
+  formatColumnOrderId(orderId: string): string {
+    const parts = orderId.split('-');
+    return `#${parts[parts.length - 1].toUpperCase()}`;
+  }
+
+  formatAddress(address: string): string {
+    if (!address) return '';
+
+    const cleaned = address.replace(/\s+/g, ' ').trim().toLowerCase();
+
+    return cleaned
+      .split(' ')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
   $any(value: any): any {
     return value;
   }
@@ -151,7 +167,7 @@ export class OrderManagement implements OnInit, OnDestroy {
 
       const { data, error } = await supabase
         .from('orders')
-        .update({ status: newStatus, 'updated_at': new Date().toISOString() })
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
         .eq('order_id', orderId);
 
       if (error) throw error;
