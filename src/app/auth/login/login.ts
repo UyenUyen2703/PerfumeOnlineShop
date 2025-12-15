@@ -20,10 +20,19 @@ export class Login {
 
   async loginWithGoogle() {
     try {
-      await this.authService.signInWithGoogle();
+      this.isLoading = true;
+      const { url } = await this.authService.signInWithGoogle();
+
+      // Google OAuth sẽ redirect, không cần thông báo success ở đây
+      if (url) {
+        // Redirect đến Google OAuth
+        window.location.href = url;
+      }
     } catch (error) {
       this.notificationService.error('Login failed. Please try again.');
       console.error('Login failed:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 

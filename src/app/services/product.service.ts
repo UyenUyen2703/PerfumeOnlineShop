@@ -9,11 +9,9 @@ import { Product } from '../../type/product';
 export class ProductService {
   constructor() {}
 
-  // Helper function để convert đường dẫn tương đối thành URL đầy đủ
   getImageUrl(relativePath: string): string {
     if (!relativePath) return '';
 
-    // Nếu đã là URL đầy đủ (http/https), trả về như cũ
     if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
       return relativePath;
     }

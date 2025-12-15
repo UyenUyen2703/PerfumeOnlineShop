@@ -60,9 +60,6 @@ export class LoginSeller {
         userData = result.data;
         userError = result.error;
       }
-
-      console.log('User data từ database:', { userData, userError });
-
       if (userError) {
         console.error('Error fetching user information:', userError);
         if (userError.code === 'PGRST116') {

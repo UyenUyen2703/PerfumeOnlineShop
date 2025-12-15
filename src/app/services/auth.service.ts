@@ -38,16 +38,22 @@ export class AuthService {
       password,
     });
     if (error) throw error;
+    if(data.user){
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
     return data;
   }
 
   async signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
     });
 
     if (error) throw error;
-    console.log('Sign-in data:', data);
+    return data;
   }
 
   async getUserId(): Promise<string | null> {
@@ -164,6 +170,7 @@ export class AuthService {
   }
 
   async signOut() {
+    localStorage.clear();
     await supabase.auth.signOut();
   }
 
@@ -289,5 +296,23 @@ export class AuthService {
 
   onAuthStateChange(callback: (event: AuthChangeEvent, session: Session | null) => void) {
     return supabase.auth.onAuthStateChange(callback);
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    try {
+      // Check both session and localStorage
+      const { data: { session } } = await supabase.auth.getSession();
+      const localUser = localStorage.getItem('user');
+
+      return !!(session?.user || localUser);
+    } catch (error) {
+      console.error('Error checking login status:', error);
+      return false;
+    }
+  }
+
+  async getSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session;
   }
 }

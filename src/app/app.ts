@@ -36,28 +36,43 @@ export class App implements OnInit {
       });
     this.currentUrl.set(this.router.url);
 
-    this.authService.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session && !this.hasShownLoginSuccess) {
-        const currentUrl = this.router.url;
-        if (
-          currentUrl.includes('/login') &&
-          !currentUrl.includes('/login-admin') &&
-          !currentUrl.includes('/login-seller')
-        ) {
-          this.hasShownLoginSuccess = true;
-          setTimeout(() => {
-            this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
-          }, 1000);
+    this.authService.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
+
+      if (event === 'SIGNED_IN' && session) {
+        try {
+          // Lưu user info vào localStorage
+          if (session.user) {
+            localStorage.setItem('user', JSON.stringify(session.user));
+
+            // Thêm user vào database
+            await this.authService.addUserToDatabase(session.user);
+          }
+
+          const currentUrl = this.router.url;
+          if (
+            currentUrl.includes('/login') ||
+            currentUrl === '/' ||
+            currentUrl.includes('#access_token=') ||
+            !this.hasShownLoginSuccess
+          ) {
+            this.hasShownLoginSuccess = true;
+            this.notificationService.success('Login successful!');
+
+            setTimeout(() => {
+              this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+            }, 1000);
+          }
+        } catch (error) {
+          console.error('Error handling sign in:', error);
+          this.notificationService.error('Login successful but failed to complete setup');
         }
       }
-      this.authService.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN') {
-          console.log('OAuth success:', session?.user);
 
-          await this.authService.addUserToDatabase(session?.user);
-          this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
-        }
-      });
+      if (event === 'SIGNED_OUT') {
+        localStorage.clear();
+        this.hasShownLoginSuccess = false;
+      }
     });
 
     try {
