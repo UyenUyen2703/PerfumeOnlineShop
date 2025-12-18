@@ -342,6 +342,8 @@ export class PersonalInfor implements OnInit {
     this.user = null;
     this.userProfile = null;
     this.router.navigate(['/login']);
+    localStorage.removeItem('persist:supabase-auth-helpers');
+    localStorage.clear();
   }
 
   getGenderLabel(value: string | null): string {

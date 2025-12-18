@@ -213,24 +213,20 @@ export class ProductService {
       let query = supabase
         .from('products')
         .select('*')
-        .gt('quantity', 0); // Only show products in stock
+        .gt('quantity', 0);
 
-      // Add search filter if provided
       if (searchTerm && searchTerm.trim()) {
         query = query.ilike('name', `%${searchTerm.trim()}%`);
       }
 
-      // Add category filter if provided
       if (categoryId) {
         query = query.eq('category_id', categoryId);
       }
 
-      // Add brand filter if provided
       if (brandId) {
         query = query.eq('brand_id', brandId);
       }
 
-      // Add sorting
       if (sortBy === 'price_asc') {
         query = query.order('price', { ascending: true });
       } else if (sortBy === 'price_desc') {
