@@ -163,7 +163,6 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   closeCategoryOnMobile(): void {
-    // Only close on mobile devices
     if (window.innerWidth <= 991) {
       this.isCategoryOpen = false;
     }

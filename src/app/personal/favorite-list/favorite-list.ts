@@ -47,11 +47,11 @@ export class FavoriteList implements OnInit, OnDestroy {
         await this.loadWishlist();
         this.subscribeToWishlist();
       } else {
-        this.error = 'Vui lòng đăng nhập để xem danh sách yêu thích';
+        this.error = 'Please log in to view your wishlist';
       }
     } catch (error) {
       console.error('Error initializing wishlist:', error);
-      this.error = 'Có lỗi xảy ra khi tải danh sách yêu thích';
+      this.error = 'An error occurred while loading the wishlist';
     }
   }
 
@@ -88,7 +88,7 @@ export class FavoriteList implements OnInit, OnDestroy {
 
     const success = await this.wishlistService.removeFromWishlist(this.userId, productId);
     if (success) {
-      this.successMessage = 'Đã xóa sản phẩm khỏi danh sách yêu thích';
+      this.successMessage = 'Removed product from the wishlist';
       setTimeout(() => {
         this.successMessage = null;
       }, 3000);
@@ -108,7 +108,7 @@ export class FavoriteList implements OnInit, OnDestroy {
     };
 
     this.cartService.addToCart(product);
-    this.successMessage = 'Đã thêm sản phẩm vào giỏ hàng';
+    this.successMessage = 'Added product to the cart';
     setTimeout(() => {
       this.successMessage = null;
     }, 3000);
@@ -143,7 +143,7 @@ export class FavoriteList implements OnInit, OnDestroy {
   async removeSelectedItems() {
     if (this.selectedItems.size === 0) return;
 
-    if (!confirm(`Bạn có chắc chắn muốn xóa ${this.selectedItems.size} sản phẩm?`)) {
+    if (!confirm(`Are you sure you want to delete ${this.selectedItems.size} products?`)) {
       return;
     }
 
@@ -154,7 +154,7 @@ export class FavoriteList implements OnInit, OnDestroy {
     }
 
     this.selectedItems.clear();
-    this.successMessage = 'Đã xóa các sản phẩm đã chọn';
+    this.successMessage = `Deleted ${this.selectedItems.size} selected products`;
     setTimeout(() => {
       this.successMessage = null;
     }, 3000);
@@ -171,7 +171,7 @@ export class FavoriteList implements OnInit, OnDestroy {
     }
 
     this.selectedItems.clear();
-    this.successMessage = `Đã thêm ${this.selectedItems.size} sản phẩm vào giỏ hàng`;
+    this.successMessage = `Added ${this.selectedItems.size} products to the cart`;
     setTimeout(() => {
       this.successMessage = null;
     }, 3000);
@@ -199,9 +199,9 @@ export class FavoriteList implements OnInit, OnDestroy {
   }
 
   getStockStatus(item: Wishlist): string {
-    if (!item.product) return 'Không có';
-    if (item.product.quantity > 0) return 'Còn hàng';
-    return 'Hết hàng';
+    if (!item.product) return 'Not available';
+    if (item.product.quantity > 0) return 'In stock';
+    return 'Out of stock';
   }
 
   getStockStatusClass(item: Wishlist): string {
