@@ -7,6 +7,26 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ExportService } from '../../services/export.service';
 import { AuthService } from '../../services/auth.service';
+import { DomSanitizer, SafeResourceUrl, SafeHtml } from '@angular/platform-browser';
+import * as mammoth from 'mammoth';
+import * as XLSX from 'xlsx';
+import { supabase } from '../../../env/enviroment';
+
+interface UploadedFile {
+  name: string;
+  size: number;
+  type: 'pdf' | 'excel' | 'word' | 'image';
+  file: File;
+  thumbnail: string;
+  url?: string;
+  safeUrl?: SafeResourceUrl;
+  htmlContent?: SafeHtml;
+  excelData?: {
+    sheets: string[];
+    activeSheet: string;
+    htmlContent: SafeHtml;
+  };
+}
 
 @Component({
   selector: 'app-analyst',
@@ -35,10 +55,24 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   isExporting: boolean = false;
   currentSellerId: string | null = null;
 
+  // File Upload Properties
+  showUploadModal: boolean = false;
+  showPreviewModal: boolean = false;
+  isDragOver: boolean = false;
+  uploadedFiles: UploadedFile[] = [];
+  selectedFile: UploadedFile | null = null;
+  isProcessingFiles: boolean = false;
+
+  // Storage File Properties
+  storageFiles: any[] = [];
+  isLoadingStorageFiles: boolean = false;
+  showStorageModal: boolean = false;
+
   constructor(
     private supabase: Supabase,
     private exportService: ExportService,
-    private authService: AuthService
+    private authService: AuthService,
+    private sanitizer: DomSanitizer
   ) {
     Chart.register(...registerables);
     const currentYear = new Date().getFullYear();
@@ -50,6 +84,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   async ngOnInit() {
     this.currentSellerId = await this.authService.getUserId();
     this.loadStatistics();
+    await this.loadStorageFiles();
   }
 
   ngAfterViewInit() {
@@ -532,6 +567,559 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Storage File Methods
+  async loadStorageFiles() {
+    if (!this.currentSellerId) {
+      return;
+    }
+
+    this.isLoadingStorageFiles = true;
+    try {
+      const { data, error } = await supabase.storage
+        .from('fileReport')
+        .list(this.currentSellerId, {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: 'created_at', order: 'desc' }
+        });
+
+      if (error) {
+        console.error('Error loading storage files:', error);
+        return;
+      }
+
+      this.storageFiles = data || [];
+      console.log('Storage files loaded:', this.storageFiles);
+    } catch (error) {
+      console.error('Error loading storage files:', error);
+    } finally {
+      this.isLoadingStorageFiles = false;
+    }
+  }
+
+  async downloadStorageFile(fileName: string, originalName?: string) {
+    if (!this.currentSellerId) {
+      alert('Please log in to download files.');
+      return;
+    }
+
+    try {
+      const filePath = `${this.currentSellerId}/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from('fileReport')
+        .download(filePath);
+
+      if (error) {
+        console.error('Error downloading file:', error);
+        alert('Error downloading file. Please try again.');
+        return;
+      }
+
+      // Create download link
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = originalName || fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      console.log('File downloaded successfully:', fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      alert('Error downloading file. Please try again.');
+    }
+  }
+
+  async deleteStorageFile(fileName: string) {
+    if (!this.currentSellerId) {
+      alert('Please log in to delete files.');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
+      return;
+    }
+
+    try {
+      const filePath = `${this.currentSellerId}/${fileName}`;
+      const { error } = await supabase.storage
+        .from('fileReport')
+        .remove([filePath]);
+
+      if (error) {
+        console.error('Error deleting file:', error);
+        alert('Error deleting file. Please try again.');
+        return;
+      }
+
+      // Reload storage files
+      await this.loadStorageFiles();
+      console.log('File deleted successfully:', fileName);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      alert('Error deleting file. Please try again.');
+    }
+  }
+
+  async previewStorageFile(fileName: string) {
+    if (!this.currentSellerId) {
+      alert('Please log in to preview files.');
+      return;
+    }
+
+    try {
+      const filePath = `${this.currentSellerId}/${fileName}`;
+      const { data: publicData } = supabase.storage
+        .from('fileReport')
+        .getPublicUrl(filePath);
+
+      if (publicData && publicData.publicUrl) {
+        // Open in new tab for preview
+        window.open(publicData.publicUrl, '_blank');
+      } else {
+        alert('Unable to generate preview URL.');
+      }
+    } catch (error) {
+      console.error('Error previewing file:', error);
+      alert('Error previewing file. Please try again.');
+    }
+  }
+
+  openStorageModal() {
+    this.showStorageModal = true;
+    this.loadStorageFiles(); // Refresh files when opening modal
+  }
+
+  closeStorageModal() {
+    this.showStorageModal = false;
+  }
+
+  getFileTypeIcon(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return '📄';
+      case 'doc':
+      case 'docx':
+        return '📝';
+      case 'xls':
+      case 'xlsx':
+        return '📊';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+      case 'webp':
+        return '🖼️';
+      default:
+        return '📎';
+    }
+  }
+
+  getOriginalFileName(fileName: string): string {
+    // Remove timestamp prefix from filename
+    const parts = fileName.split('_');
+    if (parts.length > 1) {
+      return parts.slice(1).join('_');
+    }
+    return fileName;
+  }
+
+  formatFileDate(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('vi-VN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  }
+
+  // File Upload Methods
+  openFileUploadModal() {
+    this.showUploadModal = true;
+  }
+
+  closeUploadModal() {
+    this.showUploadModal = false;
+    this.isDragOver = false;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  onFileDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+
+    if (event.dataTransfer && event.dataTransfer.files) {
+      this.processFiles(event.dataTransfer.files);
+    }
+  }
+
+  onFileSelect(event: any) {
+    if (event.target.files) {
+      this.processFiles(event.target.files);
+      // Reset the input to allow selecting the same file again
+      event.target.value = '';
+    }
+  }
+
+  async processFiles(files: FileList) {
+    this.isProcessingFiles = true;
+    let processedCount = 0;
+    let errorCount = 0;
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Check file size (limit to 50MB for better PDF support)
+        if (file.size > 50 * 1024 * 1024) {
+          alert(`File "${file.name}" is too large. Maximum size is 50MB.`);
+          errorCount++;
+          continue;
+        }
+
+        // Check if file already exists
+        if (this.uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+          alert(`File "${file.name}" already exists.`);
+          errorCount++;
+          continue;
+        }
+
+        const uploadedFile = await this.createUploadedFile(file);
+        if (uploadedFile) {
+          this.uploadedFiles.push(uploadedFile);
+          processedCount++;
+        } else {
+          errorCount++;
+        }
+      }
+
+      // Show summary message
+      if (processedCount > 0) {
+        console.log(`Successfully processed ${processedCount} file(s).`);
+      }
+      if (errorCount > 0) {
+        console.log(`${errorCount} file(s) could not be processed.`);
+      }
+    } finally {
+      this.isProcessingFiles = false;
+    }
+  }
+
+  async createUploadedFile(file: File): Promise<UploadedFile | null> {
+    try {
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      let fileType: 'pdf' | 'excel' | 'word' | 'image' = 'pdf';
+
+      console.log(`Processing file: ${file.name}, Extension: ${fileExtension}, Size: ${file.size}`);
+
+      // Determine file type
+      if (fileExtension === 'pdf') {
+        fileType = 'pdf';
+      } else if (['xls', 'xlsx'].includes(fileExtension || '')) {
+        fileType = 'excel';
+      } else if (['doc', 'docx'].includes(fileExtension || '')) {
+        fileType = 'word';
+      } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension || '')) {
+        fileType = 'image';
+      } else {
+        alert(`File type not supported: ${fileExtension}. Supported types: PDF, Excel, Word, Images`);
+        return null;
+      }
+
+      // Create proper blob URL for preview
+      let fileUrl: string | undefined = undefined;
+      let htmlContent: SafeHtml | undefined = undefined;
+      let excelData: { sheets: string[]; activeSheet: string; htmlContent: SafeHtml } | undefined = undefined;
+
+      if (fileType === 'pdf') {
+        const blob = new Blob([file], { type: 'application/pdf' });
+        fileUrl = URL.createObjectURL(blob);
+      } else if (fileType === 'word') {
+        // Convert Word document to HTML using mammoth
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+          htmlContent = this.sanitizer.bypassSecurityTrustHtml(result.value);
+          console.log('Word document converted to HTML successfully');
+          if (result.messages.length > 0) {
+            console.log('Conversion messages:', result.messages);
+          }
+        } catch (error) {
+          console.error('Error converting Word document:', error);
+          // Fallback to blob URL
+          const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+          fileUrl = URL.createObjectURL(blob);
+        }
+      } else if (fileType === 'excel') {
+        // Convert Excel document to HTML table using xlsx
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+          // Get first worksheet or active worksheet
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+
+          // Convert to HTML table
+          const htmlTable = XLSX.utils.sheet_to_html(worksheet, {
+            id: 'excel-table',
+            editable: false
+          });
+
+          // Create styled HTML content
+          const styledHtml = `
+            <div class="excel-info">
+              <div class="excel-header">
+                <h3>${file.name}</h3>
+                <p>Sheet: ${firstSheetName} (${workbook.SheetNames.length} sheets total)</p>
+              </div>
+            </div>
+            <div class="excel-content">
+              ${htmlTable}
+            </div>
+          `;
+
+          htmlContent = this.sanitizer.bypassSecurityTrustHtml(styledHtml);
+
+          // Store Excel data for potential sheet switching
+          excelData = {
+            sheets: workbook.SheetNames,
+            activeSheet: firstSheetName,
+            htmlContent: htmlContent
+          };
+
+          console.log('Excel document converted to HTML successfully');
+          console.log('Available sheets:', workbook.SheetNames);
+
+          // Also create blob URL as fallback
+          const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          fileUrl = URL.createObjectURL(blob);
+        } catch (error) {
+          console.error('Error converting Excel document:', error);
+          // Fallback to blob URL
+          const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          fileUrl = URL.createObjectURL(blob);
+        }
+      }
+
+      const uploadedFile: UploadedFile = {
+        name: file.name,
+        size: file.size,
+        type: fileType,
+        file: file,
+        thumbnail: await this.generateThumbnail(file, fileType),
+        url: fileUrl,
+        htmlContent: htmlContent,
+        excelData: excelData
+      };
+
+      console.log(`File processed successfully:`, uploadedFile);
+      return uploadedFile;
+    } catch (error) {
+      console.error('Error processing file:', error);
+      alert(`Error processing file "${file.name}": ${error}`);
+      return null;
+    }
+  }
+
+  async generateThumbnail(file: File, fileType: string): Promise<string> {
+    return new Promise((resolve) => {
+      if (fileType === 'image') {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // For non-image files, return a placeholder or icon
+        resolve('');
+      }
+    });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  openFilePreview(file: UploadedFile) {
+    this.selectedFile = file;
+
+    // Create safe URL for preview
+    if (file.url) {
+      if (file.type === 'pdf') {
+        file.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(file.url);
+        console.log('PDF URL created:', file.url);
+      } else if (file.type === 'excel') {
+        // Excel files will show rich preview
+        console.log('Excel document detected:', file.name);
+      }
+      console.log('Safe URL created:', file.safeUrl);
+    }
+
+    // Word documents use HTML content for preview
+    if (file.type === 'word' && file.htmlContent) {
+      console.log('Word document HTML content ready for preview');
+    }
+
+    this.showPreviewModal = true;
+  }
+
+  // Alternative method to open PDF in new tab if iframe fails
+  openPdfInNewTab(file: UploadedFile) {
+    if (file.url) {
+      const newWindow = window.open(file.url, '_blank');
+      if (!newWindow) {
+        alert('Please allow popups to view PDF in new tab');
+      }
+    }
+  }
+
+  // Method to open Office files with Google Docs Viewer
+  openOfficeInNewTab(file: UploadedFile) {
+    if (file.url) {
+      // Try to use Google Docs Viewer
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(file.url)}&embedded=false`;
+      const newWindow = window.open(googleViewerUrl, '_blank');
+      if (!newWindow) {
+        alert('Please allow popups to view document in new tab');
+      }
+    }
+  }
+
+  closePreviewModal() {
+    this.showPreviewModal = false;
+    this.selectedFile = null;
+  }
+
+
+  downloadFile(file: UploadedFile) {
+    const url = URL.createObjectURL(file.file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  removeFile(index: number) {
+    this.uploadedFiles.splice(index, 1);
+  }
+
+  async confirmUpload() {
+    if (this.uploadedFiles.length === 0) return;
+
+    // Get current seller ID if not available
+    if (!this.currentSellerId) {
+      this.currentSellerId = await this.authService.getUserId();
+      if (!this.currentSellerId) {
+        alert('Please log in to upload files.');
+        return;
+      }
+    }
+
+    this.isProcessingFiles = true;
+    let uploadedCount = 0;
+    let failedCount = 0;
+
+    try {
+      for (const file of this.uploadedFiles) {
+        try {
+          // Create unique file name with timestamp and seller ID
+          const timestamp = new Date().getTime();
+          const fileExtension = file.name.split('.').pop();
+          const fileName = `${this.currentSellerId}/${timestamp}_${file.name}`;
+
+          // Upload file to Supabase storage
+          const { data, error } = await supabase.storage
+            .from('fileReport')
+            .upload(fileName, file.file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (error) {
+            console.error('Error uploading file:', file.name, error);
+            failedCount++;
+          } else {
+            console.log('File uploaded successfully:', file.name, data);
+            uploadedCount++;
+
+            // Get public URL for the uploaded file
+            const { data: publicData } = supabase.storage
+              .from('fileReport')
+              .getPublicUrl(fileName);
+
+            if (publicData) {
+              console.log('File public URL:', publicData.publicUrl);
+            }
+          }
+        } catch (error) {
+          console.error('Error uploading file:', file.name, error);
+          failedCount++;
+        }
+      }
+
+      // Show result message
+      let message = '';
+      if (uploadedCount > 0) {
+        message += `Successfully uploaded ${uploadedCount} file(s) to Supabase storage.`;
+        alert(message);
+
+        // Reload storage files to show newly uploaded files
+        await this.loadStorageFiles();
+      }
+      if (failedCount > 0) {
+        message += ` Failed to upload ${failedCount} file(s).`;
+        if (uploadedCount === 0) {
+          alert(message);
+        }
+      }
+    } catch (error) {
+      console.error('Error in upload process:', error);
+      alert('Error uploading files. Please try again.');
+    } finally {
+      this.isProcessingFiles = false;
+      this.closeUploadModal();
+    }
+  }
+
+  clearAllFiles() {
+    if (confirm('Are you sure you want to remove all uploaded files?')) {
+      // Clean up URLs to prevent memory leaks
+      this.uploadedFiles.forEach(file => {
+        if (file.url) {
+          URL.revokeObjectURL(file.url);
+        }
+      });
+      this.uploadedFiles = [];
+    }
+  }
+
   ngOnDestroy() {
     if (this.chart) {
       this.chart.destroy();
@@ -542,5 +1130,12 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     if (this.yearlyRevenueChart) {
       this.yearlyRevenueChart.destroy();
     }
+
+    // Clean up file URLs to prevent memory leaks
+    this.uploadedFiles.forEach(file => {
+      if (file.url) {
+        URL.revokeObjectURL(file.url);
+      }
+    });
   }
 }

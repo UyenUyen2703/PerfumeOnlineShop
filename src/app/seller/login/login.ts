@@ -76,8 +76,8 @@ export class LoginSeller {
         await this.router.navigate(['/seller/seller-dashboard']);
 
     } catch (error: any) {
-      console.error('Lỗi đăng nhập:', error);
-      alert(error.message || 'Có lỗi xảy ra khi đăng nhập');
+      console.error('Failed login:', error);
+      alert(error.message || 'An error occurred during login. Please try again.');
     } finally {
       this.isLoading = false;
     }

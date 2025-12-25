@@ -71,7 +71,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="reports-section">
     <h2 class="section-title">Export Reports</h2>
 
@@ -136,12 +136,402 @@
           </button>
         </div>
       </div>
+
+      <div class="report-card upload-card">
+        <div class="report-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="report-content">
+          <h3>Upload Report Files</h3>
+          <p>Upload and preview PDF, Excel, Word, or Image files</p>
+          <button class="export-btn upload-btn" (click)="openFileUploadModal()">
+            <i class="fas fa-upload"></i> Upload Files
+          </button>
+        </div>
+      </div>
+
+      <div class="report-card storage-card">
+        <div class="report-icon">
+          <i class="fas fa-cloud"></i>
+        </div>
+        <div class="report-content">
+          <h3>Storage Files</h3>
+          <p>Manage and download uploaded files from storage</p>
+          <div class="storage-info">
+            <span class="files-badge">{{ storageFiles.length }} files</span>
+          </div>
+          <button class="export-btn storage-btn" (click)="openStorageModal()">
+            <i class="fas fa-folder-open"></i> View Storage
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="loading-overlay" *ngIf="isExporting">
       <div class="loading-content">
         <i class="fas fa-spinner fa-spin"></i>
         <p>Generating report... Please wait</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uploaded Files Gallery -->
+  <div class="uploaded-files-section" *ngIf="uploadedFiles.length > 0">
+    <div class="gallery-header">
+      <h2 class="section-title">Uploaded Report Files</h2>
+      <div class="gallery-actions">
+        <span class="files-count">{{ uploadedFiles.length }} files</span>
+        <button class="clear-all-btn" (click)="clearAllFiles()">
+          <i class="fas fa-trash-alt"></i> Clear All
+        </button>
+      </div>
+    </div>
+    <div class="files-gallery">
+      <div class="file-card" *ngFor="let file of uploadedFiles; let i = index" (click)="openFilePreview(file)">
+        <div class="file-preview">
+          <!-- Image thumbnail -->
+          <img *ngIf="file.type === 'image'" [src]="file.thumbnail" [alt]="file.name" class="file-thumbnail-img">
+
+          <!-- PDF icon -->
+          <div *ngIf="file.type === 'pdf'" class="file-icon-container pdf">
+            <i class="fas fa-file-pdf"></i>
+            <span class="file-type-label">PDF</span>
+          </div>
+
+          <!-- Excel icon -->
+          <div *ngIf="file.type === 'excel'" class="file-icon-container excel">
+            <i class="fas fa-file-excel"></i>
+            <span class="file-type-label">Excel</span>
+          </div>
+
+          <!-- Word icon -->
+          <div *ngIf="file.type === 'word'" class="file-icon-container word">
+            <i class="fas fa-file-word"></i>
+            <span class="file-type-label">Word</span>
+          </div>
+
+          <div class="file-hover-overlay">
+            <i class="fas fa-eye"></i>
+            <span>Click to Preview</span>
+          </div>
+        </div>
+
+        <div class="file-card-info">
+          <h4 class="file-title" [title]="file.name">{{ file.name }}</h4>
+          <p class="file-size">{{ formatFileSize(file.size) }}</p>
+          <div class="file-actions">
+            <button class="action-btn preview" (click)="openFilePreview(file); $event.stopPropagation()">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="action-btn download" (click)="downloadFile(file); $event.stopPropagation()">
+              <i class="fas fa-download"></i>
+            </button>
+            <button class="action-btn delete" (click)="removeFile(i); $event.stopPropagation()">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Upload Modal -->
+  <div class="upload-modal" *ngIf="showUploadModal" (click)="closeUploadModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Upload Report Files</h3>
+        <button class="close-btn" (click)="closeUploadModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Upload Zone -->
+        <div class="upload-zone"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onFileDrop($event)"
+             [class.drag-over]="isDragOver">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <h4>Drag & Drop Files Here</h4>
+          <p>or click to browse</p>
+          <p class="upload-info">Supported: PDF, Excel, Word, Images (Max: 50MB)</p>
+          <input type="file"
+                 #fileInput
+                 multiple
+                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+                 (change)="onFileSelect($event)"
+                 style="display: none;">
+          <button class="browse-btn" (click)="fileInput.click()">
+            <i class="fas fa-folder-open"></i> Browse Files
+          </button>
+        </div>
+
+        <!-- Processing Indicator -->
+        <div class="processing-indicator" *ngIf="isProcessingFiles">
+          <div class="processing-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing files... Please wait</p>
+          </div>
+        </div>
+
+        <!-- File Preview Grid -->
+        <div class="uploaded-files" *ngIf="uploadedFiles.length > 0">
+          <h4>Uploaded Files ({{ uploadedFiles.length }})</h4>
+          <div class="files-grid">
+            <div class="file-item" *ngFor="let file of uploadedFiles; let i = index">
+              <div class="file-thumbnail" (click)="openFilePreview(file)">
+                <!-- Image preview -->
+                <img *ngIf="file.type === 'image'" [src]="file.thumbnail" [alt]="file.name">
+
+                <!-- PDF preview -->
+                <div *ngIf="file.type === 'pdf'" class="file-icon pdf-icon">
+                  <i class="fas fa-file-pdf"></i>
+                  <span class="file-type">PDF</span>
+                </div>
+
+                <!-- Excel preview -->
+                <div *ngIf="file.type === 'excel'" class="file-icon excel-icon">
+                  <i class="fas fa-file-excel"></i>
+                  <span class="file-type">Excel</span>
+                </div>
+
+                <!-- Word preview -->
+                <div *ngIf="file.type === 'word'" class="file-icon word-icon">
+                  <i class="fas fa-file-word"></i>
+                  <span class="file-type">Word</span>
+                </div>
+
+                <div class="file-overlay">
+                  <i class="fas fa-eye"></i>
+                </div>
+              </div>
+
+              <div class="file-info">
+                <div class="file-name" [title]="file.name">{{ file.name }}</div>
+                <div class="file-size">{{ formatFileSize(file.size) }}</div>
+                <div class="file-actions">
+                  <button class="preview-btn" (click)="openFilePreview(file)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="download-btn" (click)="downloadFile(file)">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button class="delete-btn" (click)="removeFile(i)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Debug info -->
+        <div class="debug-info" *ngIf="uploadedFiles.length === 0 && !isProcessingFiles">
+          <p><small>No files uploaded yet. Try uploading a file to see it here.</small></p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeUploadModal()">Cancel</button>
+        <button class="upload-confirm-btn" (click)="confirmUpload()" [disabled]="uploadedFiles.length === 0">
+          Upload {{ uploadedFiles.length }} Files
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div class="preview-modal" *ngIf="showPreviewModal" (click)="closePreviewModal()">
+    <div class="preview-content" (click)="$event.stopPropagation()">
+      <div class="preview-header">
+        <h3>{{ selectedFile?.name }}</h3>
+        <button class="close-btn" (click)="closePreviewModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="preview-body">
+        <!-- Image Preview -->
+        <div *ngIf="selectedFile?.type === 'image'" class="image-preview">
+          <img [src]="selectedFile?.thumbnail" [alt]="selectedFile?.name">
+        </div>
+
+        <!-- PDF Preview -->
+        <div *ngIf="selectedFile?.type === 'pdf'" class="pdf-preview">
+          <div class="pdf-controls">
+            <button class="pdf-control-btn" (click)="selectedFile && openPdfInNewTab(selectedFile)">
+              <i class="fas fa-external-link-alt"></i> Open in New Tab
+            </button>
+            <button class="pdf-control-btn" (click)="selectedFile && downloadFile(selectedFile)">
+              <i class="fas fa-download"></i> Download PDF
+            </button>
+          </div>
+          <div *ngIf="selectedFile?.safeUrl; else pdfFallback" class="pdf-iframe-container">
+            <iframe [src]="selectedFile?.safeUrl" frameborder="0"></iframe>
+          </div>
+          <ng-template #pdfFallback>
+            <div class="pdf-fallback">
+              <div class="preview-placeholder">
+                <i class="fas fa-file-pdf"></i>
+                <h4>{{ selectedFile?.name }}</h4>
+                <p>{{ formatFileSize(selectedFile?.size || 0) }}</p>
+                <p>PDF preview is loading...</p>
+                <button class="download-btn" (click)="selectedFile && downloadFile(selectedFile)">
+                  <i class="fas fa-download"></i> Download to View
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Word Preview -->
+        <div *ngIf="selectedFile?.type === 'word'" class="word-preview">
+          <div class="word-controls">
+            <button class="word-control-btn" (click)="selectedFile && downloadFile(selectedFile)">
+              <i class="fas fa-download"></i> Download Word
+            </button>
+          </div>
+          <div *ngIf="selectedFile?.htmlContent; else wordFallback" class="word-content">
+            <div [innerHTML]="selectedFile?.htmlContent" class="word-document"></div>
+          </div>
+          <ng-template #wordFallback>
+            <div class="word-fallback">
+              <div class="processing-content">
+                <i class="fas fa-file-word"></i>
+                <h4>{{ selectedFile?.name }}</h4>
+                <p>{{ formatFileSize(selectedFile?.size || 0) }}</p>
+                <p>Converting Word document for preview...</p>
+                <div class="loading-spinner">
+                  <i class="fas fa-spinner fa-spin"></i>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Excel Preview -->
+        <div *ngIf="selectedFile?.type === 'excel'" class="excel-preview">
+          <div class="excel-controls">
+
+            <button class="excel-control-btn" (click)="selectedFile && downloadFile(selectedFile)">
+              <i class="fas fa-download"></i> Download Excel
+            </button>
+          </div>
+          <div *ngIf="selectedFile?.htmlContent; else excelFallback" class="excel-content">
+            <div [innerHTML]="selectedFile?.htmlContent" class="excel-document"></div>
+          </div>
+          <ng-template #excelFallback>
+            <div class="excel-fallback">
+              <div class="processing-content">
+                <i class="fas fa-file-excel"></i>
+                <h4>{{ selectedFile?.name }}</h4>
+                <p>{{ formatFileSize(selectedFile?.size || 0) }}</p>
+                <p>Converting Excel spreadsheet for preview...</p>
+                <div class="loading-spinner">
+                  <i class="fas fa-spinner fa-spin"></i>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Storage Files Modal -->
+<div class="storage-modal" [class.show]="showStorageModal" *ngIf="showStorageModal">
+  <div class="storage-modal-overlay" (click)="closeStorageModal()"></div>
+  <div class="storage-modal-content">
+    <div class="storage-modal-header">
+      <h2>
+        <i class="fas fa-cloud"></i>
+        Storage Files
+      </h2>
+      <button class="storage-close-btn" (click)="closeStorageModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="storage-modal-body">
+      <!-- Loading indicator -->
+      <div *ngIf="isLoadingStorageFiles" class="storage-loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading storage files...</p>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoadingStorageFiles && storageFiles.length === 0" class="storage-empty">
+        <div class="empty-state">
+          <i class="fas fa-folder-open"></i>
+          <h3>No Files Found</h3>
+          <p>Upload some files to see them here.</p>
+          <button class="upload-new-btn" (click)="closeStorageModal(); openFileUploadModal()">
+            <i class="fas fa-upload"></i> Upload Files
+          </button>
+        </div>
+      </div>
+
+      <!-- Files list -->
+      <div *ngIf="!isLoadingStorageFiles && storageFiles.length > 0" class="storage-files-list">
+        <div class="storage-files-header">
+          <h3>{{ storageFiles.length }} file(s) in storage</h3>
+          <button class="refresh-btn" (click)="loadStorageFiles()" [disabled]="isLoadingStorageFiles">
+            <i class="fas fa-sync-alt" [class.fa-spin]="isLoadingStorageFiles"></i>
+            Refresh
+          </button>
+        </div>
+
+        <div class="storage-files-grid">
+          <div class="storage-file-item" *ngFor="let file of storageFiles">
+            <div class="storage-file-icon">
+              {{ getFileTypeIcon(file.name) }}
+            </div>
+            <div class="storage-file-info">
+              <h4 class="storage-file-name" [title]="getOriginalFileName(file.name)">
+                {{ getOriginalFileName(file.name) }}
+              </h4>
+              <div class="storage-file-meta">
+                <span class="file-size">{{ formatFileSize(file.metadata?.size || 0) }}</span>
+                <span class="file-date">{{ formatFileDate(file.created_at || file.updated_at) }}</span>
+              </div>
+            </div>
+            <div class="storage-file-actions">
+              <button class="storage-action-btn preview-btn" 
+                      (click)="previewStorageFile(file.name)"
+                      [title]="'Preview ' + getOriginalFileName(file.name)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="storage-action-btn download-btn" 
+                      (click)="downloadStorageFile(file.name, getOriginalFileName(file.name))"
+                      [title]="'Download ' + getOriginalFileName(file.name)">
+                <i class="fas fa-download"></i>
+              </button>
+              <button class="storage-action-btn delete-btn" 
+                      (click)="deleteStorageFile(file.name)"
+                      [title]="'Delete ' + getOriginalFileName(file.name)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="storage-modal-footer">
+      <div class="storage-actions">
+        <button class="storage-footer-btn refresh-all" (click)="loadStorageFiles()" [disabled]="isLoadingStorageFiles">
+          <i class="fas fa-sync-alt"></i> Refresh All
+        </button>
+        <button class="storage-footer-btn upload-more" (click)="closeStorageModal(); openFileUploadModal()">
+          <i class="fas fa-upload"></i> Upload More
+        </button>
+        <button class="storage-footer-btn close-btn" (click)="closeStorageModal()">
+          <i class="fas fa-times"></i> Close
+        </button>
       </div>
     </div>
   </div>

@@ -2,11 +2,13 @@ import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from './../../env/enviroment';
 import { Injectable } from '@angular/core';
 import { User } from '../../type/user';
+import { SessionService } from './session.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  constructor(private sessionService: SessionService) {}
   async register(
     username: string,
     gender: string,
@@ -40,6 +42,7 @@ export class AuthService {
     if (error) throw error;
     if(data.user){
       localStorage.setItem('user', JSON.stringify(data.user));
+      this.sessionService.startSessionTimer();
     }
     return data;
   }
@@ -170,7 +173,8 @@ export class AuthService {
   }
 
   async signOut() {
-    localStorage.clear();
+    this.sessionService.clearSession();
+    localStorage.removeItem('user');
     await supabase.auth.signOut();
   }
 
@@ -295,7 +299,12 @@ export class AuthService {
   }
 
   onAuthStateChange(callback: (event: AuthChangeEvent, session: Session | null) => void) {
-    return supabase.auth.onAuthStateChange(callback);
+    return supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        localStorage.removeItem('user');
+      }
+      callback(event, session);
+    });
   }
 
   async isLoggedIn(): Promise<boolean> {
@@ -313,6 +322,7 @@ export class AuthService {
 
   async getSession() {
     const { data: { session } } = await supabase.auth.getSession();
+
     return session;
   }
 }

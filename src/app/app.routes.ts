@@ -100,6 +100,11 @@ export const routes: Routes = [
     canActivate: [canActivateAdmin],
     children: [
       {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
         path: 'dashboard',
         component: Dashboard,
       },
@@ -127,6 +132,11 @@ export const routes: Routes = [
     component: Seller,
     canActivate: [canActivateSeller],
     children: [
+      {
+        path: '',
+        redirectTo: 'seller-dashboard',
+        pathMatch: 'full',
+      },
       {
         path: 'seller-dashboard',
         component: SellerDashboard,

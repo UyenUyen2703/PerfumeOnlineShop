@@ -1,3 +1,9 @@
+<div class="add-product-modal">
+  <button igxButton="raised" color="primary" (click)="openAddProductModal()">
+    <i class="fas fa-plus"></i>
+    Add New Product
+  </button>
+</div>
 <div class="product-management-container">
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
@@ -107,6 +113,147 @@
       </div>
       <h3>No products Found</h3>
       <p>You don't have any products yet. products containing your products will appear here.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="addProductModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New Product</h2>
+      <span class="close" (click)="closeAddProductModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form class="add-product-form">
+        <div class="form-group">
+          <label for="productName">Product Name *</label>
+          <input
+            type="text"
+            id="productName"
+            [(ngModel)]="newProduct.name"
+            name="productName"
+            placeholder="Enter product name"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="productPrice">Price (VND) *</label>
+          <input
+            type="number"
+            id="productPrice"
+            [(ngModel)]="newProduct.price"
+            name="productPrice"
+            placeholder="Enter price"
+            min="0"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="productQuantity">Quantity *</label>
+          <input
+            type="number"
+            id="productQuantity"
+            [(ngModel)]="newProduct.quantity"
+            name="productQuantity"
+            placeholder="Enter quantity"
+            min="0"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="productBrand">Brand *</label>
+          <select
+            id="productBrand"
+            [(ngModel)]="newProduct.brand_id"
+            name="productBrand"
+            required>
+            <option value="">Select a brand</option>
+            <option *ngFor="let brand of brands" [value]="brand.brand_id">
+              {{ brand.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="productCategory">Category</label>
+          <select
+            id="productCategory"
+            [(ngModel)]="newProduct.category_id"
+            name="productCategory">
+            <option value="">Select a category</option>
+            <option *ngFor="let category of categories" [value]="category.category_id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="productSize">Size (ml)</label>
+          <input
+            type="number"
+            id="productSize"
+            [(ngModel)]="newProduct.size_ml"
+            name="productSize"
+            placeholder="Enter size in ml"
+            min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="productDiscount">Discount (%)</label>
+          <input
+            type="number"
+            id="productDiscount"
+            [(ngModel)]="newProduct.discount"
+            name="productDiscount"
+            placeholder="Enter discount percentage"
+            min="0"
+            max="100">
+        </div>
+
+        <div class="form-group">
+          <label for="productDescription">Description</label>
+          <textarea
+            id="productDescription"
+            [(ngModel)]="newProduct.description"
+            name="productDescription"
+            placeholder="Enter product description"
+            rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="productImage">Product Image</label>
+          <input
+            type="file"
+            id="productImage"
+            (change)="onImageSelected($event)"
+            name="productImage"
+            accept="image/*"
+            class="file-input">
+          <div class="image-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview" class="preview-img">
+            <button type="button" class="remove-image" (click)="removeImage()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="file-input-info" *ngIf="!imagePreview">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Click to select image or drag and drop</p>
+            <small>Supported formats: JPG, PNG, GIF (Max 5MB)</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" (click)="closeAddProductModal()">Cancel</button>
+      <button
+        type="button"
+        class="btn-save"
+        (click)="addProduct()"
+        [disabled]="isAddingProduct || !isFormValid()">
+        <i class="fas fa-spinner fa-spin" *ngIf="isAddingProduct"></i>
+        {{ isAddingProduct ? 'Adding...' : 'Add Product' }}
+      </button>
     </div>
   </div>
 </div>

@@ -7,6 +7,8 @@ import { Header } from './header/header';
 import { AuthService } from './services/auth.service';
 import { CurrencyService } from './services/currency.service';
 import { NotificationService } from './services/notification.service';
+import { SessionService } from './services/session.service';
+import { supabase } from '../env/enviroment';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +19,7 @@ import { NotificationService } from './services/notification.service';
 export class App implements OnInit {
   protected readonly title = signal('PerfumeOnlineShop');
   currentUrl = signal('');
+  isLoading = signal(true);
   private hasShownLoginSuccess = false;
 
   productList: any[] = [];
@@ -25,14 +28,20 @@ export class App implements OnInit {
     private currencyService: CurrencyService,
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private sessionService: SessionService
   ) {}
 
   async ngOnInit() {
+    // Set loading to true initially
+    this.isLoading.set(true);
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentUrl.set(event.url);
+        // Set loading to false after navigation completes
+        setTimeout(() => this.isLoading.set(false), 100);
       });
     this.currentUrl.set(this.router.url);
 
@@ -41,11 +50,8 @@ export class App implements OnInit {
 
       if (event === 'SIGNED_IN' && session) {
         try {
-          // Lưu user info vào localStorage
           if (session.user) {
-            localStorage.setItem('user', JSON.stringify(session.user));
-
-            // Thêm user vào database
+            this.sessionService.startSessionTimer();
             await this.authService.addUserToDatabase(session.user);
           }
 
@@ -59,8 +65,54 @@ export class App implements OnInit {
             this.hasShownLoginSuccess = true;
             this.notificationService.success('Login successful!');
 
-            setTimeout(() => {
-              this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+            // Kiểm tra role của user để điều hướng đúng trang
+            setTimeout(async () => {
+              try {
+                // Lấy thông tin user từ database để check role
+                const authUser = await this.authService.getUser();
+                if (authUser) {
+                  let { data: userData, error } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('user_id', authUser.id)
+                    .single();
+
+                  // Nếu không tìm thấy bằng user_id, thử tìm bằng email
+                  if (error && error.code === 'PGRST116') {
+                    const result = await supabase
+                      .from('users')
+                      .select('role')
+                      .eq('email', authUser.email)
+                      .single();
+                    userData = result.data;
+                  }
+
+                  // Điều hướng dựa vào role và URL hiện tại
+                  if (userData?.role === 'seller') {
+                    if (currentUrl.includes('/login-seller')) {
+                      this.router.navigate(['/seller/seller-dashboard']);
+                    } else if (!currentUrl.includes('/seller')) {
+                      this.router.navigate(['/seller/seller-dashboard']);
+                    }
+                  } else if (userData?.role === 'admin') {
+                    if (currentUrl.includes('/login-admin')) {
+                      this.router.navigate(['/admin/dashboard']);
+                    } else if (!currentUrl.includes('/admin')) {
+                      this.router.navigate(['/admin/dashboard']);
+                    }
+                  } else {
+                    // Customer hoặc role mặc định - điều hướng về home
+                    this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+                  }
+                } else {
+                  // Fallback nếu không lấy được thông tin user
+                  this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+                }
+              } catch (error) {
+                console.error('Error checking user role for navigation:', error);
+                // Fallback về home nếu có lỗi
+                this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
+              }
             }, 1000);
           }
         } catch (error) {
@@ -70,7 +122,7 @@ export class App implements OnInit {
       }
 
       if (event === 'SIGNED_OUT') {
-        localStorage.clear();
+        this.sessionService.clearSession();
         this.hasShownLoginSuccess = false;
       }
     });
@@ -85,6 +137,13 @@ export class App implements OnInit {
     } catch (error) {
       console.error('Error checking user on app start:', error);
     }
+
+    // Set loading to false after initial setup
+    setTimeout(() => this.isLoading.set(false), 200);
+
+    setInterval(() => {
+      this.sessionService.checkSession();
+    }, 5 * 60 * 1000); // Check every 5 minutes
   }
 
   isAdminRoute(): boolean {
@@ -98,15 +157,16 @@ export class App implements OnInit {
 
   isSellerRoute(): boolean {
     const url = this.currentUrl();
-    return (
-      url.startsWith('/login-seller') ||
-      url.startsWith('/register-seller') ||
-      url.startsWith('/seller')
-    );
+    return url.startsWith('/seller') && !url.startsWith('/login-seller') && !url.startsWith('/register-seller');
   }
 
   isAdminAuthRoute(): boolean {
     const url = this.currentUrl();
     return url.startsWith('/login-admin') || url.startsWith('/register-admin');
+  }
+
+  isSellerAuthRoute(): boolean {
+    const url = this.currentUrl();
+    return url.startsWith('/login-seller') || url.startsWith('/register-seller');
   }
 }
