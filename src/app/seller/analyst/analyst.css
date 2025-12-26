@@ -1723,7 +1723,6 @@
   color: #6c757d;
 }
 
-/* ==================== STORAGE MODAL STYLES ==================== */
 .storage-modal {
   position: fixed;
   top: 0;
@@ -2132,13 +2131,8 @@
   transform: none !important;
 }
 
-/* Storage Card Update */
 .report-card.storage-card {
   border-left-color: #20c997;
-}
-
-.report-card.storage-card .report-icon {
-  background: linear-gradient(135deg, #20c997, #17a2b8);
 }
 
 .storage-info {

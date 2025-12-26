@@ -111,7 +111,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       const orderItems = await this.supabase.getData('order_items');
       const products = await this.supabase.getData('products');
 
-      // Filter orders by current seller through order items and products
       const sellerOrders = orders.filter(order => {
         const relatedOrderItems = orderItems.filter((item: any) => item.order_id === order.order_id);
         return relatedOrderItems.some((item: any) => {
@@ -577,7 +576,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     try {
       const { data, error } = await supabase.storage
         .from('fileReport')
-        .list(this.currentSellerId, {
+        .list('reports', {
           limit: 100,
           offset: 0,
           sortBy: { column: 'created_at', order: 'desc' }
@@ -589,7 +588,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.storageFiles = data || [];
-      console.log('Storage files loaded:', this.storageFiles);
     } catch (error) {
       console.error('Error loading storage files:', error);
     } finally {
@@ -604,7 +602,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     }
 
     try {
-      const filePath = `${this.currentSellerId}/${fileName}`;
+      const filePath = `reports/${fileName}`;
       const { data, error } = await supabase.storage
         .from('fileReport')
         .download(filePath);
@@ -615,7 +613,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      // Create download link
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
@@ -625,7 +622,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      console.log('File downloaded successfully:', fileName);
     } catch (error) {
       console.error('Error downloading file:', error);
       alert('Error downloading file. Please try again.');
@@ -643,7 +639,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     }
 
     try {
-      const filePath = `${this.currentSellerId}/${fileName}`;
+      const filePath = `reports/${fileName}`;
       const { error } = await supabase.storage
         .from('fileReport')
         .remove([filePath]);
@@ -654,9 +650,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
 
-      // Reload storage files
       await this.loadStorageFiles();
-      console.log('File deleted successfully:', fileName);
     } catch (error) {
       console.error('Error deleting file:', error);
       alert('Error deleting file. Please try again.');
@@ -670,7 +664,7 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     }
 
     try {
-      const filePath = `${this.currentSellerId}/${fileName}`;
+      const filePath = `reports/${fileName}`;
       const { data: publicData } = supabase.storage
         .from('fileReport')
         .getPublicUrl(filePath);
@@ -775,7 +769,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   onFileSelect(event: any) {
     if (event.target.files) {
       this.processFiles(event.target.files);
-      // Reset the input to allow selecting the same file again
       event.target.value = '';
     }
   }
@@ -971,23 +964,15 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     if (file.url) {
       if (file.type === 'pdf') {
         file.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(file.url);
-        console.log('PDF URL created:', file.url);
       } else if (file.type === 'excel') {
-        // Excel files will show rich preview
-        console.log('Excel document detected:', file.name);
       }
-      console.log('Safe URL created:', file.safeUrl);
     }
-
-    // Word documents use HTML content for preview
     if (file.type === 'word' && file.htmlContent) {
-      console.log('Word document HTML content ready for preview');
     }
 
     this.showPreviewModal = true;
   }
 
-  // Alternative method to open PDF in new tab if iframe fails
   openPdfInNewTab(file: UploadedFile) {
     if (file.url) {
       const newWindow = window.open(file.url, '_blank');
@@ -996,8 +981,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
-
-  // Method to open Office files with Google Docs Viewer
   openOfficeInNewTab(file: UploadedFile) {
     if (file.url) {
       // Try to use Google Docs Viewer
@@ -1033,7 +1016,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
   async confirmUpload() {
     if (this.uploadedFiles.length === 0) return;
 
-    // Get current seller ID if not available
     if (!this.currentSellerId) {
       this.currentSellerId = await this.authService.getUserId();
       if (!this.currentSellerId) {
@@ -1049,12 +1031,10 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     try {
       for (const file of this.uploadedFiles) {
         try {
-          // Create unique file name with timestamp and seller ID
           const timestamp = new Date().getTime();
           const fileExtension = file.name.split('.').pop();
-          const fileName = `${this.currentSellerId}/${timestamp}_${file.name}`;
+          const fileName = `/reports/${timestamp}_${file.name}`;
 
-          // Upload file to Supabase storage
           const { data, error } = await supabase.storage
             .from('fileReport')
             .upload(fileName, file.file, {
@@ -1066,16 +1046,13 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
             console.error('Error uploading file:', file.name, error);
             failedCount++;
           } else {
-            console.log('File uploaded successfully:', file.name, data);
             uploadedCount++;
 
-            // Get public URL for the uploaded file
             const { data: publicData } = supabase.storage
               .from('fileReport')
               .getPublicUrl(fileName);
 
             if (publicData) {
-              console.log('File public URL:', publicData.publicUrl);
             }
           }
         } catch (error) {
