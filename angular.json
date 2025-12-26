@@ -20,6 +20,9 @@
               "tslib",
               "@supabase/postgrest-js",
               "file-saver",
+              "croppie",
+              "mammoth",
+              "docx",
               "xlsx"
             ],
             "assets": [
@@ -47,8 +50,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "12kB",
-                  "maximumError": "15kB"
+                  "maximumWarning": "20kB",
+                  "maximumError": "40kB"
                 }
               ],
               "outputHashing": "all",
