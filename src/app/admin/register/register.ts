@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
@@ -48,7 +48,6 @@ export class RegisterAdmin {
       console.error('Unexpected error during admin registration:', error);
       alert('An unexpected error occurred. Please try again later.');
     }finally{
-      console.log('Admin registration process completed.');
     }
   }
 }

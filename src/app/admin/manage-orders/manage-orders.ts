@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { IgcFormsModule, IgxGridComponent, IgxGridModule } from 'igniteui-angular';
-import { supabase } from '../../../env/enviroment';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { IgxGridComponent, IgxGridModule } from 'igniteui-angular';
+import { supabase } from '../../../env/enviroment';
 
 @Component({
   selector: 'app-manage-orders',
@@ -29,7 +29,6 @@ export class ManageOrders {
       const { data: ordersData, error } = await supabase.from('orders').select('*');
       if (error) throw error;
       this.order = ordersData || [];
-      console.log('Orders loaded:', this.order);
     } catch (error) {
       console.error('Error loading orders:', error);
       this.order = [];

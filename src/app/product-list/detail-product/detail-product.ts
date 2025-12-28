@@ -1,12 +1,12 @@
-import { NgForOf, NgIf } from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
-import { CurrencyService } from '../../services/currency.service';
+import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
 import { AuthService } from '../../services/auth.service';
+import { CurrencyService } from '../../services/currency.service';
 import { ProductService } from '../../services/product.service';
 import { WishlistService } from '../../services/wishlist.service';
-import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
 
 @Component({
   selector: 'app-detail-product',
@@ -106,7 +106,6 @@ export class DetailProduct implements OnInit {
   }
 
   onProductAdded(product: any): void {
-    console.log('Product added to cart:', product);
   }
 
   getImageUrl(relativePath: string): string {
@@ -129,7 +128,7 @@ export class DetailProduct implements OnInit {
 
   async toggleWishlist(productId: string): Promise<void> {
     if (!this.userId) {
-      this.wishlistMessage = 'Vui lòng đăng nhập để thêm vào danh sách yêu thích';
+      this.wishlistMessage = 'Please login to add to wishlist';
       this.router.navigate(['/login']);
       return;
     }
@@ -142,17 +141,17 @@ export class DetailProduct implements OnInit {
         const success = await this.wishlistService.removeFromWishlist(this.userId, productId);
         if (success) {
           this.isInWishlist = false;
-          this.wishlistMessage = 'Đã xóa khỏi danh sách yêu thích';
+          this.wishlistMessage = 'Removed from wishlist';
         } else {
-          this.wishlistMessage = 'Không thể xóa khỏi danh sách yêu thích';
+          this.wishlistMessage = 'Could not remove from wishlist';
         }
       } else {
         const success = await this.wishlistService.addToWishlist(this.userId, productId);
         if (success) {
           this.isInWishlist = true;
-          this.wishlistMessage = 'Đã thêm vào danh sách yêu thích';
+          this.wishlistMessage = 'Added to wishlist';
         } else {
-          this.wishlistMessage = 'Không thể thêm vào danh sách yêu thích';
+          this.wishlistMessage = 'Could not add to wishlist';
         }
       }
 
@@ -161,7 +160,7 @@ export class DetailProduct implements OnInit {
       }, 3000);
     } catch (error) {
       console.error('Error toggling wishlist:', error);
-      this.wishlistMessage = 'Có lỗi xảy ra';
+      this.wishlistMessage = 'An error occurred';
       setTimeout(() => {
         this.wishlistMessage = null;
       }, 3000);

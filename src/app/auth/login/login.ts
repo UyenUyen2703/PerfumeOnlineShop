@@ -23,9 +23,9 @@ export class Login {
       this.isLoading = true;
       const { url } = await this.authService.signInWithGoogle();
 
-      // Google OAuth sẽ redirect, không cần thông báo success ở đây
+      // Google OAuth will redirect, no need for success notification here
       if (url) {
-        // Redirect đến Google OAuth
+        // Redirect to Google OAuth
         window.location.href = url;
       }
     } catch (error) {

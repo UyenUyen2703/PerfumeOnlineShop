@@ -60,8 +60,6 @@ export class ProductService {
         console.error(`Error updating product ${productId} quantity:`, updateError);
         return;
       }
-
-      console.log(`Product ${productId} quantity updated: ${currentQuantity} -> ${newQuantity}`);
     } catch (error) {
       console.error('Error in updateProductQuantity:', error);
     }
@@ -102,7 +100,7 @@ export class ProductService {
         if (availableQuantity < item.quantity) {
           const productName = product.name || item.name;
           errors.push(
-            `${productName}: Không đủ hàng (Còn: ${availableQuantity}, Yêu cầu: ${item.quantity})`
+            `${productName}: Insufficient stock (Available: ${availableQuantity}, Required: ${item.quantity})`
           );
           console.warn(
             `Insufficient stock for ${productName}: available ${availableQuantity}, requested ${item.quantity}`
@@ -172,11 +170,9 @@ export class ProductService {
         console.error(`Error restoring product ${productId} quantity:`, updateError);
         return;
       }
-
-      console.log(`Product ${productId} quantity restored: ${currentQuantity} -> ${newQuantity}`);
     } catch (error) {
       console.error('Error in restoreProductQuantity:', error);
-      // Không throw để không gây lỗi hệ thống
+      // Do not throw to avoid system error
     }
   }
 

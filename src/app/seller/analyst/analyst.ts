@@ -134,10 +134,10 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
         return false;
       }).length;
 
-      // Lấy KPI của tháng (có thể từ database hoặc cấu hình)
+      // Get monthly KPI (can be from database or configuration)
       this.monthlyKPI = await this.getMonthlyKPI(currentMonth + 1, currentYear);
 
-      // Tính phần trăm đạt được
+      // Calculate achievement percentage
       this.achievementPercentage = this.monthlyKPI > 0 ?
         Math.round((this.currentMonthOrders / this.monthlyKPI) * 100) : 0;
 
@@ -807,10 +807,8 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
 
       // Show summary message
       if (processedCount > 0) {
-        console.log(`Successfully processed ${processedCount} file(s).`);
       }
       if (errorCount > 0) {
-        console.log(`${errorCount} file(s) could not be processed.`);
       }
     } finally {
       this.isProcessingFiles = false;
@@ -821,8 +819,6 @@ export class Analyst implements OnInit, AfterViewInit, OnDestroy {
     try {
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       let fileType: 'pdf' | 'excel' | 'word' | 'image' = 'pdf';
-
-      console.log(`Processing file: ${file.name}, Extension: ${fileExtension}, Size: ${file.size}`);
 
       // Determine file type
       if (fileExtension === 'pdf') {

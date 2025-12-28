@@ -116,7 +116,6 @@ export class ManageProduct {
     this.successMessage = null;
     try {
       const { data, error } = await supabase.from('products').delete().eq('product_id', productId);
-      console.log('Delete response data:', data);
       if (error) {
         throw error;
       }
@@ -187,7 +186,6 @@ export class ManageProduct {
         .update({ quantity: newQuantity, updated_at: new Date() })
         .eq('product_id', productId)
         .select();
-      console.log('Update response data:', data);
       if (error) {
         throw error;
       }

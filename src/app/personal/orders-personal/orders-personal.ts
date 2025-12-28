@@ -1,10 +1,9 @@
-import { User } from './../../../type/user';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Supabase } from '../../supabase';
+import { CartItem, Order } from '../../../type/order';
 import { AuthService } from '../../services/auth.service';
-import { Order, OrderItem, CartItem } from '../../../type/order';
+import { Supabase } from '../../supabase';
 
 type OrderStatus = 'outstanding' | 'awaiting' | 'cancelled' | 'delivered' | 'shipped';
 
@@ -146,7 +145,6 @@ export class OrdersPersonal {
       }
 
       const orderData = await this.supabase.getOrderUserId(orderId, user.id);
-      console.log('Specific order data:', orderData);
 
       if (orderData) {
         return this.processOrdersData([orderData])[0];

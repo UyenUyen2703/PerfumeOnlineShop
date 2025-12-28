@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../services/product.service';
-import { CurrencyService } from '../../services/currency.service';
-import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
-import { Product } from '../../../type/product';
+import { ActivatedRoute, Router } from '@angular/router';
 import { supabase } from '../../../env/enviroment';
-import { IgxFilterDirective } from "igniteui-angular";
+import { Product } from '../../../type/product';
+import { AddToCartComponent } from '../../components/add-to-cart/add-to-cart.component';
+import { CurrencyService } from '../../services/currency.service';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-search',
@@ -82,7 +81,7 @@ export class Search implements OnInit {
     this.isLoading = true;
 
     try {
-      // Nếu không có từ khóa tìm kiếm và không có filter, hiển thị tất cả sản phẩm
+      // If no search term and no filter, show all products
       if (!this.searchTerm.trim() && !this.selectedCategory && !this.selectedBrand) {
         this.products = await this.getAllProducts();
       } else {

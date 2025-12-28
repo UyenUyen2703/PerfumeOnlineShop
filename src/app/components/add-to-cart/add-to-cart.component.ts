@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-add-to-cart',
@@ -92,7 +92,7 @@ export class AddToCartComponent implements OnInit {
 
     } catch (error) {
       console.error('Error adding product to cart:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+      alert('An error occurred while adding product to cart');
     } finally {
       this.isLoading = false;
     }

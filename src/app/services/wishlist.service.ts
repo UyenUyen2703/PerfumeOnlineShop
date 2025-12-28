@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { supabase } from '../../env/enviroment';
 import { Product } from '../../type/product';
 
@@ -97,7 +97,7 @@ export class WishlistService {
         .single();
 
       if (existing) {
-        this.errorSubject.next('Sản phẩm đã có trong danh sách yêu thích');
+        this.errorSubject.next('Product is already in wishlist');
         return false;
       }
 

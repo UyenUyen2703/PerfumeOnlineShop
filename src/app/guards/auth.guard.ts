@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { CanActivate, CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, CanActivateFn, Router } from '@angular/router';
 import { supabase } from '../../env/enviroment';
 import { AuthService } from '../services/auth.service';
 
@@ -45,7 +45,6 @@ export const canActivateSeller: CanActivateFn = async (route, state) => {
     }
 
     if (!authUser) {
-      console.log('Seller guard: Không có user, chuyển hướng về login');
       router.navigate(['/login-seller']);
       return false;
     }
@@ -118,14 +117,12 @@ export const canActivateAdmin: CanActivateFn = async (route, state) => {
     if (error) {
       console.error('Admin guard: Error fetching user data:', error);
       if (error.code === 'PGRST116') {
-        console.log('Admin guard: User không tồn tại trong DB');
       }
       router.navigate(['/login-admin']);
       return false;
     }
 
     if (userData && userData.role === 'admin') {
-      console.log('Admin guard: Access granted - User is admin');
       return true;
     }
     router.navigate(['/login-admin']);

@@ -1,13 +1,13 @@
 import { NgForOf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { take } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 import { CurrencyService } from '../services/currency.service';
 import { NotificationService } from '../services/notification.service';
 import { ProductService } from '../services/product.service';
 import { Supabase } from '../supabase';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'app-home-page',
@@ -30,11 +30,11 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Kiểm tra nếu có thông báo login thành công từ query params
+    // Check if there is a login success message from query params
     this.route.queryParams.pipe(take(1)).subscribe(params => {
       if (params['loginSuccess'] === 'true') {
-        this.notificationService.success('Chào mừng bạn đến với cửa hàng nước hoa!');
-        // Xóa query parameter sau khi hiển thị thông báo
+        this.notificationService.success('Welcome to the perfume shop!');
+        // Remove query parameter after showing notification
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {},
@@ -80,17 +80,16 @@ export class HomePage implements OnInit {
         quantity: 1,
         options: (product.brands?.name || 'No Brand') + ' • ' + (product.categories?.name || 'No Category')
       };
-      // Sử dụng buy now mode thay vì thêm vào cart
+      // Use buy now mode instead of adding to cart
       this.cartService.setBuyNowMode(productToAdd);
       this.router.navigate(['/cart']);
     } catch (error) {
       console.error('Error adding product to cart:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+      alert('An error occurred while adding product to cart');
     }
   }
 
   onProductAdded(product: any): void {
-    console.log('Product added to cart:', product);
   }
 
   getImageUrl(relativePath: string): string {

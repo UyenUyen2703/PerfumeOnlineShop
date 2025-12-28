@@ -1,15 +1,15 @@
-import { ExportService } from './../../services/export.service';
-import { ProductService } from './../../services/product.service';
-import { supabase } from './../../../env/enviroment';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   IgxColumnComponent,
   IgxGridComponent,
   IgxGridModule,
   IgxGridPinningActionsComponent,
 } from 'igniteui-angular';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { supabase } from './../../../env/enviroment';
+import { ExportService } from './../../services/export.service';
+import { ProductService } from './../../services/product.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -63,7 +63,6 @@ export class Dashboard implements OnInit {
       const { data, error } = await supabase.from('brands').select('*');
       if (error) throw error;
       this.brand = data;
-      console.log('Brand loaded:', this.brand);
       return this.brand;
     } catch (error) {
       console.error('Error loading brand:', error);

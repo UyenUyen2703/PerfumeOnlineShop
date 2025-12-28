@@ -1,7 +1,7 @@
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { supabase } from './../../env/enviroment';
 import { Injectable } from '@angular/core';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { User } from '../../type/user';
+import { supabase } from './../../env/enviroment';
 import { SessionService } from './session.service';
 
 @Injectable({
@@ -118,7 +118,6 @@ export class AuthService {
         .eq('user_id', user.id);
 
       if (existingUser && existingUser.length > 0) {
-        console.log('User already exists in database:', existingUser[0].user_id);
         return existingUser[0];
       }
 

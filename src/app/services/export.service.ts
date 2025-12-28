@@ -17,7 +17,7 @@ export class ExportService {
 
   getImageUrl(relativePath: string): string {
     if (!relativePath) return '';
-    if (relativePath.startsWith('http')) return relativePath; // Nếu đã là URL đầy đủ
+    if (relativePath.startsWith('http')) return relativePath; // If it is already a full URL
     return supabase.storage.from('images-storage').getPublicUrl(relativePath).data.publicUrl;
   }
 
@@ -42,7 +42,6 @@ export class ExportService {
       .select('brand_id')
       .eq('name', brandName)
       .single();
-      console.log('Brand fetch result:', data);
     if (error || !data) {
       console.error('Error fetching brand ID:', error);
       return null;
@@ -56,7 +55,6 @@ export class ExportService {
       .select('category_id')
       .eq('name', categoryName)
       .single();
-      console.log('Category fetch result:', data);
     if (error || !data) {
       console.error('Error fetching category ID:', error);
       return null;

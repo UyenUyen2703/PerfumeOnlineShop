@@ -30,12 +30,12 @@ export class RegisterSeller {
 
   async onSubmit() {
     if (this.registerData.password !== this.registerData.confirmPassword) {
-      alert('Mật khẩu xác nhận không khớp!');
+      alert('Confirm password does not match!');
       return;
     }
 
     if (!this.registerData.email || !this.registerData.password || !this.agreeToTerms) {
-      alert('Vui lòng điền đầy đủ thông tin bắt buộc và đồng ý điều khoản!');
+      alert('Please fill in all required fields and agree to the terms!');
       return;
     }
 
@@ -58,11 +58,11 @@ export class RegisterSeller {
         throw error;
       }
 
-      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
+      alert('Registration successful! Please check your email to verify your account.');
       this.router.navigate(['/login-seller']);
     } catch (error: any) {
       console.error('Registration error:', error);
-      alert('Có lỗi xảy ra khi đăng ký: ' + error.message);
+      alert('An error occurred during registration: ' + error.message);
     } finally {
       this.isLoading = false;
     }

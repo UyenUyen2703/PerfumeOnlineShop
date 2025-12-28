@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { supabase } from '../../../env/enviroment';
-import { IgxGridComponent, IgxColumnComponent, IgxGridModule } from "igniteui-angular";
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { IgxColumnComponent, IgxGridComponent, IgxGridModule } from "igniteui-angular";
+import { supabase } from '../../../env/enviroment';
 
 @Component({
   selector: 'app-manage-user',
@@ -26,7 +26,6 @@ export class ManageUser implements OnInit {
         .select('*');
       if (error) throw error;
       this.userData = usersData || [];
-      console.log('Users loaded:', this.userData);
     } catch (error) {
       console.error('Error loading users:', error);
       this.userData = [];

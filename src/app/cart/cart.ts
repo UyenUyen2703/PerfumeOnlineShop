@@ -74,6 +74,7 @@ export class Cart implements OnInit, OnDestroy {
     if (this.buyNowItemSubscription) {
       this.buyNowItemSubscription.unsubscribe();
     }
+    this.cartService.clearBuyNowMode();
   }
 
 
@@ -262,12 +263,12 @@ export class Cart implements OnInit, OnDestroy {
     const cleanPhone = this.recipientPhone.replace(/\D/g, '');
 
     if (cleanPhone.length === 0) {
-      this.phoneError = '❌ Số điện thoại không được để trống';
+      this.phoneError = '❌ Phone number cannot be empty';
       return false;
     }
 
     if (cleanPhone.length < 10) {
-      this.phoneError = `❌ Số điện thoại chưa đủ 10 số (hiện tại: ${cleanPhone.length}/10)`;
+      this.phoneError = `❌ Phone number must be at least 10 digits (current: ${cleanPhone.length}/10)`;
       return false;
     }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { supabase } from '../../env/enviroment';
-import { Order, OrderItem, SellerNotification } from '../../type/order';
+import { Order, OrderItem } from '../../type/order';
 import { AuthService } from './auth.service';
 import { ProductService } from './product.service';
 
@@ -53,10 +53,9 @@ export class OrderService {
         throw new Error(error.message);
       }
 
-      // Cập nhật số lượng sản phẩm
+      // Update product quantities
       try {
         await this.productService.updateMultipleProductQuantities(cartItems);
-        console.log('Product quantities updated successfully after order placement');
       } catch (quantityError) {
         console.error('Error updating product quantities:', quantityError);
         console.warn('Order created but inventory may not be updated');
@@ -86,8 +85,8 @@ export class OrderService {
   }
 
   /**
-   * Hủy đơn hàng và hoàn lại số lượng sản phẩm
-   * @param orderId - ID của đơn hàng
+   * Cancel order and restore product quantities
+   * @param orderId - ID of the order
    * @returns Promise<void>
    */
   async cancelOrder(orderId: string): Promise<void> {
@@ -97,7 +96,7 @@ export class OrderService {
         throw new Error('User not authenticated');
       }
 
-      // Kiểm tra đơn hàng có thuộc về user này không
+      // Check if order belongs to this user
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .select('status')
@@ -109,12 +108,12 @@ export class OrderService {
         throw new Error('Order not found or access denied');
       }
 
-      // Chỉ cho phép hủy đơn hàng có status là 'Pending'
+      // Only allow cancelling orders with status 'Pending'
       if (order.status !== 'Pending') {
         throw new Error(`Cannot cancel order with status: ${order.status}`);
       }
 
-      // Lấy danh sách sản phẩm trong đơn hàng
+      // Get list of products in the order
       const { data: orderItems, error: itemsError } = await supabase
         .from('order_items')
         .select('product_id, quantity')
@@ -124,14 +123,14 @@ export class OrderService {
         throw new Error('Error fetching order items');
       }
 
-      // Hoàn lại số lượng sản phẩm
+      // Restore product quantities
       if (orderItems && orderItems.length > 0) {
         for (const item of orderItems) {
           await this.productService.restoreProductQuantity(item.product_id, item.quantity);
         }
       }
 
-      // Cập nhật status đơn hàng thành 'Cancelled'
+      // Update order status to 'Cancelled'
       const { error: updateError } = await supabase
         .from('orders')
         .update({ status: 'Cancelled' })
@@ -140,8 +139,6 @@ export class OrderService {
       if (updateError) {
         throw new Error('Error updating order status');
       }
-
-      console.log(`Order ${orderId} cancelled and product quantities restored`);
     } catch (error) {
       console.error('Error cancelling order:', error);
       throw error;
@@ -149,9 +146,9 @@ export class OrderService {
   }
 
   /**
-   * Cập nhật trạng thái đơn hàng
-   * @param orderId - ID của đơn hàng
-   * @param newStatus - Trạng thái mới
+   * Update order status
+   * @param orderId - ID of the order
+   * @param newStatus - New status
    * @returns Promise<void>
    */
   async updateOrderStatus(orderId: string, newStatus: string): Promise<void> {
@@ -167,8 +164,6 @@ export class OrderService {
       if (error) {
         throw new Error(`Error updating order status: ${error.message}`);
       }
-
-      console.log(`Order ${orderId} status updated to: ${newStatus}`);
     } catch (error) {
       console.error('Error updating order status:', error);
       throw error;

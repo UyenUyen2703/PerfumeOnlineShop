@@ -2,13 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { supabase } from '../env/enviroment';
 import { Footer } from './footer/footer';
 import { Header } from './header/header';
 import { AuthService } from './services/auth.service';
 import { CurrencyService } from './services/currency.service';
 import { NotificationService } from './services/notification.service';
 import { SessionService } from './services/session.service';
-import { supabase } from '../env/enviroment';
 
 @Component({
   selector: 'app-root',
@@ -46,7 +46,6 @@ export class App implements OnInit {
     this.currentUrl.set(this.router.url);
 
     this.authService.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
         try {
@@ -65,10 +64,10 @@ export class App implements OnInit {
             this.hasShownLoginSuccess = true;
             this.notificationService.success('Login successful!');
 
-            // Kiểm tra role của user để điều hướng đúng trang
+            // Check user role to navigate to the correct page
             setTimeout(async () => {
               try {
-                // Lấy thông tin user từ database để check role
+                // Get user info from database to check role
                 const authUser = await this.authService.getUser();
                 if (authUser) {
                   let { data: userData, error } = await supabase
@@ -77,7 +76,7 @@ export class App implements OnInit {
                     .eq('user_id', authUser.id)
                     .single();
 
-                  // Nếu không tìm thấy bằng user_id, thử tìm bằng email
+                  // If not found by user_id, try finding by email
                   if (error && error.code === 'PGRST116') {
                     const result = await supabase
                       .from('users')
@@ -87,7 +86,7 @@ export class App implements OnInit {
                     userData = result.data;
                   }
 
-                  // Điều hướng dựa vào role và URL hiện tại
+                  // Navigate based on role and current URL
                   if (userData?.role === 'seller') {
                     if (currentUrl.includes('/login-seller')) {
                       this.router.navigate(['/seller/seller-dashboard']);
@@ -101,16 +100,16 @@ export class App implements OnInit {
                       this.router.navigate(['/admin/dashboard']);
                     }
                   } else {
-                    // Customer hoặc role mặc định - điều hướng về home
+                    // Customer or default role - navigate to home
                     this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
                   }
                 } else {
-                  // Fallback nếu không lấy được thông tin user
+                  // Fallback if user info cannot be retrieved
                   this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
                 }
               } catch (error) {
                 console.error('Error checking user role for navigation:', error);
-                // Fallback về home nếu có lỗi
+                // Fallback to home if there is an error
                 this.router.navigate(['/'], { queryParams: { loginSuccess: 'true' } });
               }
             }, 1000);
@@ -132,7 +131,6 @@ export class App implements OnInit {
       if (user) {
         await this.authService.addUserToDatabase(user);
       } else {
-        console.log('No user found, continuing with guest access...');
       }
     } catch (error) {
       console.error('Error checking user on app start:', error);

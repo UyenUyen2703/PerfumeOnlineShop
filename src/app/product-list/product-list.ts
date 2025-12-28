@@ -1,12 +1,12 @@
 import { NgForOf } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { Supabase } from '../supabase';
-import { CurrencyService } from '../services/currency.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.component';
 import { AuthService } from '../services/auth.service';
+import { CurrencyService } from '../services/currency.service';
 import { ProductService } from '../services/product.service';
 import { WishlistService } from '../services/wishlist.service';
-import { AddToCartComponent } from '../components/add-to-cart/add-to-cart.component';
+import { Supabase } from '../supabase';
 
 @Component({
   selector: 'app-product-list',
@@ -155,7 +155,6 @@ export class ProductList implements OnInit, OnDestroy {
   }
 
   onProductAdded(product: any): void {
-    console.log('Product added to cart:', product);
   }
 
   toggleCategory(): void {
@@ -206,7 +205,7 @@ export class ProductList implements OnInit, OnDestroy {
     event.stopPropagation();
 
     if (!this.userId) {
-      alert('Bạn cần đăng nhập!');
+      alert('You need to login!');
       this.router.navigate(['/login']);
       return;
     }
